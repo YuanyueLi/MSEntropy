@@ -203,7 +203,7 @@ def apply_weight_to_intensity(peaks: np.ndarray) -> np.ndarray:
     # Apply the weight.
     if entropy < 3:
         weight = 0.25 + 0.25 * entropy
-        weighted_peaks[:, 1] *= np.power(weight, weight)
+        weighted_peaks[:, 1] = np.power(peaks[:, 1], weight)
         intensity_sum = np.sum(weighted_peaks[:, 1])
         weighted_peaks[:, 1] /= intensity_sum
 
