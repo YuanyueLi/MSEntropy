@@ -32,11 +32,35 @@ class TestEntropySimilarity(unittest.TestCase):
         similarity = me.calculate_unweighted_entropy_similarity(spec_query, spec_reference, ms2_tolerance_in_da=0.05)
         self.assertAlmostEqual(similarity, 0.9826668790176113, places=4)
 
+        similarity = me.calculate_unweighted_entropy_similarity(spec_query, spec_reference, ms2_tolerance_in_da=0.015)
+        self.assertAlmostEqual(similarity, 0.9780402849658875, places=4)
+
+    def test_unweighted_entropy_similarity_ppm(self):
+        spec_query = np.array([[69.071, 7.917962], [86.066, 1.021589], [86.0969, 100.0]], dtype=np.float32)
+        spec_reference = np.array([[41.04, 37.16], [69.07, 66.83], [86.1, 999.0]], dtype=np.float32)
+        similarity = me.calculate_unweighted_entropy_similarity(spec_query, spec_reference, ms2_tolerance_in_ppm=200)
+        self.assertAlmostEqual(similarity, 0.9826668790176113, places=4)
+
+        similarity = me.calculate_unweighted_entropy_similarity(spec_query, spec_reference, ms2_tolerance_in_ppm=50)
+        self.assertAlmostEqual(similarity, 0.9780402849658875, places=4)
+
     def test_entropy_similarity(self):
         spec_query = np.array([[69.071, 7.917962], [86.066, 1.021589], [86.0969, 100.0]], dtype=np.float32)
         spec_reference = np.array([[41.04, 37.16], [69.07, 66.83], [86.1, 999.0]], dtype=np.float32)
         similarity = me.calculate_entropy_similarity(spec_query, spec_reference, ms2_tolerance_in_da=0.05)
         self.assertAlmostEqual(similarity, 0.8984397722577456, places=4)
+
+        similarity = me.calculate_entropy_similarity(spec_query, spec_reference, ms2_tolerance_in_da=0.015)
+        self.assertAlmostEqual(similarity, 0.8380874603833756, places=4)
+
+    def test_entropy_similarity_ppm(self):
+        spec_query = np.array([[69.071, 7.917962], [86.066, 1.021589], [86.0969, 100.0]], dtype=np.float32)
+        spec_reference = np.array([[41.04, 37.16], [69.07, 66.83], [86.1, 999.0]], dtype=np.float32)
+        similarity = me.calculate_entropy_similarity(spec_query, spec_reference, ms2_tolerance_in_ppm=200)
+        self.assertAlmostEqual(similarity, 0.8984397722577456, places=4)
+
+        similarity = me.calculate_entropy_similarity(spec_query, spec_reference, ms2_tolerance_in_ppm=50)
+        self.assertAlmostEqual(similarity, 0.8380874603833756, places=4)
 
 
 if __name__ == "__main__":

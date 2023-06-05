@@ -44,7 +44,7 @@ def clean_spectrum(
 
     min_ms2_difference_in_ppm : float, optional
         The minimum m/z difference between two peaks in the resulting spectrum. Defaults to -1, which will use the min_ms2_difference_in_da instead. If a negative value is given, the min_ms2_difference_in_da will be used instead.
-        ** Note either min_ms2_difference_in_da or min_ms2_difference_in_ppm must be positive. If both are positive, min_ms2_difference_in_da will be used. **
+        ** Note either min_ms2_difference_in_da or min_ms2_difference_in_ppm must be positive. If both are positive, min_ms2_difference_in_ppm will be used. **
 
     max_peak_num : int, optional
         The maximum number of peaks to keep. Defaults to None, which will keep all peaks.
@@ -84,7 +84,12 @@ def clean_spectrum(
 
     # Step 3. Centroid the spectrum by merging peaks within min_ms2_difference_in_da.
     # The peaks will be sorted by m/z in ascending order.
-    peaks = centroid_spectrum(peaks, ms2_da=min_ms2_difference_in_da, ms2_ppm=min_ms2_difference_in_ppm)
+    if min_ms2_difference_in_ppm > 0:
+        peaks = centroid_spectrum(peaks, ms2_da=-1, ms2_ppm=min_ms2_difference_in_ppm)
+    elif min_ms2_difference_in_da > 0:
+        peaks = centroid_spectrum(peaks, ms2_da=min_ms2_difference_in_da, ms2_ppm=-1)
+    else:
+        raise ValueError("Either min_ms2_difference_in_da or min_ms2_difference_in_ppm must be positive.")
 
     # Step 4. Remove peaks with intensity < noise_threshold * max_intensity.
     if noise_threshold is not None:
@@ -197,4 +202,4 @@ def _check_centroid(peaks: np.ndarray, ms2_da: float = -1, ms2_ppm: float = -1) 
         return 1 if np.all(np.diff(peaks[:, 0]) >= ms2_da) else 0
     elif ms2_ppm >= 0:
         # Use ms2_ppm to check if the spectrum is centroided.
-        return 1 if np.all(np.diff(peaks[:, 0]) >= peaks[:, 0] * ms2_ppm * 1e-6) else 0
+        return 1 if np.all(np.diff(peaks[:, 0]) >= peaks[1:, 0] * ms2_ppm * 1e-6) else 0

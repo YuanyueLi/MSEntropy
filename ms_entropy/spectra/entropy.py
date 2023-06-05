@@ -44,7 +44,7 @@ def calculate_entropy_similarity(
     ms2_tolerance_in_ppm : float, optional
         The MS2 tolerance in ppm. Defaults to -1. If this is set to a negative value, ms2_tolerance_in_da will be used instead.
 
-        **Note:** Either `ms2_tolerance_in_da` or `ms2_tolerance_in_ppm` must be positive. If both `ms2_tolerance_in_da` and `ms2_tolerance_in_ppm` are positive, `ms2_tolerance_in_da` will be used.
+        **Note:** Either `ms2_tolerance_in_da` or `ms2_tolerance_in_ppm` must be positive. If both `ms2_tolerance_in_da` and `ms2_tolerance_in_ppm` are positive, `ms2_tolerance_in_ppm` will be used.
 
     clean_spectra : bool, optional
         Whether to clean the spectra before calculating entropy similarity. Defaults to True. **Only set this to False if the spectra have been preprocessed by the `clean_spectrum()` function!** Otherwise, the results will be incorrect. If the spectra are already cleaned, set this to False to save time.
@@ -111,7 +111,7 @@ def calculate_unweighted_entropy_similarity(
     ms2_tolerance_in_ppm : float, optional
         The MS2 tolerance in ppm. Defaults to -1. If this is set to a negative value, ms2_tolerance_in_da will be used instead.
 
-        **Note:** Either `ms2_tolerance_in_da` or `ms2_tolerance_in_ppm` must be positive. If both `ms2_tolerance_in_da` and `ms2_tolerance_in_ppm` are positive, `ms2_tolerance_in_da` will be used.
+        **Note:** Either `ms2_tolerance_in_da` or `ms2_tolerance_in_ppm` must be positive. If both `ms2_tolerance_in_da` and `ms2_tolerance_in_ppm` are positive, `ms2_tolerance_in_ppm` will be used.
 
     clean_spectra : bool, optional
         Whether to clean the spectra before calculating unweighted entropy similarity. Defaults to True. Only set this to False if the spectra have been preprocessed by the clean_spectrum() function! Otherwise, the results will be incorrect. If the spectra are already cleaned, set this to False to save time. If the spectra are in the list format, always set this to True or an error will be raised.
@@ -148,7 +148,7 @@ def calculate_unweighted_entropy_similarity(
 
     while a < peaks_a.shape[0] and b < peaks_b.shape[0]:
         mass_difference: float = peaks_a[a, 0] - peaks_b[b, 0]
-        if ms2_tolerance_in_da < 0:
+        if ms2_tolerance_in_ppm > 0:
             max_allowed_mass_difference = peaks_a[a, 0] * ms2_tolerance_in_ppm * 1e-6
         if mass_difference < -max_allowed_mass_difference:
             # This peak only exists in peaks_a.
