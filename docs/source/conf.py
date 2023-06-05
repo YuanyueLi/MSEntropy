@@ -19,13 +19,13 @@ release = "0.1.0"
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.doctest", "numpydoc"]
+extensions = ["sphinx.ext.autodoc", "sphinx.ext.doctest", "sphinx.ext.autosummary", "sphinx.ext.viewcode", "sphinx.ext.githubpages", "numpydoc"]
 
 # apidoc_module_dir = "../../ms_entropy"
 # apidoc_output_dir = "./api"
 # apidoc_separate_modules = True
 # apidoc_module_first = True
-
+numpydoc_show_class_members = False
 
 templates_path = ["_templates"]
 exclude_patterns = []

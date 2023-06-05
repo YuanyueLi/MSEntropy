@@ -7,7 +7,19 @@ API
 .. autofunction:: ms_entropy.clean_spectrum
 .. autofunction:: ms_entropy.apply_weight_to_intensity
 
-.. autoclass:: ms_entropy.Run
+.. autoclass:: ms_entropy.FlashEntropySearch
+   :members:
+   :show-inheritance:
+
+.. autoclass:: ms_entropy.entropy_search.FlashEntropySearchCore
+   :members:
+   :show-inheritance:
+
+.. autoclass:: ms_entropy.entropy_search.FlashEntropySearchCoreLowMemory
+   :members:
+   :show-inheritance:
+
+.. autoclass:: ms_entropy.Pipe
    :members:
    :show-inheritance:
 

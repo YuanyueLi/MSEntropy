@@ -6,3 +6,4 @@ from .spectra import (
     calculate_unweighted_entropy_similarity,
     apply_weight_to_intensity,
 )
+from .entropy_search import FlashEntropySearch, FlashEntropySearchCore, FlashEntropySearchCoreLowMemory

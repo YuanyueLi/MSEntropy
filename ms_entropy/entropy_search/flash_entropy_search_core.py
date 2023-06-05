@@ -4,7 +4,8 @@ import numpy as np
 from pathlib import Path
 from functools import reduce
 import multiprocessing
-from ..spectra import apply_weight_to_intensity, entropy_similarity_search_fast
+from ..spectra import apply_weight_to_intensity
+from .fast import entropy_similarity_search_fast
 
 
 class FlashEntropySearchCore:
