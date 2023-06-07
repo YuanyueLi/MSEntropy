@@ -106,7 +106,7 @@ class FlashEntropySearch:
             max_mz = precursor_mz - precursor_ions_removal_da
         else:
             max_mz = None
-        return clean_spectrum(spectrum=peaks,
+        return clean_spectrum(peaks=peaks,
                               min_mz=None,
                               max_mz=max_mz,
                               noise_threshold=noise_threshold,
@@ -146,7 +146,7 @@ class FlashEntropySearch:
             max_mz = precursor_mz - precursor_ions_removal_da
         else:
             max_mz = None
-        peaks = clean_spectrum(spectrum=peaks,
+        peaks = clean_spectrum(peaks=peaks,
                                min_mz=None,
                                max_mz=max_mz,
                                noise_threshold=noise_threshold,

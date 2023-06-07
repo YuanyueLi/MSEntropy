@@ -1,8 +1,5 @@
-from typing import Union
-
-import numba
 import numpy as np
-
+from typing import Union
 from . import tools
 
 
@@ -138,18 +135,7 @@ def calculate_unweighted_entropy_similarity(
 
     if peaks_a.shape[0] == 0 or peaks_b.shape[0] == 0:
         return 0.0
-    return _calculate_unweighted_entropy_similarity_clean_spectra(
-        peaks_a, peaks_b, ms2_tolerance_in_da=ms2_tolerance_in_da, ms2_tolerance_in_ppm=ms2_tolerance_in_ppm
-    )
 
-
-@numba.jit(nopython=True, cache=True)
-def _calculate_unweighted_entropy_similarity_clean_spectra(
-    peaks_a: Union[list[list[float, float]], np.ndarray],
-    peaks_b: Union[list[list[float, float]], np.ndarray],
-    ms2_tolerance_in_da: float = 0.02,
-    ms2_tolerance_in_ppm: float = -1,
-):
     # Calculate the entropy similarity of the two spectra.
     a: int = 0
     b: int = 0
@@ -185,7 +171,6 @@ def _calculate_unweighted_entropy_similarity_clean_spectra(
     return entropy_similarity
 
 
-@numba.jit(nopython=True, cache=True, fastmath=True)
 def apply_weight_to_intensity(peaks: np.ndarray) -> np.ndarray:
     """
     Apply a weight to the intensity of a spectrum based on spectral entropy based on the method described in:
@@ -210,9 +195,7 @@ def apply_weight_to_intensity(peaks: np.ndarray) -> np.ndarray:
         return np.empty((0, 2), dtype=np.float32)
 
     # Calculate the spectral entropy.
-    entropy = 0.0
-    if peaks.shape[0] > 0:
-        entropy = -np.sum(peaks[:, 1] * np.log(peaks[:, 1]))
+    entropy = calculate_spectral_entropy(peaks, clean_spectrum=False)
 
     # Copy the peaks.
     weighted_peaks = peaks.copy()

@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 from typing import Union
-
-import numba
 import numpy as np
 
 
