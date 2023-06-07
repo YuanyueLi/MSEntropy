@@ -1,4 +1,3 @@
-from .mse import Pipe, function_decorator_dataframe
 from .spectra import (
     calculate_spectral_entropy,
     clean_spectrum,
