@@ -4,8 +4,7 @@ import numpy as np
 from pathlib import Path
 from functools import reduce
 import multiprocessing
-from ..spectra import apply_weight_to_intensity
-from .fast import entropy_similarity_search_fast
+from ..tools import apply_weight_to_intensity, entropy_similarity_search_fast
 
 
 class FlashEntropySearchCore:
@@ -104,9 +103,9 @@ class FlashEntropySearchCore:
         # Go through all the peaks in the spectrum
         for mz_query, intensity_query in peaks:
             # Determine the mz index range
-            product_mz_idx_min = _find_location_from_array_with_index(
+            product_mz_idx_min = self._find_location_from_array_with_index(
                 mz_query - ms2_tolerance_in_da, library_mz, library_mz_idx_start, 'left', index_number_in_one_da)
-            product_mz_idx_max = _find_location_from_array_with_index(
+            product_mz_idx_max = self._find_location_from_array_with_index(
                 mz_query + ms2_tolerance_in_da, library_mz, library_mz_idx_start, 'right', index_number_in_one_da)
 
             if target == "cpu" and search_type == 0:
@@ -165,9 +164,9 @@ class FlashEntropySearchCore:
         product_peak_match_idx_max = np.zeros(peaks.shape[0], dtype=np.uint64)
         for peak_idx, (mz_query, _) in enumerate(peaks):
             # Determine the mz index range
-            product_mz_idx_min = _find_location_from_array_with_index(
+            product_mz_idx_min = self._find_location_from_array_with_index(
                 mz_query - ms2_tolerance_in_da, all_ions_mz, all_ions_mz_idx_start, 'left', index_number_in_one_da)
-            product_mz_idx_max = _find_location_from_array_with_index(
+            product_mz_idx_max = self._find_location_from_array_with_index(
                 mz_query + ms2_tolerance_in_da, all_ions_mz, all_ions_mz_idx_start, 'right', index_number_in_one_da)
 
             product_peak_match_idx_min[peak_idx] = product_mz_idx_min
@@ -192,9 +191,9 @@ class FlashEntropySearchCore:
                 # Match the neutral loss ions
                 mz_nl = precursor_mz-mz
                 # Determine the mz index range
-                neutral_loss_mz_idx_min = _find_location_from_array_with_index(
+                neutral_loss_mz_idx_min = self._find_location_from_array_with_index(
                     mz_nl - ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, 'left', index_number_in_one_da)
-                neutral_loss_mz_idx_max = _find_location_from_array_with_index(
+                neutral_loss_mz_idx_max = self._find_location_from_array_with_index(
                     mz_nl + ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, 'right', index_number_in_one_da)
 
                 # Calculate the entropy similarity for this matched peak
@@ -208,7 +207,7 @@ class FlashEntropySearchCore:
                 modified_value_nl[s1 > s2] = 0
 
                 # Check if this query peak is already matched to a product ion in the same library spectrum
-                duplicate_idx_in_nl = _intersect1d(modified_idx_product, modified_idx_nl)
+                duplicate_idx_in_nl = self._remove_duplicate_with_cpu(modified_idx_product, modified_idx_nl, self.total_spectra_num)
                 modified_value_nl[duplicate_idx_in_nl] = 0
 
                 entropy_similarity[modified_idx_nl] += modified_value_nl
@@ -245,9 +244,9 @@ class FlashEntropySearchCore:
                 # Match the neutral loss ions
                 mz_nl = precursor_mz-mz
                 # Determine the mz index range
-                neutral_loss_mz_idx_min = _find_location_from_array_with_index(
+                neutral_loss_mz_idx_min = self._find_location_from_array_with_index(
                     mz_nl - ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, 'left', index_number_in_one_da)
-                neutral_loss_mz_idx_max = _find_location_from_array_with_index(
+                neutral_loss_mz_idx_max = self._find_location_from_array_with_index(
                     mz_nl + ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, 'right', index_number_in_one_da)
 
                 # Calculate the entropy similarity for this matched peak
@@ -262,7 +261,7 @@ class FlashEntropySearchCore:
                 modified_value_nl[s1 > s2] = 0
 
                 # Check if this query peak is already matched to a product ion in the same library spectrum
-                duplicate_idx_in_nl = _intersect1d_with_gpu(modified_idx_product, modified_idx_nl)
+                duplicate_idx_in_nl = self._remove_duplicate_with_gpu(modified_idx_product, modified_idx_nl, self.total_spectra_num)
                 modified_value_nl[duplicate_idx_in_nl] = 0
 
                 entropy_similarity_modification_list.append((modified_idx_nl, modified_value_nl.get()))
@@ -273,6 +272,41 @@ class FlashEntropySearchCore:
             return entropy_similarity.get()
         else:
             raise ValueError("target should be cpu or gpu")
+
+    def _remove_duplicate_with_cpu(self, array_1, array_2, max_element):
+        if len(array_1) + len(array_2) < 4_000_000:
+            # When len(array_1) + len(array_2) < 4_000_000, this method is faster than array method
+            aux = np.concatenate((array_1, array_2))
+            aux_sort_indices = np.argsort(aux, kind="mergesort")
+            aux = aux[aux_sort_indices]
+            mask = aux[1:] == aux[:-1]
+            array2_indices = aux_sort_indices[1:][mask] - array_1.size
+            return array2_indices
+        else:
+            # When len(array_1) + len(array_2) > 4_000_000, this method is faster than sort method
+            note = np.zeros(max_element, dtype=np.int8)
+            note[array_1] = 1
+            duplicate_idx = np.where(note[array_2] == 1)[0]
+            return duplicate_idx
+
+
+    def _remove_duplicate_with_gpu(self, array_1, array_2, max_element):
+        import cupy as cp
+        if len(array_1) + len(array_2) < 4_000_000:
+            # When len(array_1) + len(array_2) < 4_000_000, this method is faster than array method
+            aux = cp.array(np.concatenate((array_1, array_2)))
+            aux_sort_indices = cp.argsort(aux)
+            aux = aux[aux_sort_indices]
+            mask = aux[1:] == aux[:-1]
+            ar2_indices = aux_sort_indices[1:][mask] - array_1.size
+            return ar2_indices
+
+        else:
+            # When len(array_1) + len(array_2) > 4_000_000, this method is faster than sort method
+            note = cp.zeros(max_element, dtype=np.int8)
+            note[array_1] = 1
+            duplicate_idx = cp.where(note[array_2] == 1)[0]
+            return duplicate_idx
 
     def build_index(self, all_spectra_list: list,  max_indexed_mz: float = 1500.00005):
         """
@@ -322,13 +356,14 @@ class FlashEntropySearchCore:
             peaks = self._preprocess_peaks(peaks)
 
             # Assign the product ion m/z
-            peak_data.view(np.float32).reshape(total_peaks_num, -1)[peak_idx:(peak_idx + peaks.shape[0]), 0] = peaks[:, 0]
+            peak_data_item = peak_data[peak_idx:(peak_idx + peaks.shape[0])]
+            peak_data_item["ion_mz"] = peaks[:, 0]
             # Assign the neutral loss mass
-            peak_data.view(np.float32).reshape(total_peaks_num, -1)[peak_idx:(peak_idx + peaks.shape[0]), 1] = precursor_mz - peaks[:, 0]
+            peak_data_item["nl_mass"] = precursor_mz - peaks[:, 0]
             # Assign the intensity
-            peak_data.view(np.float32).reshape(total_peaks_num, -1)[peak_idx:(peak_idx + peaks.shape[0]), 2] = peaks[:, 1]
+            peak_data_item["intensity"] = peaks[:, 1]
             # Assign the spectrum index
-            peak_data.view(np.uint32).reshape(total_peaks_num, -1)[peak_idx:(peak_idx + peaks.shape[0]), 3] = idx
+            peak_data_item["spec_idx"] = idx
             # Set the peak index
             peak_idx += peaks.shape[0]
 
@@ -337,18 +372,16 @@ class FlashEntropySearchCore:
         return self.index
 
     def _generate_index_from_peak_data(self, peak_data, max_indexed_mz):
-        total_peaks_num = peak_data.shape[0]
-
         # Sort with precursor m/z.
         peak_data.sort(order="ion_mz")
 
         # Record the m/z, intensity, and spectrum index information for product ions.
-        all_ions_mz = np.copy(peak_data.view(np.float32).reshape(total_peaks_num, -1)[:, 0])
-        all_ions_intensity = np.copy(peak_data.view(np.float32).reshape(total_peaks_num, -1)[:, 2])
-        all_ions_spec_idx = np.copy(peak_data.view(np.uint32).reshape(total_peaks_num, -1)[:, 3])
+        all_ions_mz = np.copy(peak_data["ion_mz"])
+        all_ions_intensity = np.copy(peak_data["intensity"])
+        all_ions_spec_idx = np.copy(peak_data["spec_idx"])
 
         # Assign the index of the product ions.
-        peak_data.view(np.uint64).reshape(total_peaks_num, -1)[:, 2] = np.arange(0, self.total_peaks_num, dtype=np.uint64)
+        peak_data["peak_idx"] = np.arange(0, self.total_peaks_num, dtype=np.uint64)
 
         # Build index for fast access to the ion's m/z.
         max_mz = min(np.max(all_ions_mz), max_indexed_mz)
@@ -360,10 +393,10 @@ class FlashEntropySearchCore:
         peak_data.sort(order="nl_mass")
 
         # Record the m/z, intensity, spectrum index, and product ions index information for neutral loss ions.
-        all_nl_mass = np.copy(peak_data.view(np.float32).reshape(total_peaks_num, -1)[:, 1])
-        all_nl_intensity = np.copy(peak_data.view(np.float32).reshape(total_peaks_num, -1)[:, 2])
-        all_nl_spec_idx = np.copy(peak_data.view(np.uint32).reshape(total_peaks_num, -1)[:, 3])
-        all_ions_idx_for_nl = np.copy(peak_data.view(np.uint64).reshape(total_peaks_num, -1)[:, 2])
+        all_nl_mass = peak_data["nl_mass"]
+        all_nl_intensity = peak_data["intensity"]
+        all_nl_spec_idx = peak_data["spec_idx"]
+        all_ions_idx_for_nl = peak_data["peak_idx"]
 
         # Build the index for fast access to the neutral loss mass.
         max_mz = min(np.max(all_nl_mass), max_indexed_mz)
@@ -391,6 +424,22 @@ class FlashEntropySearchCore:
 
     def _score_peaks_gpu(self, entropy_transform, intensity_query, intensity_library):
         return entropy_transform(intensity_library, intensity_query)
+
+    def _find_location_from_array_with_index(self, wanted_mz, mz_array, mz_idx_start_array, side, index_number):
+        mz_min_int = (np.floor(wanted_mz*index_number)).astype(int)
+        mz_max_int = mz_min_int + 1
+
+        if mz_min_int >= len(mz_idx_start_array):
+            mz_idx_search_start = mz_idx_start_array[-1]
+        else:
+            mz_idx_search_start = mz_idx_start_array[mz_min_int].astype(int)
+
+        if mz_max_int >= len(mz_idx_start_array):
+            mz_idx_search_end = len(mz_array)
+        else:
+            mz_idx_search_end = mz_idx_start_array[mz_max_int].astype(int)+1
+
+        return mz_idx_search_start + np.searchsorted(mz_array[mz_idx_search_start:mz_idx_search_end], wanted_mz, side=side)
 
     def save_memory_for_multiprocessing(self):
         """
@@ -448,7 +497,6 @@ class FlashEntropySearchCore:
         with open(path_data / 'information.json', 'w') as f:
             json.dump(information, f)
 
-
 def _convert_numpy_array_to_shared_memory(np_array, array_c_type=None):
     """
     The char table of shared memory can be find at:
@@ -467,38 +515,3 @@ def _convert_numpy_array_to_shared_memory(np_array, array_c_type=None):
     np_array_new[:] = np_array
     return np_array_new
 
-
-def _find_location_from_array_with_index(wanted_mz, mz_array, mz_idx_start_array, side, index_number):
-    mz_min_int = (np.floor(wanted_mz*index_number)).astype(int)
-    mz_max_int = mz_min_int + 1
-
-    if mz_min_int >= len(mz_idx_start_array):
-        mz_idx_search_start = mz_idx_start_array[-1]
-    else:
-        mz_idx_search_start = mz_idx_start_array[mz_min_int].astype(int)
-
-    if mz_max_int >= len(mz_idx_start_array):
-        mz_idx_search_end = len(mz_array)
-    else:
-        mz_idx_search_end = mz_idx_start_array[mz_max_int].astype(int)+1
-
-    return mz_idx_search_start + np.searchsorted(mz_array[mz_idx_search_start:mz_idx_search_end], wanted_mz, side=side)
-
-
-def _intersect1d(ar1, ar2):
-    aux = np.concatenate((ar1, ar2))
-    aux_sort_indices = np.argsort(aux, kind='mergesort')
-    aux = aux[aux_sort_indices]
-    mask = aux[1:] == aux[:-1]
-    ar2_indices = aux_sort_indices[1:][mask] - ar1.size
-    return ar2_indices
-
-
-def _intersect1d_with_gpu(ar1, ar2):
-    import cupy as cp
-    aux = cp.array(np.concatenate((ar1, ar2)))
-    aux_sort_indices = cp.argsort(aux)
-    aux = aux[aux_sort_indices]
-    mask = aux[1:] == aux[:-1]
-    ar2_indices = aux_sort_indices[1:][mask] - ar1.size
-    return ar2_indices

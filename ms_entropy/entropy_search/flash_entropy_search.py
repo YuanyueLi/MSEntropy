@@ -5,7 +5,7 @@ import pickle
 from pathlib import Path
 from .flash_entropy_search_core import FlashEntropySearchCore
 from .flash_entropy_search_core_low_memory import FlashEntropySearchCoreLowMemory
-from ..spectra import clean_spectrum
+from ..tools import clean_spectrum
 
 
 class FlashEntropySearch:
@@ -106,7 +106,7 @@ class FlashEntropySearch:
             max_mz = precursor_mz - precursor_ions_removal_da
         else:
             max_mz = None
-        return clean_spectrum(peaks=peaks,
+        return clean_spectrum(spectrum=peaks,
                               min_mz=None,
                               max_mz=max_mz,
                               noise_threshold=noise_threshold,
@@ -146,7 +146,7 @@ class FlashEntropySearch:
             max_mz = precursor_mz - precursor_ions_removal_da
         else:
             max_mz = None
-        peaks = clean_spectrum(peaks=peaks,
+        peaks = clean_spectrum(spectrum=peaks,
                                min_mz=None,
                                max_mz=max_mz,
                                noise_threshold=noise_threshold,
