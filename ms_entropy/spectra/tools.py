@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 from typing import Union
-
-import numba
 import numpy as np
 
 
@@ -186,8 +184,6 @@ def _centroid_spectrum(peaks: np.ndarray, ms2_da: float = -1, ms2_ppm: float = -
 
             # Set the intensity of the merged peaks to 0.
             peaks[left_idx:right_idx, 1] = 0
-        else:
-            break
 
     # Return the new spectrum.
     peaks_new = peaks_new[:peaks_new_len]

@@ -1,8 +1,5 @@
-from typing import Union
-
-import numba
 import numpy as np
-
+from typing import Union
 from . import tools
 
 
@@ -53,7 +50,7 @@ def calculate_entropy_similarity(
         Whether to clean the spectra before calculating entropy similarity. Defaults to True. **Only set this to False if the spectra have been preprocessed by the `clean_spectrum()` function!** Otherwise, the results will be incorrect. If the spectra are already cleaned, set this to False to save time.
 
     **kwargs : optional
-        The arguments and keyword arguments to pass to clean_spectrum().
+        The arguments and keyword arguments to pass to function ``clean_spectrum()``.
 
         _
 
@@ -63,8 +60,14 @@ def calculate_entropy_similarity(
         The entropy similarity between the two spectra.
     """
     if clean_spectra:
-        peaks_a = tools.clean_spectrum(peaks_a, min_ms2_difference_in_da=2 * ms2_tolerance_in_da, min_ms2_difference_in_ppm=2 * ms2_tolerance_in_ppm, **kwargs)
-        peaks_b = tools.clean_spectrum(peaks_b, min_ms2_difference_in_da=2 * ms2_tolerance_in_da, min_ms2_difference_in_ppm=2 * ms2_tolerance_in_ppm, **kwargs)
+        kwargs.update(
+            {
+                "min_ms2_difference_in_da": max(2 * ms2_tolerance_in_da, kwargs.get("min_ms2_difference_in_da", -1)),
+                "min_ms2_difference_in_ppm": max(2 * ms2_tolerance_in_ppm, kwargs.get("min_ms2_difference_in_ppm", -1)),
+            }
+        )
+        peaks_a = tools.clean_spectrum(peaks_a, **kwargs)
+        peaks_b = tools.clean_spectrum(peaks_b, **kwargs)
     else:
         peaks_a = np.asarray(peaks_a, dtype=np.float32, order="C").reshape(-1, 2)
         peaks_b = np.asarray(peaks_b, dtype=np.float32, order="C").reshape(-1, 2)
@@ -120,7 +123,7 @@ def calculate_unweighted_entropy_similarity(
         Whether to clean the spectra before calculating unweighted entropy similarity. Defaults to True. Only set this to False if the spectra have been preprocessed by the clean_spectrum() function! Otherwise, the results will be incorrect. If the spectra are already cleaned, set this to False to save time. If the spectra are in the list format, always set this to True or an error will be raised.
 
     **kwargs : optional
-        The arguments and keyword arguments to pass to clean_spectrum().
+        The arguments and keyword arguments to pass to function ``clean_spectrum()``.
 
         _
 
@@ -130,26 +133,21 @@ def calculate_unweighted_entropy_similarity(
         The unweighted entropy similarity between the two spectra.
     """
     if clean_spectra:
-        peaks_a = tools.clean_spectrum(peaks_a, min_ms2_difference_in_da=2 * ms2_tolerance_in_da, min_ms2_difference_in_ppm=2 * ms2_tolerance_in_ppm, **kwargs)
-        peaks_b = tools.clean_spectrum(peaks_b, min_ms2_difference_in_da=2 * ms2_tolerance_in_da, min_ms2_difference_in_ppm=2 * ms2_tolerance_in_ppm, **kwargs)
+        kwargs.update(
+            {
+                "min_ms2_difference_in_da": max(2 * ms2_tolerance_in_da, kwargs.get("min_ms2_difference_in_da", -1)),
+                "min_ms2_difference_in_ppm": max(2 * ms2_tolerance_in_ppm, kwargs.get("min_ms2_difference_in_ppm", -1)),
+            }
+        )
+        peaks_a = tools.clean_spectrum(peaks_a, **kwargs)
+        peaks_b = tools.clean_spectrum(peaks_b, **kwargs)
     else:
         peaks_a = np.asarray(peaks_a, dtype=np.float32, order="C").reshape(-1, 2)
         peaks_b = np.asarray(peaks_b, dtype=np.float32, order="C").reshape(-1, 2)
 
     if peaks_a.shape[0] == 0 or peaks_b.shape[0] == 0:
         return 0.0
-    return _calculate_unweighted_entropy_similarity_clean_spectra(
-        peaks_a, peaks_b, ms2_tolerance_in_da=ms2_tolerance_in_da, ms2_tolerance_in_ppm=ms2_tolerance_in_ppm
-    )
 
-
-@numba.njit(nopython=True, cache=True)
-def _calculate_unweighted_entropy_similarity_clean_spectra(
-    peaks_a: Union[list[list[float, float]], np.ndarray],
-    peaks_b: Union[list[list[float, float]], np.ndarray],
-    ms2_tolerance_in_da: float = 0.02,
-    ms2_tolerance_in_ppm: float = -1,
-):
     # Calculate the entropy similarity of the two spectra.
     a: int = 0
     b: int = 0
@@ -185,7 +183,6 @@ def _calculate_unweighted_entropy_similarity_clean_spectra(
     return entropy_similarity
 
 
-@numba.njit(nopython=True, cache=True, fastmath=True)
 def apply_weight_to_intensity(peaks: np.ndarray) -> np.ndarray:
     """
     Apply a weight to the intensity of a spectrum based on spectral entropy based on the method described in:
