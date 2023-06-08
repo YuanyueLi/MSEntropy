@@ -143,7 +143,7 @@ def calculate_unweighted_entropy_similarity(
     )
 
 
-@numba.jit(nopython=True, cache=True)
+@numba.njit(nopython=True, cache=True)
 def _calculate_unweighted_entropy_similarity_clean_spectra(
     peaks_a: Union[list[list[float, float]], np.ndarray],
     peaks_b: Union[list[list[float, float]], np.ndarray],
@@ -185,7 +185,7 @@ def _calculate_unweighted_entropy_similarity_clean_spectra(
     return entropy_similarity
 
 
-@numba.jit(nopython=True, cache=True, fastmath=True)
+@numba.njit(nopython=True, cache=True, fastmath=True)
 def apply_weight_to_intensity(peaks: np.ndarray) -> np.ndarray:
     """
     Apply a weight to the intensity of a spectrum based on spectral entropy based on the method described in:
