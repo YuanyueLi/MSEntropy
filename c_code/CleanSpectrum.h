@@ -11,16 +11,6 @@
 typedef float float_spec;
 // static_assert(sizeof(float_spec) == 4);
 
-void print_spectrum(char* info, float_spec (*spectrum_2d)[2], int spectrum_len);
-void swap(float_spec* a, float_spec* b);
-void swap_int(int* a, int* b);
-void sort_spectrum_by_mz(float_spec (*spectrum_2d)[2], int spectrum_len);
-int sort_spectrum_by_mz_and_zero_intensity(float_spec (*spectrum_2d)[2], int spectrum_len);
-void calculate_spectrum_argsort(float_spec (*spectrum_2d)[2], int spectrum_len, int* spectrum_argsort);
-bool need_centroid(float_spec (*spectrum_2d)[2], int spectrum_len, float min_ms2_difference_in_da, float min_ms2_difference_in_ppm);
-// Centroid the spectrum, the content in the spectrum will be modified.
-int centroid_spectrum(float_spec (*spectrum_2d)[2], int spectrum_length, float min_ms2_difference_in_da, float min_ms2_difference_in_ppm, int* spectrum_argsort);
-
 /**
  * @brief Clean the spectrum.
  *
@@ -55,3 +45,13 @@ int clean_spectrum(float_spec* spectrum, int spectrum_length,
                    float min_ms2_difference_in_da, float min_ms2_difference_in_ppm,
                    int max_peak_num,
                    bool normalize_intensity);
+
+void print_spectrum(char* info, float_spec (*spectrum_2d)[2], int spectrum_len);
+void swap(float_spec* a, float_spec* b);
+void swap_int(int* a, int* b);
+void sort_spectrum_by_mz(float_spec (*spectrum_2d)[2], int spectrum_len);
+int sort_spectrum_by_mz_and_zero_intensity(float_spec (*spectrum_2d)[2], int spectrum_len);
+void calculate_spectrum_argsort(float_spec (*spectrum_2d)[2], int spectrum_len, int* spectrum_argsort);
+bool need_centroid(float_spec (*spectrum_2d)[2], int spectrum_len, float min_ms2_difference_in_da, float min_ms2_difference_in_ppm);
+// Centroid the spectrum, the content in the spectrum will be modified.
+int centroid_spectrum(float_spec (*spectrum_2d)[2], int spectrum_length, float min_ms2_difference_in_da, float min_ms2_difference_in_ppm, int* spectrum_argsort);
