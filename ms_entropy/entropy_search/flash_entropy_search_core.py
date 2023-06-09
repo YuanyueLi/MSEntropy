@@ -4,7 +4,7 @@ import numpy as np
 from pathlib import Path
 from functools import reduce
 import multiprocessing
-from ..tools import apply_weight_to_intensity, entropy_similarity_search_fast
+from ..spectra import apply_weight_to_intensity
 
 
 class FlashEntropySearchCore:
@@ -13,7 +13,7 @@ class FlashEntropySearchCore:
         Initialize the EntropySearch class.
         :param path_array: The path array of the index files.
         :param max_ms2_tolerance_in_da: The maximum MS2 tolerance used when searching the MS/MS spectra, in Dalton. Default is 0.024.
-        :param mz_index_step:   The step size of the m/z index, in Dalton. Default is 0.0001. 
+        :param mz_index_step:   The step size of the m/z index, in Dalton. Default is 0.0001.
                                 The smaller the step size, the faster the search, but the larger the index size and longer the index building time.
         """
         self.mz_index_step = mz_index_step
@@ -29,33 +29,54 @@ class FlashEntropySearchCore:
         else:
             self.path_data = None
 
-        self.index_names = ['all_ions_mz_idx_start', 'all_ions_mz', 'all_ions_intensity', 'all_ions_spec_idx',
-                            'all_nl_mass_idx_start', 'all_nl_mass', 'all_nl_intensity', 'all_nl_spec_idx', 'all_ions_idx_for_nl']
+        self.index_names = [
+            "all_ions_mz_idx_start",
+            "all_ions_mz",
+            "all_ions_intensity",
+            "all_ions_spec_idx",
+            "all_nl_mass_idx_start",
+            "all_nl_mass",
+            "all_nl_intensity",
+            "all_nl_spec_idx",
+            "all_ions_idx_for_nl",
+        ]
         self.index_dtypes = {
-            'all_ions_mz_idx_start': np.int64, 'all_ions_mz': np.float32, 'all_ions_intensity': np.float32, 'all_ions_spec_idx': np.uint32,
-            'all_nl_mass_idx_start': np.int64, 'all_nl_mass': np.float32, 'all_nl_intensity': np.float32, 'all_nl_spec_idx': np.uint32,
-            'all_ions_idx_for_nl': np.uint64}
+            "all_ions_mz_idx_start": np.int64,
+            "all_ions_mz": np.float32,
+            "all_ions_intensity": np.float32,
+            "all_ions_spec_idx": np.uint32,
+            "all_nl_mass_idx_start": np.int64,
+            "all_nl_mass": np.float32,
+            "all_nl_intensity": np.float32,
+            "all_nl_spec_idx": np.uint32,
+            "all_ions_idx_for_nl": np.uint64,
+        }
 
-    def search(self,
-               method="open", target="cpu",
-               precursor_mz=None, peaks=None, ms2_tolerance_in_da=0.02,
-               search_type=0, search_spectra_idx_min=0, search_spectra_idx_max=0, search_array=None):
+    def search(
+        self,
+        method="open",
+        target="cpu",
+        precursor_mz=None,
+        peaks=None,
+        ms2_tolerance_in_da=0.02,
+        search_type=0,
+        search_spectra_idx_min=0,
+        search_spectra_idx_max=0,
+    ):
         """
         Perform identity-, open- or neutral loss search on the MS/MS spectra library.
 
-        :param method:  The search method, can be "open" or "neutral_loss". 
+        :param method:  The search method, can be "open" or "neutral_loss".
                         Set it to "open" for identity search and open search, set it to "neutral_loss" for neutral loss search.
         :param target:  The target to search, can be "cpu" or "gpu".
         :param precursor_mz:    The precursor m/z of the query MS/MS spectrum, required for neutral loss search.
         :param peaks:   The peaks of the query MS/MS spectrum. The peaks need to be precleaned by "clean_spectrum" function.
         :param ms2_tolerance_in_da: The MS2 tolerance used when searching the MS/MS spectra, in Dalton. Default is 0.02.
-        :param search_type: The search type, can be 0, 1 or 2. 
+        :param search_type: The search type, can be 0, 1 or 2.
                             Set it to 0 for searching the whole MS/MS spectra library.
-                            Set it to 1 for searching a range of the MS/MS spectra library, 
-                            set it to 2 for searching only when search_array is True (or 1).
+                            Set it to 1 for searching a range of the MS/MS spectra library,
         :param search_spectra_idx_min:  The minimum index of the MS/MS spectra to search, required when search_type is 1.
         :param search_spectra_idx_max:  The maximum index of the MS/MS spectra to search, required when search_type is 1.
-        :param search_array:    The array of the MS/MS spectra to search, required when search_type is 2.
         """
         if not self.index:
             return np.zeros(0, dtype=np.float32)
@@ -64,12 +85,22 @@ class FlashEntropySearchCore:
 
         # Check peaks
         assert ms2_tolerance_in_da <= self.max_ms2_tolerance_in_da, "The MS2 tolerance is larger than the maximum MS2 tolerance."
-        assert abs(np.sum(peaks[:, 1])-1) < 1e-4, "The peaks are not normalized to sum to 1."
-        assert peaks.shape[0] <= 1 or np.min(peaks[1:, 0] - peaks[:-1, 0]) > self.max_ms2_tolerance_in_da * 2, \
-            "The peaks array should be sorted by m/z, and the m/z difference between two adjacent peaks should be larger than 2 * max_ms2_tolerance_in_da."
-        all_ions_mz_idx_start, all_ions_mz, all_ions_intensity, all_ions_spec_idx, \
-            all_nl_mass_idx_start, all_nl_mass, all_nl_intensity, all_nl_spec_idx, all_ions_idx_for_nl = self.index
-        index_number_in_one_da = int(1/self.mz_index_step)
+        assert abs(np.sum(peaks[:, 1]) - 1) < 1e-4, "The peaks are not normalized to sum to 1."
+        assert (
+            peaks.shape[0] <= 1 or np.min(peaks[1:, 0] - peaks[:-1, 0]) > self.max_ms2_tolerance_in_da * 2
+        ), "The peaks array should be sorted by m/z, and the m/z difference between two adjacent peaks should be larger than 2 * max_ms2_tolerance_in_da."
+        (
+            all_ions_mz_idx_start,
+            all_ions_mz,
+            all_ions_intensity,
+            all_ions_spec_idx,
+            all_nl_mass_idx_start,
+            all_nl_mass,
+            all_nl_intensity,
+            all_nl_spec_idx,
+            all_ions_idx_for_nl,
+        ) = self.index
+        index_number_in_one_da = int(1 / self.mz_index_step)
 
         # Prepare the query spectrum
         peaks = self._preprocess_peaks(peaks)
@@ -92,11 +123,12 @@ class FlashEntropySearchCore:
             entropy_similarity = np.zeros(self.total_spectra_num, dtype=np.float32)
         else:
             import cupy as cp
+
             entropy_transform = cp.ElementwiseKernel(
-                'T intensity_a, T intensity_b',
-                'T similarity',
-                '''T intensity_ab = intensity_a + intensity_b;
-                similarity = intensity_ab * log2f(intensity_ab) - intensity_a * log2f(intensity_a) - intensity_b * log2f(intensity_b);'''
+                "T intensity_a, T intensity_b",
+                "T similarity",
+                """T intensity_ab = intensity_a + intensity_b;
+                similarity = intensity_ab * log2f(intensity_ab) - intensity_a * log2f(intensity_a) - intensity_b * log2f(intensity_b);""",
             )
             entropy_similarity = cp.zeros(self.total_spectra_num, dtype=np.float32)
 
@@ -104,33 +136,40 @@ class FlashEntropySearchCore:
         for mz_query, intensity_query in peaks:
             # Determine the mz index range
             product_mz_idx_min = self._find_location_from_array_with_index(
-                mz_query - ms2_tolerance_in_da, library_mz, library_mz_idx_start, 'left', index_number_in_one_da)
+                mz_query - ms2_tolerance_in_da, library_mz, library_mz_idx_start, "left", index_number_in_one_da
+            )
             product_mz_idx_max = self._find_location_from_array_with_index(
-                mz_query + ms2_tolerance_in_da, library_mz, library_mz_idx_start, 'right', index_number_in_one_da)
+                mz_query + ms2_tolerance_in_da, library_mz, library_mz_idx_start, "right", index_number_in_one_da
+            )
 
             if target == "cpu" and search_type == 0:
-                intensity_library = library_peaks_intensity[product_mz_idx_min: product_mz_idx_max]
-                modified_idx = library_spec_idx[product_mz_idx_min: product_mz_idx_max]
+                intensity_library = library_peaks_intensity[product_mz_idx_min:product_mz_idx_max]
+                modified_idx = library_spec_idx[product_mz_idx_min:product_mz_idx_max]
                 entropy_similarity[modified_idx] += self._score_peaks_with_cpu(intensity_query, intensity_library)
-            elif target == "cpu" and search_type != 0:
-                entropy_similarity_search_fast(product_mz_idx_min, product_mz_idx_max, intensity_query, entropy_similarity,
-                                               library_peaks_intensity, library_spec_idx,
-                                               search_type, search_spectra_idx_min, search_spectra_idx_max, search_array)
+            elif target == "cpu" and search_type == 1:
+                entropy_similarity_search_identity(
+                    product_mz_idx_min,
+                    product_mz_idx_max,
+                    intensity_query,
+                    entropy_similarity,
+                    library_peaks_intensity,
+                    library_spec_idx,
+                    search_spectra_idx_min,
+                    search_spectra_idx_max,
+                )
             elif target == "gpu":
-                intensity_library = cp.array(library_peaks_intensity[product_mz_idx_min: product_mz_idx_max])
+                intensity_library = cp.array(library_peaks_intensity[product_mz_idx_min:product_mz_idx_max])
                 modified_value = entropy_transform(intensity_library, intensity_query)
-                modified_idx = cp.array(library_spec_idx[product_mz_idx_min: product_mz_idx_max])
+                modified_idx = cp.array(library_spec_idx[product_mz_idx_min:product_mz_idx_max])
                 entropy_similarity.scatter_add(modified_idx, modified_value)
 
         if target == "cpu":
             return entropy_similarity
-        else:
+        elif target == "gpu":
             entropy_similarity = entropy_similarity.get()
             if search_type == 1:
                 entropy_similarity[:search_spectra_idx_min] = 0
                 entropy_similarity[search_spectra_idx_max:] = 0
-            elif search_type == 2:
-                entropy_similarity[np.bitwise_not(search_array)] = 0
             return entropy_similarity
 
     def search_hybrid(self, target="cpu", precursor_mz=None, peaks=None, ms2_tolerance_in_da=0.02):
@@ -149,12 +188,22 @@ class FlashEntropySearchCore:
 
         # Check peaks
         assert ms2_tolerance_in_da <= self.max_ms2_tolerance_in_da, "The MS2 tolerance is larger than the maximum MS2 tolerance."
-        assert abs(np.sum(peaks[:, 1])-1) < 1e-4, "The peaks are not normalized to sum to 1."
-        assert peaks.shape[0] <= 1 or np.min(peaks[1:, 0] - peaks[:-1, 0]) > self.max_ms2_tolerance_in_da * 2, \
-            "The peaks array should be sorted by m/z, and the m/z difference between two adjacent peaks should be larger than 2 * max_ms2_tolerance_in_da."
-        all_ions_mz_idx_start, all_ions_mz, all_ions_intensity, all_ions_spec_idx, \
-            all_nl_mass_idx_start, all_nl_mass, all_nl_intensity, all_nl_spec_idx, all_ions_idx_for_nl = self.index
-        index_number_in_one_da = int(1/self.mz_index_step)
+        assert abs(np.sum(peaks[:, 1]) - 1) < 1e-4, "The peaks are not normalized to sum to 1."
+        assert (
+            peaks.shape[0] <= 1 or np.min(peaks[1:, 0] - peaks[:-1, 0]) > self.max_ms2_tolerance_in_da * 2
+        ), "The peaks array should be sorted by m/z, and the m/z difference between two adjacent peaks should be larger than 2 * max_ms2_tolerance_in_da."
+        (
+            all_ions_mz_idx_start,
+            all_ions_mz,
+            all_ions_intensity,
+            all_ions_spec_idx,
+            all_nl_mass_idx_start,
+            all_nl_mass,
+            all_nl_intensity,
+            all_nl_spec_idx,
+            all_ions_idx_for_nl,
+        ) = self.index
+        index_number_in_one_da = int(1 / self.mz_index_step)
 
         # Prepare the query spectrum
         peaks = self._preprocess_peaks(peaks)
@@ -165,9 +214,11 @@ class FlashEntropySearchCore:
         for peak_idx, (mz_query, _) in enumerate(peaks):
             # Determine the mz index range
             product_mz_idx_min = self._find_location_from_array_with_index(
-                mz_query - ms2_tolerance_in_da, all_ions_mz, all_ions_mz_idx_start, 'left', index_number_in_one_da)
+                mz_query - ms2_tolerance_in_da, all_ions_mz, all_ions_mz_idx_start, "left", index_number_in_one_da
+            )
             product_mz_idx_max = self._find_location_from_array_with_index(
-                mz_query + ms2_tolerance_in_da, all_ions_mz, all_ions_mz_idx_start, 'right', index_number_in_one_da)
+                mz_query + ms2_tolerance_in_da, all_ions_mz, all_ions_mz_idx_start, "right", index_number_in_one_da
+            )
 
             product_peak_match_idx_min[peak_idx] = product_mz_idx_min
             product_peak_match_idx_max[peak_idx] = product_mz_idx_max
@@ -182,28 +233,30 @@ class FlashEntropySearchCore:
                 product_mz_idx_max = product_peak_match_idx_max[peak_idx]
 
                 # Calculate the entropy similarity for this matched peak
-                modified_idx_product = all_ions_spec_idx[product_mz_idx_min: product_mz_idx_max]
-                modified_value_product = self._score_peaks_with_cpu(intensity, all_ions_intensity[product_mz_idx_min: product_mz_idx_max])
+                modified_idx_product = all_ions_spec_idx[product_mz_idx_min:product_mz_idx_max]
+                modified_value_product = self._score_peaks_with_cpu(intensity, all_ions_intensity[product_mz_idx_min:product_mz_idx_max])
 
                 entropy_similarity[modified_idx_product] += modified_value_product
 
                 ###############################################################
                 # Match the neutral loss ions
-                mz_nl = precursor_mz-mz
+                mz_nl = precursor_mz - mz
                 # Determine the mz index range
                 neutral_loss_mz_idx_min = self._find_location_from_array_with_index(
-                    mz_nl - ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, 'left', index_number_in_one_da)
+                    mz_nl - ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, "left", index_number_in_one_da
+                )
                 neutral_loss_mz_idx_max = self._find_location_from_array_with_index(
-                    mz_nl + ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, 'right', index_number_in_one_da)
+                    mz_nl + ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, "right", index_number_in_one_da
+                )
 
                 # Calculate the entropy similarity for this matched peak
-                modified_idx_nl = all_nl_spec_idx[neutral_loss_mz_idx_min: neutral_loss_mz_idx_max]
-                modified_value_nl = self._score_peaks_with_cpu(intensity, all_nl_intensity[neutral_loss_mz_idx_min: neutral_loss_mz_idx_max])
+                modified_idx_nl = all_nl_spec_idx[neutral_loss_mz_idx_min:neutral_loss_mz_idx_max]
+                modified_value_nl = self._score_peaks_with_cpu(intensity, all_nl_intensity[neutral_loss_mz_idx_min:neutral_loss_mz_idx_max])
 
                 # Check if the neutral loss ion is already matched to other query peak as a product ion
-                nl_matched_product_ion_idx = all_ions_idx_for_nl[neutral_loss_mz_idx_min: neutral_loss_mz_idx_max]
-                s1 = np.searchsorted(product_peak_match_idx_min, nl_matched_product_ion_idx, side='right')
-                s2 = np.searchsorted(product_peak_match_idx_max-1, nl_matched_product_ion_idx, side='left')
+                nl_matched_product_ion_idx = all_ions_idx_for_nl[neutral_loss_mz_idx_min:neutral_loss_mz_idx_max]
+                s1 = np.searchsorted(product_peak_match_idx_min, nl_matched_product_ion_idx, side="right")
+                s2 = np.searchsorted(product_peak_match_idx_max - 1, nl_matched_product_ion_idx, side="left")
                 modified_value_nl[s1 > s2] = 0
 
                 # Check if this query peak is already matched to a product ion in the same library spectrum
@@ -215,14 +268,15 @@ class FlashEntropySearchCore:
 
         elif target == "gpu":
             import cupy as cp
+
             entropy_transform = cp.ElementwiseKernel(
-                'T intensity_a, T intensity_b',
-                'T similarity',
-                '''T intensity_ab = intensity_a + intensity_b;
-                similarity = intensity_ab * log2f(intensity_ab) - intensity_a * log2f(intensity_a) - intensity_b * log2f(intensity_b);'''
+                "T intensity_a, T intensity_b",
+                "T similarity",
+                """T intensity_ab = intensity_a + intensity_b;
+                similarity = intensity_ab * log2f(intensity_ab) - intensity_a * log2f(intensity_a) - intensity_b * log2f(intensity_b);""",
             )
             product_peak_match_idx_min_gpu = cp.array(product_peak_match_idx_min)
-            product_peak_match_idx_max_gpu = cp.array(product_peak_match_idx_max-1)
+            product_peak_match_idx_max_gpu = cp.array(product_peak_match_idx_max - 1)
 
             entropy_similarity_modification_list = []
             # Go through all the peaks in the spectrum and calculate the entropy similarity
@@ -233,31 +287,35 @@ class FlashEntropySearchCore:
                 product_mz_idx_max = product_peak_match_idx_max[peak_idx]
 
                 # Calculate the entropy similarity for this matched peak
-                modified_idx_product = all_ions_spec_idx[product_mz_idx_min: product_mz_idx_max]
-                modified_value_product = self._score_peaks_gpu(entropy_transform, intensity, cp.array(
-                    all_ions_intensity[product_mz_idx_min: product_mz_idx_max]))
+                modified_idx_product = all_ions_spec_idx[product_mz_idx_min:product_mz_idx_max]
+                modified_value_product = self._score_peaks_gpu(
+                    entropy_transform, intensity, cp.array(all_ions_intensity[product_mz_idx_min:product_mz_idx_max])
+                )
 
                 entropy_similarity_modification_list.append((modified_idx_product, modified_value_product.get()))
                 del modified_value_product
 
                 ###############################################################
                 # Match the neutral loss ions
-                mz_nl = precursor_mz-mz
+                mz_nl = precursor_mz - mz
                 # Determine the mz index range
                 neutral_loss_mz_idx_min = self._find_location_from_array_with_index(
-                    mz_nl - ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, 'left', index_number_in_one_da)
+                    mz_nl - ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, "left", index_number_in_one_da
+                )
                 neutral_loss_mz_idx_max = self._find_location_from_array_with_index(
-                    mz_nl + ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, 'right', index_number_in_one_da)
+                    mz_nl + ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, "right", index_number_in_one_da
+                )
 
                 # Calculate the entropy similarity for this matched peak
-                modified_idx_nl = all_nl_spec_idx[neutral_loss_mz_idx_min: neutral_loss_mz_idx_max]
-                modified_value_nl = self._score_peaks_gpu(entropy_transform, intensity, cp.array(
-                    all_nl_intensity[neutral_loss_mz_idx_min: neutral_loss_mz_idx_max]))
+                modified_idx_nl = all_nl_spec_idx[neutral_loss_mz_idx_min:neutral_loss_mz_idx_max]
+                modified_value_nl = self._score_peaks_gpu(
+                    entropy_transform, intensity, cp.array(all_nl_intensity[neutral_loss_mz_idx_min:neutral_loss_mz_idx_max])
+                )
 
                 # Check if the neutral loss ion is already matched to other query peak as a product ion
-                nl_matched_product_ion_idx = cp.array(all_ions_idx_for_nl[neutral_loss_mz_idx_min: neutral_loss_mz_idx_max])
-                s1 = cp.searchsorted(product_peak_match_idx_min_gpu, nl_matched_product_ion_idx, side='right')
-                s2 = cp.searchsorted(product_peak_match_idx_max_gpu, nl_matched_product_ion_idx, side='left')
+                nl_matched_product_ion_idx = cp.array(all_ions_idx_for_nl[neutral_loss_mz_idx_min:neutral_loss_mz_idx_max])
+                s1 = cp.searchsorted(product_peak_match_idx_min_gpu, nl_matched_product_ion_idx, side="right")
+                s2 = cp.searchsorted(product_peak_match_idx_max_gpu, nl_matched_product_ion_idx, side="left")
                 modified_value_nl[s1 > s2] = 0
 
                 # Check if this query peak is already matched to a product ion in the same library spectrum
@@ -289,9 +347,9 @@ class FlashEntropySearchCore:
             duplicate_idx = np.where(note[array_2] == 1)[0]
             return duplicate_idx
 
-
     def _remove_duplicate_with_gpu(self, array_1, array_2, max_element):
         import cupy as cp
+
         if len(array_1) + len(array_2) < 4_000_000:
             # When len(array_1) + len(array_2) < 4_000_000, this method is faster than array method
             aux = cp.array(np.concatenate((array_1, array_2)))
@@ -308,7 +366,7 @@ class FlashEntropySearchCore:
             duplicate_idx = cp.where(note[array_2] == 1)[0]
             return duplicate_idx
 
-    def build_index(self, all_spectra_list: list,  max_indexed_mz: float = 1500.00005):
+    def build_index(self, all_spectra_list: list, max_indexed_mz: float = 1500.00005):
         """
         Build the index for the MS/MS spectra library.
 
@@ -325,17 +383,22 @@ class FlashEntropySearchCore:
         total_peaks_num = np.sum([spectrum["peaks"].shape[0] for spectrum in all_spectra_list])
         total_spectra_num = len(all_spectra_list)
         # total_spectra_num can not be bigger than 2^32-1 (uint32), total_peak_num can not be bigger than 2^63-1 (int64)
-        assert total_spectra_num < 2 ** 32 - 1, "The total spectra number is too big."
-        assert total_peaks_num < 2 ** 63 - 1, "The total peaks number is too big."
+        assert total_spectra_num < 2**32 - 1, "The total spectra number is too big."
+        assert total_peaks_num < 2**63 - 1, "The total peaks number is too big."
         self.total_spectra_num = total_spectra_num
         self.total_peaks_num = total_peaks_num
 
         ############## Step 1: Collect the precursor m/z and peaks information. ##############
-        dtype_peak_data = np.dtype([("ion_mz", np.float32),  # The m/z of the fragment ion.
-                                    ("nl_mass", np.float32),  # The neutral loss mass of the fragment ion.
-                                    ("intensity", np.float32),  # The intensity of the fragment ion.
-                                    ("spec_idx", np.uint32),  # The index of the MS/MS spectra.
-                                    ("peak_idx", np.uint64)], align=True)  # The index of the fragment ion.
+        dtype_peak_data = np.dtype(
+            [
+                ("ion_mz", np.float32),  # The m/z of the fragment ion.
+                ("nl_mass", np.float32),  # The neutral loss mass of the fragment ion.
+                ("intensity", np.float32),  # The intensity of the fragment ion.
+                ("spec_idx", np.uint32),  # The index of the MS/MS spectra.
+                ("peak_idx", np.uint64),
+            ],
+            align=True,
+        )  # The index of the fragment ion.
 
         # Initialize the peak data array.
         peak_data = np.zeros(total_peaks_num, dtype=dtype_peak_data)
@@ -348,15 +411,16 @@ class FlashEntropySearchCore:
             assert peaks.ndim == 2, "The peaks array should be a 2D numpy array."
             assert peaks.shape[1] == 2, "The peaks array should be a 2D numpy array with the shape of [n, 2]."
             assert peaks.shape[0] > 0, "The peaks array should not be empty."
-            assert abs(np.sum(peaks[:, 1])-1) < 1e-4, "The peaks array should be normalized to sum to 1."
-            assert peaks.shape[0] <= 1 or np.min(peaks[1:, 0] - peaks[:-1, 0]) > self.max_ms2_tolerance_in_da * 2, \
-                "The peaks array should be sorted by m/z, and the m/z difference between two adjacent peaks should be larger than 2 * max_ms2_tolerance_in_da."
+            assert abs(np.sum(peaks[:, 1]) - 1) < 1e-4, "The peaks array should be normalized to sum to 1."
+            assert (
+                peaks.shape[0] <= 1 or np.min(peaks[1:, 0] - peaks[:-1, 0]) > self.max_ms2_tolerance_in_da * 2
+            ), "The peaks array should be sorted by m/z, and the m/z difference between two adjacent peaks should be larger than 2 * max_ms2_tolerance_in_da."
 
             # Preprocess the peaks array.
             peaks = self._preprocess_peaks(peaks)
 
             # Assign the product ion m/z
-            peak_data_item = peak_data[peak_idx:(peak_idx + peaks.shape[0])]
+            peak_data_item = peak_data[peak_idx : (peak_idx + peaks.shape[0])]
             peak_data_item["ion_mz"] = peaks[:, 0]
             # Assign the neutral loss mass
             peak_data_item["nl_mass"] = precursor_mz - peaks[:, 0]
@@ -385,8 +449,8 @@ class FlashEntropySearchCore:
 
         # Build index for fast access to the ion's m/z.
         max_mz = min(np.max(all_ions_mz), max_indexed_mz)
-        search_array = np.arange(0., max_mz, self.mz_index_step)
-        all_ions_mz_idx_start = np.searchsorted(all_ions_mz, search_array, side='left').astype(np.int64)
+        search_array = np.arange(0.0, max_mz, self.mz_index_step)
+        all_ions_mz_idx_start = np.searchsorted(all_ions_mz, search_array, side="left").astype(np.int64)
 
         ############## Step 3: Build the index by sort with neutral loss mass. ##############
         # Sort with the neutral loss mass.
@@ -400,12 +464,21 @@ class FlashEntropySearchCore:
 
         # Build the index for fast access to the neutral loss mass.
         max_mz = min(np.max(all_nl_mass), max_indexed_mz)
-        search_array = np.arange(0., max_mz, self.mz_index_step)
-        all_nl_mass_idx_start = np.searchsorted(all_nl_mass, search_array, side='left').astype(np.int64)
+        search_array = np.arange(0.0, max_mz, self.mz_index_step)
+        all_nl_mass_idx_start = np.searchsorted(all_nl_mass, search_array, side="left").astype(np.int64)
 
         ############## Step 4: Save the index. ##############
-        index = [all_ions_mz_idx_start, all_ions_mz, all_ions_intensity, all_ions_spec_idx,
-                 all_nl_mass_idx_start, all_nl_mass, all_nl_intensity, all_nl_spec_idx, all_ions_idx_for_nl]
+        index = [
+            all_ions_mz_idx_start,
+            all_ions_mz,
+            all_ions_intensity,
+            all_ions_spec_idx,
+            all_nl_mass_idx_start,
+            all_nl_mass,
+            all_nl_intensity,
+            all_nl_spec_idx,
+            all_ions_idx_for_nl,
+        ]
         return index
 
     def _preprocess_peaks(self, peaks):
@@ -418,15 +491,14 @@ class FlashEntropySearchCore:
 
     def _score_peaks_with_cpu(self, intensity_query, intensity_library):
         intensity_mix = intensity_library + intensity_query
-        modified_value = intensity_mix * np.log2(intensity_mix) \
-            - intensity_library * np.log2(intensity_library) - intensity_query * np.log2(intensity_query)
+        modified_value = intensity_mix * np.log2(intensity_mix) - intensity_library * np.log2(intensity_library) - intensity_query * np.log2(intensity_query)
         return modified_value
 
     def _score_peaks_gpu(self, entropy_transform, intensity_query, intensity_library):
         return entropy_transform(intensity_library, intensity_query)
 
     def _find_location_from_array_with_index(self, wanted_mz, mz_array, mz_idx_start_array, side, index_number):
-        mz_min_int = (np.floor(wanted_mz*index_number)).astype(int)
+        mz_min_int = (np.floor(wanted_mz * index_number)).astype(int)
         mz_max_int = mz_min_int + 1
 
         if mz_min_int >= len(mz_idx_start_array):
@@ -437,13 +509,13 @@ class FlashEntropySearchCore:
         if mz_max_int >= len(mz_idx_start_array):
             mz_idx_search_end = len(mz_array)
         else:
-            mz_idx_search_end = mz_idx_start_array[mz_max_int].astype(int)+1
+            mz_idx_search_end = mz_idx_start_array[mz_max_int].astype(int) + 1
 
         return mz_idx_search_start + np.searchsorted(mz_array[mz_idx_search_start:mz_idx_search_end], wanted_mz, side=side)
 
     def save_memory_for_multiprocessing(self):
         """
-        Move the numpy array in the index to shared memory in order to save memory. 
+        Move the numpy array in the index to shared memory in order to save memory.
         This function is not required when you only use one thread to search the MS/MS spectra.
         When use multiple threads, this function is also not required but highly recommended, as it avoids the memory copy and saves a lot of memory and time.
         """
@@ -465,9 +537,9 @@ class FlashEntropySearchCore:
             path_data = Path(path_data)
             self.index = []
             for name in self.index_names:
-                self.index.append(np.fromfile(path_data / f'{name}.npy', dtype=self.index_dtypes[name]))
+                self.index.append(np.fromfile(path_data / f"{name}.npy", dtype=self.index_dtypes[name]))
 
-            with open(path_data / 'information.json', 'r') as f:
+            with open(path_data / "information.json", "r") as f:
                 information = json.load(f)
             self.mz_index_step = information["mz_index_step"]
             self.total_spectra_num = information["total_spectra_num"]
@@ -487,15 +559,16 @@ class FlashEntropySearchCore:
         path_data = Path(path_data)
         path_data.mkdir(parents=True, exist_ok=True)
         for i, name in enumerate(self.index_names):
-            self.index[i].tofile(path_data / f'{name}.npy')
+            self.index[i].tofile(path_data / f"{name}.npy")
         information = {
             "mz_index_step": float(self.mz_index_step),
             "total_spectra_num": int(self.total_spectra_num),
-            'total_peaks_num': int(self.total_peaks_num),
+            "total_peaks_num": int(self.total_peaks_num),
             "max_ms2_tolerance_in_da": float(self.max_ms2_tolerance_in_da),
         }
-        with open(path_data / 'information.json', 'w') as f:
+        with open(path_data / "information.json", "w") as f:
             json.dump(information, f)
+
 
 def _convert_numpy_array_to_shared_memory(np_array, array_c_type=None):
     """
@@ -515,3 +588,33 @@ def _convert_numpy_array_to_shared_memory(np_array, array_c_type=None):
     np_array_new[:] = np_array
     return np_array_new
 
+
+def entropy_similarity_search_identity(
+    product_mz_idx_min,
+    product_mz_idx_max,
+    intensity,
+    entropy_similarity,
+    library_peaks_intensity,
+    library_spec_idx_array,
+    search_spectra_idx_min,
+    search_spectra_idx_max,
+):
+    """
+    The entropy_similarity will be modified in this function.
+    search_type is 0: search all spectra.
+    search_type is 1: search spectra in the range [search_spectra_idx_min, search_spectra_idx_max).
+
+    Note: the intensity here should be half of the original intensity.
+    """
+    intensity_xlog2x: np.float32 = intensity * np.log2(intensity)
+
+    all_library_spec_idx = library_spec_idx_array[product_mz_idx_min:product_mz_idx_max]
+
+    idx_list = product_mz_idx_min + np.where(np.bitwise_and(all_library_spec_idx >= search_spectra_idx_min, all_library_spec_idx < search_spectra_idx_max))[0]
+
+    array_library_spec_idx = library_spec_idx_array[idx_list]
+    array_library_peak_intensity = library_peaks_intensity[idx_list]
+    array_library_ab = intensity + array_library_peak_intensity
+    entropy_similarity[array_library_spec_idx] += (
+        array_library_ab * np.log2(array_library_ab) - intensity_xlog2x - array_library_peak_intensity * np.log2(array_library_peak_intensity)
+    )
