@@ -11,3 +11,4 @@ Welcome to MS Entropy's documentation!
    :caption: Contents:
 
    api
+   api_pipe
