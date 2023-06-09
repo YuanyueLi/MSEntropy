@@ -1,6 +1,5 @@
 import numpy as np
 import unittest
-import tempfile
 import ms_entropy as me
 
 
