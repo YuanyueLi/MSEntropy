@@ -2,7 +2,7 @@
 // or project specific include files.
 
 #pragma once
-#define __DEBUG__ENTROPY_SIMILARTY__ false
+#define __DEBUG__ENTROPY_SIMILARTY__ 0
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
