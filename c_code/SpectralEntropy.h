@@ -21,15 +21,15 @@ float_spec calculate_spectral_entropy(const float_spec *spectrum, int spectrum_l
 
 /** Calculate unweighted entropy similarity for two spectra.
  *
- * Note: The spectrum_a and spectrum_b will be modified, if you want to keep the original spectra, please copy them before calling this function.
+ * Note: The peaks_a and peaks_b will be modified, if you want to keep the original spectra, please copy them before calling this function.
  * This function will clean the spectra if clean_spectra is true, otherwise, the spectra will be used directly.
  *
  * Only one of min_ms2_difference_in_da and min_ms2_difference_in_ppm should be positive.
  *
- * @param spectrum_a The first spectrum.  A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
- * @param spectrum_a_len The length of the first spectrum.
- * @param spectrum_b The second spectrum.  A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
- * @param spectrum_b_len The length of the second spectrum.
+ * @param peaks_a The first spectrum.  A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
+ * @param peaks_a_len The length of the first spectrum.
+ * @param peaks_b The second spectrum.  A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
+ * @param peaks_b_len The length of the second spectrum.
  * @param ms2_tolerance_in_da The MS2 tolerance in Da, set to -1 if you want to use ppm.
  * @param ms2_tolerance_in_ppm The MS2 tolerance in ppm, set to -1 if you want to use Da.
  * @param clean_spectra Whether to clean the spectra.
@@ -43,8 +43,8 @@ float_spec calculate_spectral_entropy(const float_spec *spectrum, int spectrum_l
  * @return The unweighted entropy similarity of the two spectra.
  */
 float calculate_unweighted_entropy_similarity(
-    float_spec *spectrum_a, int spectrum_a_len,
-    float_spec *spectrum_b, int spectrum_b_len,
+    float_spec *peaks_a, int peaks_a_len,
+    float_spec *peaks_b, int peaks_b_len,
     float ms2_tolerance_in_da, float ms2_tolerance_in_ppm,
     bool clean_spectra,
     float min_mz, float max_mz,
@@ -53,15 +53,15 @@ float calculate_unweighted_entropy_similarity(
 
 /** Calculate entropy similarity for two spectra.
  *
- * Note: The spectrum_a and spectrum_b will be modified, if you want to keep the original spectra, please copy them before calling this function.
+ * Note: The peaks_a and peaks_b will be modified, if you want to keep the original spectra, please copy them before calling this function.
  * This function will clean the spectra if clean_spectra is true, otherwise, the spectra will be used directly.
  *
  * Only one of min_ms2_difference_in_da and min_ms2_difference_in_ppm should be positive.
  *
- * @param spectrum_a The first spectrum.  A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
- * @param spectrum_a_len The length of the first spectrum.
- * @param spectrum_b The second spectrum.  A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
- * @param spectrum_b_len The length of the second spectrum.
+ * @param peaks_a The first spectrum.  A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
+ * @param peaks_a_len The length of the first spectrum.
+ * @param peaks_b The second spectrum.  A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
+ * @param peaks_b_len The length of the second spectrum.
  * @param ms2_tolerance_in_da The MS2 tolerance in Da, set to -1 if you want to use ppm.
  * @param ms2_tolerance_in_ppm The MS2 tolerance in ppm, set to -1 if you want to use Da.
  * @param clean_spectra Whether to clean the spectra before calculating the similarity.
@@ -75,8 +75,8 @@ float calculate_unweighted_entropy_similarity(
  * @return The entropy similarity of the two spectra.
  */
 float calculate_entropy_similarity(
-    float_spec *spectrum_a, int spectrum_a_len,
-    float_spec *spectrum_b, int spectrum_b_len,
+    float_spec *peaks_a, int peaks_a_len,
+    float_spec *peaks_b, int peaks_b_len,
     float ms2_tolerance_in_da, float ms2_tolerance_in_ppm,
     bool clean_spectra,
     float min_mz, float max_mz,

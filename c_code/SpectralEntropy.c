@@ -8,27 +8,27 @@
 
 // Calculate unweighted entropy similarity
 float calculate_unweighted_entropy_similarity(
-    float_spec* spectrum_a, int spectrum_a_len,
-    float_spec* spectrum_b, int spectrum_b_len,
+    float_spec* peaks_a, int peaks_a_len,
+    float_spec* peaks_b, int peaks_b_len,
     float ms2_tolerance_in_da, float ms2_tolerance_in_ppm,
     bool clean_spectra,
     float min_mz, float max_mz,
     float noise_threshold,
     int max_peak_num) {
-    float_spec(*spec_a_2d)[2] = (float_spec(*)[2])spectrum_a;
-    float_spec(*spec_b_2d)[2] = (float_spec(*)[2])spectrum_b;
+    float_spec(*spec_a_2d)[2] = (float_spec(*)[2])peaks_a;
+    float_spec(*spec_b_2d)[2] = (float_spec(*)[2])peaks_b;
 
     if (__DEBUG__ENTROPY_SIMILARTY__) {
-        print_spectrum("spec_query:\n", spec_a_2d, spectrum_a_len);
-        print_spectrum("spec_reference:\n", spec_b_2d, spectrum_b_len);
+        print_spectrum("spec_query:\n", spec_a_2d, peaks_a_len);
+        print_spectrum("spec_reference:\n", spec_b_2d, peaks_b_len);
     }
 
     if (clean_spectra) {
-        spectrum_a_len = clean_spectrum(spectrum_a, spectrum_a_len, min_mz, max_mz, noise_threshold, 2 * ms2_tolerance_in_da, 2 * ms2_tolerance_in_ppm, max_peak_num, true);
-        spectrum_b_len = clean_spectrum(spectrum_b, spectrum_b_len, min_mz, max_mz, noise_threshold, 2 * ms2_tolerance_in_da, 2 * ms2_tolerance_in_ppm, max_peak_num, true);
+        peaks_a_len = clean_spectrum(peaks_a, peaks_a_len, min_mz, max_mz, noise_threshold, 2 * ms2_tolerance_in_da, 2 * ms2_tolerance_in_ppm, max_peak_num, true);
+        peaks_b_len = clean_spectrum(peaks_b, peaks_b_len, min_mz, max_mz, noise_threshold, 2 * ms2_tolerance_in_da, 2 * ms2_tolerance_in_ppm, max_peak_num, true);
     }
 
-    if (spectrum_a_len == 0 || spectrum_b_len == 0) {
+    if (peaks_a_len == 0 || peaks_b_len == 0) {
         return 0.0;
     }
 
@@ -36,7 +36,7 @@ float calculate_unweighted_entropy_similarity(
     float_spec peak_a_intensity, peak_b_intensity, peak_ab_intensity;
     float_spec similarity = 0;
 
-    while (a < spectrum_a_len && b < spectrum_b_len) {
+    while (a < peaks_a_len && b < peaks_b_len) {
         float mass_delta_da = spec_a_2d[a][0] - spec_b_2d[b][0];
         if (ms2_tolerance_in_ppm > 0) {
             ms2_tolerance_in_da = ms2_tolerance_in_ppm * spec_a_2d[a][0] * 1e-6;
@@ -62,74 +62,78 @@ float calculate_unweighted_entropy_similarity(
 
 // Calculate entropy similarity
 float calculate_entropy_similarity(
-    float_spec* spectrum_a, int spectrum_a_len,
-    float_spec* spectrum_b, int spectrum_b_len,
+    float_spec* peaks_a, int peaks_a_len,
+    float_spec* peaks_b, int peaks_b_len,
     float ms2_tolerance_in_da, float ms2_tolerance_in_ppm,
     bool clean_spectra,
     float min_mz, float max_mz,
     float noise_threshold,
     int max_peak_num) {
     if (__DEBUG__ENTROPY_SIMILARTY__) {
-        print_spectrum("spec_query:\n", (float_spec(*)[2])spectrum_a, spectrum_a_len);
-        print_spectrum("spec_reference:\n", (float_spec(*)[2])spectrum_b, spectrum_b_len);
+        print_spectrum("spec_query:\n", (float_spec(*)[2])peaks_a, peaks_a_len);
+        print_spectrum("spec_reference:\n", (float_spec(*)[2])peaks_b, peaks_b_len);
     }
 
     if (clean_spectra) {
-        spectrum_a_len = clean_spectrum(spectrum_a, spectrum_a_len, min_mz, max_mz, noise_threshold, 2 * ms2_tolerance_in_da, 2 * ms2_tolerance_in_ppm, max_peak_num, true);
-        spectrum_b_len = clean_spectrum(spectrum_b, spectrum_b_len, min_mz, max_mz, noise_threshold, 2 * ms2_tolerance_in_da, 2 * ms2_tolerance_in_ppm, max_peak_num, true);
+        peaks_a_len = clean_spectrum(peaks_a, peaks_a_len, min_mz, max_mz, noise_threshold, 2 * ms2_tolerance_in_da, 2 * ms2_tolerance_in_ppm, max_peak_num, true);
+        peaks_b_len = clean_spectrum(peaks_b, peaks_b_len, min_mz, max_mz, noise_threshold, 2 * ms2_tolerance_in_da, 2 * ms2_tolerance_in_ppm, max_peak_num, true);
     }
 
-    if (spectrum_a_len == 0 || spectrum_b_len == 0) {
+    if (peaks_a_len == 0 || peaks_b_len == 0) {
         return 0.0;
     }
-    apply_weight_to_intensity(spectrum_a, spectrum_a_len);
-    apply_weight_to_intensity(spectrum_b, spectrum_b_len);
+    apply_weight_to_intensity(peaks_a, peaks_a_len);
+    apply_weight_to_intensity(peaks_b, peaks_b_len);
 
     return calculate_unweighted_entropy_similarity(
-        spectrum_a, spectrum_a_len, spectrum_b, spectrum_b_len,
+        peaks_a, peaks_a_len, peaks_b, peaks_b_len,
         ms2_tolerance_in_da, ms2_tolerance_in_ppm, false, min_mz, max_mz, noise_threshold, max_peak_num);
 }
 
-// Calculate spectral entropy of a spectrum. The spectrum intensity need to be prenormalized.
-float_spec calculate_spectral_entropy(const float_spec* spectrum, int spectrum_length) {
-    const float_spec* spectrum_ptr = &spectrum[1];
-    const float_spec* spectrum_end = spectrum_ptr + spectrum_length * 2;
+// Calculate spectral entropy of a peaks. The peaks intensity need to be prenormalized.
+float_spec calculate_spectral_entropy(const float_spec* peaks, int peaks_length) {
+    const float_spec* peak_ptr = &peaks[1];
+    const float_spec* peak_end_ptr = peak_ptr + peaks_length * 2;
 
     float_spec intensity_sum = 0;
-    for (; spectrum_ptr < spectrum_end; spectrum_ptr += 2) {
-        intensity_sum += *spectrum_ptr;
+    for (; peak_ptr < peak_end_ptr; peak_ptr += 2) {
+        intensity_sum += *peak_ptr;
     }
     if (intensity_sum == 0) {
         return 0;
     } else {
         float_spec entropy = 0;
-        for (spectrum_ptr = &spectrum[1]; spectrum_ptr < spectrum_end; spectrum_ptr += 2) {
-            float_spec intensity = (*spectrum_ptr) / intensity_sum;
+        for (peak_ptr = &peaks[1]; peak_ptr < peak_end_ptr; peak_ptr += 2) {
+            float_spec intensity = (*peak_ptr) / intensity_sum;
             entropy -= intensity * logf(intensity);
         }
         return entropy;
     }
 }
 
-// Apply weight to a spectrum by spectral entropy.
-// The spectrum intensity need to be prenormalized.
-// The spectrum data will be modified.
-void apply_weight_to_intensity(float_spec* spectrum, int spectrum_length) {
-    float_spec entropy = calculate_spectral_entropy(spectrum, spectrum_length);
+// Apply weight to a peaks by spectral entropy.
+// The peaks intensity need to be prenormalized.
+// The peaks data will be modified.
+void apply_weight_to_intensity(float_spec* peaks, int peaks_length) {
+    float_spec entropy = calculate_spectral_entropy(peaks, peaks_length);
     if (entropy < 3) {
         const float_spec weight = 0.25 + 0.25 * entropy;
+        float_spec* peak_ptr = &peaks[1];
+        const float_spec* peak_end_ptr = peak_ptr + peaks_length * 2;
+
+        // Calculate the sum of intensity.
         float_spec intensity_sum = 0;
-        float_spec* spectrum_ptr = &spectrum[1];
-        const float_spec* spectrum_end = spectrum_ptr + spectrum_length * 2;
-        for (; spectrum_ptr < spectrum_end; spectrum_ptr += 2) {
-            *spectrum_ptr = powf(*spectrum_ptr, weight);
-            intensity_sum += *spectrum_ptr;
+        for (; peak_ptr < peak_end_ptr; peak_ptr += 2) {
+            *peak_ptr = powf(*peak_ptr, weight);
+            intensity_sum += *peak_ptr;
         }
+
+        // Normalize the intensity.
         if (intensity_sum > 0) {
             float_spec reciprocal_intensity_sum = 1.0 / intensity_sum;
-            spectrum_ptr = &spectrum[1];
-            for (; spectrum_ptr < spectrum_end; spectrum_ptr += 2) {
-                *spectrum_ptr *= reciprocal_intensity_sum;
+            peak_ptr = &peaks[1];
+            for (; peak_ptr < peak_end_ptr; peak_ptr += 2) {
+                *peak_ptr *= reciprocal_intensity_sum;
             }
         }
     }

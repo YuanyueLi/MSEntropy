@@ -14,10 +14,10 @@ typedef float float_spec;
 /**
  * @brief Clean the spectrum.
  *
- * The function will modify the content in the spectrum in place and return the length of the cleaned spectrum.
- * If you want to keep the original spectrum, please copy it before calling this function.
+ * The function will modify the content in the peaks in place and return the length of the cleaned peaks.
+ * If you want to keep the original peaks, please copy it before calling this function.
  *
- * This function will clean the spectrum by the following steps:
+ * This function will clean the peaks by the following steps:
  * 1. Remove empty peaks (m/z <= 0 or intensity <= 0).
  * 2. Remove peaks with m/z >= max_mz or m/z < min_mz.
  * 3. Centroid the spectrum by merging peaks within min_ms2_difference_in_da or min_ms2_difference_in_ppm.
@@ -27,19 +27,19 @@ typedef float float_spec;
  *
  * Note: The only one of min_ms2_difference_in_da and min_ms2_difference_in_ppm should be positive.
 
- * @param spectrum The spectrum to be cleaned. A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
- * @param spectrum_length The length of the spectrum.
- * @param min_mz The minimum m/z of the spectrum. If set to -1, this function will not remove peaks with m/z < min_mz.
- * @param max_mz The maximum m/z of the spectrum. If set to -1, this function will not remove peaks with m/z >= max_mz.
- * @param noise_threshold The noise threshold of the spectrum. If set to -1, this function will not remove peaks with intensity < noise_threshold * max_intensity.
- * @param min_ms2_difference_in_da The minimum difference in m/z to merge peaks. If set to -1, this function will not centroid the spectrum.
- * @param min_ms2_difference_in_ppm The minimum difference in ppm to merge peaks. If set to -1, this function will not centroid the spectrum.
+ * @param peaks The peaks to be cleaned. A 2D array. peaks[x][0] is the m/z, peaks[x][1] is the intensity.
+ * @param spectrum_length The length of the peaks.
+ * @param min_mz The minimum m/z of the peaks. If set to -1, this function will not remove peaks with m/z < min_mz.
+ * @param max_mz The maximum m/z of the peaks. If set to -1, this function will not remove peaks with m/z >= max_mz.
+ * @param noise_threshold The noise threshold of the peaks. If set to -1, this function will not remove peaks with intensity < noise_threshold * max_intensity.
+ * @param min_ms2_difference_in_da The minimum difference in m/z to merge peaks. If set to -1, this function will not centroid the peaks.
+ * @param min_ms2_difference_in_ppm The minimum difference in ppm to merge peaks. If set to -1, this function will not centroid the peaks.
  * @param max_peak_num The maximum number of peaks to keep. If set to -1, this function will not remove peaks.
  * @param normalize_intensity Whether to normalize the intensity to sum to 1.
  *
- * @return int The length of the cleaned spectrum.
+ * @return int The length of the cleaned peaks.
 */
-int clean_spectrum(float_spec* spectrum, int spectrum_length,
+int clean_spectrum(float_spec* peaks, int spectrum_length,
                    float min_mz, float max_mz,
                    float noise_threshold,
                    float min_ms2_difference_in_da, float min_ms2_difference_in_ppm,
