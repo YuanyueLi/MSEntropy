@@ -7,20 +7,25 @@
 #include "CleanSpectrum.h"
 
 // Calculate unweighted entropy similarity
-float unweighted_entropy_similarity(
+float calculate_unweighted_entropy_similarity(
     float_spec* spectrum_a, int spectrum_a_len,
     float_spec* spectrum_b, int spectrum_b_len,
-    float ms2_da, bool spectra_is_preclean) {
-    if (!spectra_is_preclean) {
-        clean_spectrum(spectrum_a, &spectrum_a_len, 0, -1, 0.01, -1, true, 2 * ms2_da);
-        clean_spectrum(spectrum_b, &spectrum_b_len, 0, -1, 0.01, -1, true, 2 * ms2_da);
-    }
-
+    float ms2_tolerance_in_da, float ms2_tolerance_in_ppm,
+    bool clean_spectra,
+    float min_mz, float max_mz,
+    float noise_threshold,
+    int max_peak_num) {
     float_spec(*spec_a_2d)[2] = (float_spec(*)[2])spectrum_a;
     float_spec(*spec_b_2d)[2] = (float_spec(*)[2])spectrum_b;
+
     if (__DEBUG__ENTROPY_SIMILARTY__) {
         print_spectrum("spec_query:\n", spec_a_2d, spectrum_a_len);
         print_spectrum("spec_reference:\n", spec_b_2d, spectrum_b_len);
+    }
+
+    if (clean_spectra) {
+        spectrum_a_len = clean_spectrum(spectrum_a, spectrum_a_len, min_mz, max_mz, noise_threshold, 2 * ms2_tolerance_in_da, 2 * ms2_tolerance_in_ppm, max_peak_num, true);
+        spectrum_b_len = clean_spectrum(spectrum_b, spectrum_b_len, min_mz, max_mz, noise_threshold, 2 * ms2_tolerance_in_da, 2 * ms2_tolerance_in_ppm, max_peak_num, true);
     }
 
     if (spectrum_a_len == 0 || spectrum_b_len == 0) {
@@ -33,10 +38,13 @@ float unweighted_entropy_similarity(
 
     while (a < spectrum_a_len && b < spectrum_b_len) {
         float mass_delta_da = spec_a_2d[a][0] - spec_b_2d[b][0];
-        if (mass_delta_da < -ms2_da) {
+        if (ms2_tolerance_in_ppm > 0) {
+            ms2_tolerance_in_da = ms2_tolerance_in_ppm * spec_a_2d[a][0] * 1e-6;
+        }
+        if (mass_delta_da < -ms2_tolerance_in_da) {
             // Peak only existed in spec a.
             a++;
-        } else if (mass_delta_da > ms2_da) {
+        } else if (mass_delta_da > ms2_tolerance_in_da) {
             // Peak only existed in spec b.
             b++;
         } else {
@@ -53,25 +61,33 @@ float unweighted_entropy_similarity(
 }
 
 // Calculate entropy similarity
-float entropy_similarity(
+float calculate_entropy_similarity(
     float_spec* spectrum_a, int spectrum_a_len,
     float_spec* spectrum_b, int spectrum_b_len,
-    float ms2_da, bool spectra_is_preclean) {
-    if (!spectra_is_preclean) {
-        clean_spectrum(spectrum_a, &spectrum_a_len, 0, -1, 0.01, -1, true, 2 * ms2_da);
-        clean_spectrum(spectrum_b, &spectrum_b_len, 0, -1, 0.01, -1, true, 2 * ms2_da);
-    }
+    float ms2_tolerance_in_da, float ms2_tolerance_in_ppm,
+    bool clean_spectra,
+    float min_mz, float max_mz,
+    float noise_threshold,
+    int max_peak_num) {
     if (__DEBUG__ENTROPY_SIMILARTY__) {
         print_spectrum("spec_query:\n", (float_spec(*)[2])spectrum_a, spectrum_a_len);
         print_spectrum("spec_reference:\n", (float_spec(*)[2])spectrum_b, spectrum_b_len);
     }
+
+    if (clean_spectra) {
+        spectrum_a_len = clean_spectrum(spectrum_a, spectrum_a_len, min_mz, max_mz, noise_threshold, 2 * ms2_tolerance_in_da, 2 * ms2_tolerance_in_ppm, max_peak_num, true);
+        spectrum_b_len = clean_spectrum(spectrum_b, spectrum_b_len, min_mz, max_mz, noise_threshold, 2 * ms2_tolerance_in_da, 2 * ms2_tolerance_in_ppm, max_peak_num, true);
+    }
+
     if (spectrum_a_len == 0 || spectrum_b_len == 0) {
         return 0.0;
     }
     apply_weight_to_intensity(spectrum_a, spectrum_a_len);
     apply_weight_to_intensity(spectrum_b, spectrum_b_len);
 
-    return unweighted_entropy_similarity(spectrum_a, spectrum_a_len, spectrum_b, spectrum_b_len, ms2_da, true);
+    return calculate_unweighted_entropy_similarity(
+        spectrum_a, spectrum_a_len, spectrum_b, spectrum_b_len,
+        ms2_tolerance_in_da, ms2_tolerance_in_ppm, false, min_mz, max_mz, noise_threshold, max_peak_num);
 }
 
 // Calculate spectral entropy of a spectrum. The spectrum intensity need to be prenormalized.

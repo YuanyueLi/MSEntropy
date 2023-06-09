@@ -158,7 +158,7 @@ def _centroid_spectrum(peaks: np.ndarray, ms2_da: float = -1, ms2_ppm: float = -
     mz_delta_allowed_right = ms2_da
     # Iterate through the peaks from high to low intensity.
     for idx in intensity_order[::-1]:
-        if ms2_da < 0:
+        if ms2_ppm > 0:
             mz_delta_allowed_left = peaks[idx, 0] * ms2_ppm * 1e-6
             # For the right boundary, the mz_delta_allowed_right = peaks[right_idx, 0] * ms2_ppm * 1e-6 = peaks[idx, 0] / (1 - ms2_ppm * 1e-6)
             mz_delta_allowed_right = peaks[idx, 0] / (1 - ms2_ppm * 1e-6)
@@ -195,9 +195,9 @@ def _check_centroid(peaks: np.ndarray, ms2_da: float = -1, ms2_ppm: float = -1) 
     if peaks.shape[0] <= 1:
         return 1
 
-    if ms2_da >= 0:
-        # Use ms2_da to check if the spectrum is centroided.
-        return 1 if np.all(np.diff(peaks[:, 0]) >= ms2_da) else 0
-    elif ms2_ppm >= 0:
+    if ms2_ppm >= 0:
         # Use ms2_ppm to check if the spectrum is centroided.
         return 1 if np.all(np.diff(peaks[:, 0]) >= peaks[1:, 0] * ms2_ppm * 1e-6) else 0
+    elif ms2_da >= 0:
+        # Use ms2_da to check if the spectrum is centroided.
+        return 1 if np.all(np.diff(peaks[:, 0]) >= ms2_da) else 0

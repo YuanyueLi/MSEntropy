@@ -20,19 +20,22 @@ void apply_weight_to_intensity(float_spec *spectrum, int spectrum_length);
 
 // Calculate unweighted entropy similarity, the spectrum_a and spectrum_b will be modified.
 // If the spectra_is_preclean is true, the spectrum_a and spectrum_b need to be cleaned before calculating the similarity, or the similarity will be wrong.
-float unweighted_entropy_similarity(
+float calculate_unweighted_entropy_similarity(
     float_spec *spectrum_a, int spectrum_a_len,
     float_spec *spectrum_b, int spectrum_b_len,
-    float ms2_da, bool spectra_is_preclean);
-
-float unweighted_entropy_similarity_ori(
-    float_spec *spectrum_a, int spectrum_a_len,
-    float_spec *spectrum_b, int spectrum_b_len,
-    float ms2_da, bool spectra_is_preclean);
+    float ms2_tolerance_in_da, float ms2_tolerance_in_ppm,
+    bool clean_spectra,
+    float min_mz, float max_mz,
+    float noise_threshold,
+    int max_peak_num);
 
 // Calculate entropy similarity, the spectrum_a and spectrum_b will be modified.
 // If the spectra_is_preclean is true, the spectrum_a and spectrum_b need to be cleaned before calculating the similarity, or the similarity will be wrong.
-float entropy_similarity(
+float calculate_entropy_similarity(
     float_spec *spectrum_a, int spectrum_a_len,
     float_spec *spectrum_b, int spectrum_b_len,
-    float ms2_da, bool spectra_is_preclean);
+    float ms2_tolerance_in_da, float ms2_tolerance_in_ppm,
+    bool clean_spectra,
+    float min_mz, float max_mz,
+    float noise_threshold,
+    int max_peak_num);
