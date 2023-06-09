@@ -95,13 +95,20 @@ float_spec calculate_spectral_entropy(const float_spec* spectrum, int spectrum_l
     const float_spec* spectrum_ptr = &spectrum[1];
     const float_spec* spectrum_end = spectrum_ptr + spectrum_length * 2;
 
-    float_spec entropy = 0;
+    float_spec intensity_sum = 0;
     for (; spectrum_ptr < spectrum_end; spectrum_ptr += 2) {
-        float_spec intensity = *spectrum_ptr;
-        entropy -= intensity * logf(intensity);
+        intensity_sum += *spectrum_ptr;
     }
-
-    return entropy;
+    if (intensity_sum == 0) {
+        return 0;
+    } else {
+        float_spec entropy = 0;
+        for (spectrum_ptr = &spectrum[1]; spectrum_ptr < spectrum_end; spectrum_ptr += 2) {
+            float_spec intensity = (*spectrum_ptr) / intensity_sum;
+            entropy -= intensity * logf(intensity);
+        }
+        return entropy;
+    }
 }
 
 // Apply weight to a spectrum by spectral entropy.

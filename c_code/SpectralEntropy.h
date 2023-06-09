@@ -9,17 +9,39 @@
 
 #include "CleanSpectrum.h"
 
-// Calculate spectral entropy of a spectrum.
-// All peaks in the spectrum need to have a positive intensity, or the result will be wrong.
-// The spectrum intensity need to be prenormalized to sum equal to 1.
+/** Calculate spectral entropy of a spectrum.
+ *
+ * @param spectrum The spectrum to be calculated. A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
+ * All peaks in the spectrum need to have a positive intensity, or the result will be wrong.
+ * @param spectrum_length The length of the spectrum.
+ *
+ * @return The spectral entropy.
+ */
 float_spec calculate_spectral_entropy(const float_spec *spectrum, int spectrum_length);
 
-// Apply weight to a spectrum by spectral entropy.
-// The spectrum need to be precleaned by clean_spectrum function, or the result will be wrong.
-void apply_weight_to_intensity(float_spec *spectrum, int spectrum_length);
-
-// Calculate unweighted entropy similarity, the spectrum_a and spectrum_b will be modified.
-// If the spectra_is_preclean is true, the spectrum_a and spectrum_b need to be cleaned before calculating the similarity, or the similarity will be wrong.
+/** Calculate unweighted entropy similarity for two spectra.
+ *
+ * Note: The spectrum_a and spectrum_b will be modified, if you want to keep the original spectra, please copy them before calling this function.
+ * This function will clean the spectra if clean_spectra is true, otherwise, the spectra will be used directly.
+ *
+ * Only one of min_ms2_difference_in_da and min_ms2_difference_in_ppm should be positive.
+ *
+ * @param spectrum_a The first spectrum.  A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
+ * @param spectrum_a_len The length of the first spectrum.
+ * @param spectrum_b The second spectrum.  A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
+ * @param spectrum_b_len The length of the second spectrum.
+ * @param ms2_tolerance_in_da The MS2 tolerance in Da, set to -1 if you want to use ppm.
+ * @param ms2_tolerance_in_ppm The MS2 tolerance in ppm, set to -1 if you want to use Da.
+ * @param clean_spectra Whether to clean the spectra.
+ * If set to false, the spectra need to be cleaned before calling this function, or the result will be wrong.
+ * If set to false, the following parameters will be ignored.
+ * @param min_mz The minimum m/z of the spectra, set to -1 if you want to use the minimum m/z of the spectra.
+ * @param max_mz The maximum m/z of the spectra, set to -1 if you want to use the maximum m/z of the spectra.
+ * @param noise_threshold The noise threshold, set to -1 if you want to use the noise threshold of the spectra.
+ * @param max_peak_num The maximum number of peaks in the spectra, set to -1 if you want to use the maximum number of peaks of the spectra.
+ *
+ * @return The unweighted entropy similarity of the two spectra.
+ */
 float calculate_unweighted_entropy_similarity(
     float_spec *spectrum_a, int spectrum_a_len,
     float_spec *spectrum_b, int spectrum_b_len,
@@ -29,8 +51,29 @@ float calculate_unweighted_entropy_similarity(
     float noise_threshold,
     int max_peak_num);
 
-// Calculate entropy similarity, the spectrum_a and spectrum_b will be modified.
-// If the spectra_is_preclean is true, the spectrum_a and spectrum_b need to be cleaned before calculating the similarity, or the similarity will be wrong.
+/** Calculate entropy similarity for two spectra.
+ *
+ * Note: The spectrum_a and spectrum_b will be modified, if you want to keep the original spectra, please copy them before calling this function.
+ * This function will clean the spectra if clean_spectra is true, otherwise, the spectra will be used directly.
+ *
+ * Only one of min_ms2_difference_in_da and min_ms2_difference_in_ppm should be positive.
+ *
+ * @param spectrum_a The first spectrum.  A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
+ * @param spectrum_a_len The length of the first spectrum.
+ * @param spectrum_b The second spectrum.  A 2D array. spectrum[x][0] is the m/z, spectrum[x][1] is the intensity.
+ * @param spectrum_b_len The length of the second spectrum.
+ * @param ms2_tolerance_in_da The MS2 tolerance in Da, set to -1 if you want to use ppm.
+ * @param ms2_tolerance_in_ppm The MS2 tolerance in ppm, set to -1 if you want to use Da.
+ * @param clean_spectra Whether to clean the spectra before calculating the similarity.
+ * If set to false, the spectra need to be cleaned before calling this function, or the result will be wrong.
+ * If set to false, the following parameters will be ignored.
+ * @param min_mz The minimum m/z of the spectra, -1 means no limit.
+ * @param max_mz The maximum m/z of the spectra, -1 means no limit.
+ * @param noise_threshold The noise threshold, -1 means no limit.
+ * @param max_peak_num The maximum number of peaks in the spectra, -1 means no limit.
+ *
+ * @return The entropy similarity of the two spectra.
+ */
 float calculate_entropy_similarity(
     float_spec *spectrum_a, int spectrum_a_len,
     float_spec *spectrum_b, int spectrum_b_len,
@@ -39,3 +82,7 @@ float calculate_entropy_similarity(
     float min_mz, float max_mz,
     float noise_threshold,
     int max_peak_num);
+
+// Apply weight to a spectrum by spectral entropy.
+// The spectrum need to be precleaned by clean_spectrum function, or the result will be wrong.
+void apply_weight_to_intensity(float_spec *spectrum, int spectrum_length);
