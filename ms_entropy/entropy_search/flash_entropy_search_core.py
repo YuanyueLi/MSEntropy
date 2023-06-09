@@ -606,15 +606,13 @@ def entropy_similarity_search_identity(
 
     Note: the intensity here should be half of the original intensity.
     """
-    intensity_xlog2x: np.float32 = intensity * np.log2(intensity)
-
     all_library_spec_idx = library_spec_idx_array[product_mz_idx_min:product_mz_idx_max]
-
     idx_list = product_mz_idx_min + np.where(np.bitwise_and(all_library_spec_idx >= search_spectra_idx_min, all_library_spec_idx < search_spectra_idx_max))[0]
 
     array_library_spec_idx = library_spec_idx_array[idx_list]
     array_library_peak_intensity = library_peaks_intensity[idx_list]
+    
     array_library_ab = intensity + array_library_peak_intensity
     entropy_similarity[array_library_spec_idx] += (
-        array_library_ab * np.log2(array_library_ab) - intensity_xlog2x - array_library_peak_intensity * np.log2(array_library_peak_intensity)
+        array_library_ab * np.log2(array_library_ab) - intensity * np.log2(intensity) - array_library_peak_intensity * np.log2(array_library_peak_intensity)
     )
