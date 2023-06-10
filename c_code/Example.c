@@ -9,7 +9,7 @@ int main() {
         int spectrum_len = 7;
         int spectrum_output_len = 0;
         print_spectrum("Origin spectrum:\n", spectrum_2d, spectrum_len);
-        spectrum_len = clean_spectrum(*spectrum_2d, spectrum_len, 0, -1, 0.01, 0.05, -1, 2, true);
+        spectrum_len = clean_spectrum(*spectrum_2d, spectrum_len, 0, -1, 0.01, 0.05, -1, 5, true);
         print_spectrum("Final spectrum:\n", spectrum_2d, spectrum_len);
     }
     {

@@ -17,6 +17,13 @@
         "cleanspectrum.h": "c",
         "cleanspectrum.c": "cpp",
         "spectralentropy.h": "c",
-        "spectralentropy.c": "cpp"
+        "spectralentropy.c": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp"
     }
 }

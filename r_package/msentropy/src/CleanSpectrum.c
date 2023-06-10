@@ -200,7 +200,7 @@ int clean_spectrum(float_spec* spectrum, int spectrum_length,
     float_spec* spectrum_ptr = spectrum;
     float_spec* spectrum_end = spectrum + spectrum_length * 2;
     for (; spectrum_ptr < spectrum_end; spectrum_ptr += 2) {
-        if (*spectrum_ptr <= min_mz || *spectrum_ptr >= max_mz) {
+        if (*spectrum_ptr <= min_mz || (*spectrum_ptr >= max_mz && max_mz > 0)) {
             spectrum_ptr[1] = 0;
         }
     }

@@ -28,7 +28,7 @@ typedef float float_spec;
  * Note: The only one of min_ms2_difference_in_da and min_ms2_difference_in_ppm should be positive.
 
  * @param peaks The peaks to be cleaned. A 2D array. peaks[x][0] is the m/z, peaks[x][1] is the intensity.
- * @param spectrum_length The length of the peaks.
+ * @param peaks_length The length of the peaks.
  * @param min_mz The minimum m/z of the peaks. If set to -1, this function will not remove peaks with m/z < min_mz.
  * @param max_mz The maximum m/z of the peaks. If set to -1, this function will not remove peaks with m/z >= max_mz.
  * @param noise_threshold The noise threshold of the peaks. If set to -1, this function will not remove peaks with intensity < noise_threshold * max_intensity.
@@ -39,7 +39,7 @@ typedef float float_spec;
  *
  * @return int The length of the cleaned peaks.
 */
-int clean_spectrum(float_spec* peaks, int spectrum_length,
+int clean_spectrum(float_spec* peaks, int peaks_length,
                    float min_mz, float max_mz,
                    float noise_threshold,
                    float min_ms2_difference_in_da, float min_ms2_difference_in_ppm,
@@ -54,4 +54,4 @@ int sort_spectrum_by_mz_and_zero_intensity(float_spec (*spectrum_2d)[2], int spe
 void calculate_spectrum_argsort(float_spec (*spectrum_2d)[2], int spectrum_len, int* spectrum_argsort);
 bool need_centroid(float_spec (*spectrum_2d)[2], int spectrum_len, float min_ms2_difference_in_da, float min_ms2_difference_in_ppm);
 // Centroid the spectrum, the content in the spectrum will be modified.
-int centroid_spectrum(float_spec (*spectrum_2d)[2], int spectrum_length, float min_ms2_difference_in_da, float min_ms2_difference_in_ppm, int* spectrum_argsort);
+int centroid_spectrum(float_spec (*spectrum_2d)[2], int peaks_length, float min_ms2_difference_in_da, float min_ms2_difference_in_ppm, int* spectrum_argsort);
