@@ -97,15 +97,19 @@ float_spec calculate_spectral_entropy(const float_spec* peaks, int peaks_length)
 
     float_spec intensity_sum = 0;
     for (; peak_ptr < peak_end_ptr; peak_ptr += 2) {
-        intensity_sum += *peak_ptr;
+        if (*peak_ptr > 0) {
+            intensity_sum += *peak_ptr;
+        }
     }
     if (intensity_sum == 0) {
         return 0;
     } else {
         float_spec entropy = 0;
         for (peak_ptr = &peaks[1]; peak_ptr < peak_end_ptr; peak_ptr += 2) {
-            float_spec intensity = (*peak_ptr) / intensity_sum;
-            entropy -= intensity * logf(intensity);
+            if (*peak_ptr > 0) {
+                float_spec intensity = (*peak_ptr) / intensity_sum;
+                entropy -= intensity * logf(intensity);
+            }
         }
         return entropy;
     }
