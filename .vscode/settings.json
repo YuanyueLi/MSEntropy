@@ -14,6 +14,9 @@
         "*.rmd": "markdown",
         "*.ipynb": "python",
         "*.py": "python",
-        "cleanspectrum.h": "c"
+        "cleanspectrum.h": "c",
+        "cleanspectrum.c": "cpp",
+        "spectralentropy.h": "c",
+        "spectralentropy.c": "cpp"
     }
 }

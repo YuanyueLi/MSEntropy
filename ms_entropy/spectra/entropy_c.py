@@ -194,6 +194,7 @@ def calculate_unweighted_entropy_similarity(
     if clean_spectra:
         peaks_a = np.array(peaks_a, dtype=np.float32, copy=True, order="C")
         peaks_b = np.array(peaks_b, dtype=np.float32, copy=True, order="C")
+        
     cfunc_calculate_unweighted_entropy_similarity = lib_spectral_entropy.calculate_unweighted_entropy_similarity
     cfunc_calculate_unweighted_entropy_similarity.argtypes = [
         np.ctypeslib.ndpointer(dtype=np.float32, flags="C_CONTIGUOUS"),  # peaks_a
