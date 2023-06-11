@@ -62,7 +62,7 @@ clean_spectrum <- function(peaks, min_mz, max_mz, noise_threshold, min_ms2_diffe
 #' @param peaks_b A matrix of spectral peaks, with two columns: mz and intensity
 #' @param ms2_tolerance_in_da The MS2 tolerance in Da, set to -1 to disable
 #' @param ms2_tolerance_in_ppm The MS2 tolerance in ppm, set to -1 to disable
-#' @param clean_spectra Whether to clean the spectra before calculating the entropy similarity, see \code{\link{cleanSpectrum}}
+#' @param clean_spectra Whether to clean the spectra before calculating the entropy similarity, see \code{\link{clean_spectrum}}
 #' @param min_mz The minimum mz value to keep, set to -1 to disable
 #' @param max_mz The maximum mz value to keep, set to -1 to disable
 #' @param noise_threshold The noise threshold, set to -1 to disable, all peaks have intensity < noise_threshold * max_intensity will be removed
@@ -77,9 +77,11 @@ clean_spectrum <- function(peaks, min_mz, max_mz, noise_threshold, min_ms2_diffe
 #' intensity_b <- c(37.16, 66.83, 999.0)
 #' peaks_a <- matrix(c(mz_a, intensity_a), ncol = 2, byrow = FALSE)
 #' peaks_b <- matrix(c(mz_b, intensity_b), ncol = 2, byrow = FALSE)
-#' calculate_unweighted_entropy_similarity(peaks_a, peaks_b, ms2_tolerance_in_da = 0.02, ms2_tolerance_in_ppm = -1,
-#'                                         clean_spectra = TRUE, min_mz = 0, max_mz = 1000, noise_threshold = 0.01,
-#'                                         max_peak_num = 100)
+#' calculate_unweighted_entropy_similarity(peaks_a, peaks_b,
+#'                                        ms2_tolerance_in_da = 0.02, ms2_tolerance_in_ppm = -1,
+#'                                        clean_spectra = TRUE, min_mz = 0, max_mz = 1000,
+#'                                        noise_threshold = 0.01,
+#'                                        max_peak_num = 100)
 #'
 calculate_unweighted_entropy_similarity <- function(peaks_a, peaks_b, ms2_tolerance_in_da, ms2_tolerance_in_ppm, clean_spectra, min_mz, max_mz, noise_threshold, max_peak_num) {
     .Call(`_msentropy_r_calculate_unweighted_entropy_similarity`, peaks_a, peaks_b, ms2_tolerance_in_da, ms2_tolerance_in_ppm, clean_spectra, min_mz, max_mz, noise_threshold, max_peak_num)
@@ -93,7 +95,7 @@ calculate_unweighted_entropy_similarity <- function(peaks_a, peaks_b, ms2_tolera
 #' @param peaks_b A matrix of spectral peaks, with two columns: mz and intensity
 #' @param ms2_tolerance_in_da The MS2 tolerance in Da, set to -1 to disable
 #' @param ms2_tolerance_in_ppm The MS2 tolerance in ppm, set to -1 to disable
-#' @param clean_spectra Whether to clean the spectra before calculating the entropy similarity, see \code{\link{cleanSpectrum}}
+#' @param clean_spectra Whether to clean the spectra before calculating the entropy similarity, see \code{\link{clean_spectrum}}
 #' @param min_mz The minimum mz value to keep, set to -1 to disable
 #' @param max_mz The maximum mz value to keep, set to -1 to disable
 #' @param noise_threshold The noise threshold, set to -1 to disable, all peaks have intensity < noise_threshold * max_intensity will be removed
@@ -108,8 +110,10 @@ calculate_unweighted_entropy_similarity <- function(peaks_a, peaks_b, ms2_tolera
 #' intensity_b <- c(37.16, 66.83, 999.0)
 #' peaks_a <- matrix(c(mz_a, intensity_a), ncol = 2, byrow = FALSE)
 #' peaks_b <- matrix(c(mz_b, intensity_b), ncol = 2, byrow = FALSE)
-#' calculate_entropy_similarity(peaks_a, peaks_b, ms2_tolerance_in_da = 0.02, ms2_tolerance_in_ppm = -1,
-#'                              clean_spectra = TRUE, min_mz = 0, max_mz = 1000, noise_threshold = 0.01,
+#' calculate_entropy_similarity(peaks_a, peaks_b,
+#'                              ms2_tolerance_in_da = 0.02, ms2_tolerance_in_ppm = -1,
+#'                              clean_spectra = TRUE, min_mz = 0, max_mz = 1000,
+#'                              noise_threshold = 0.01,
 #'                              max_peak_num = 100)
 #'
 calculate_entropy_similarity <- function(peaks_a, peaks_b, ms2_tolerance_in_da, ms2_tolerance_in_ppm, clean_spectra, min_mz, max_mz, noise_threshold, max_peak_num) {

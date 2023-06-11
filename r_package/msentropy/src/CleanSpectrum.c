@@ -3,20 +3,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 // Print spectrum 2d array
-void print_spectrum(char* info, float_spec (*spectrum_2d)[2], int spectrum_len) {
+void print_spectrum(const char* info, float_spec (*spectrum_2d)[2], int spectrum_len) {
+    return;
     printf("%s", info);
-    int i, j;
+    int i;
     for (i = 0; i < spectrum_len; i++) {
         printf("%d\t%f\t%f\n", i, spectrum_2d[i][0], spectrum_2d[i][1]);
     }
-};
+}
 
 void swap(float_spec* a, float_spec* b) {
     float_spec c = *a;
     *a = *b;
     *b = c;
-};
+}
 
 void inline swap_int(int* a, int* b) {
     int c = *a;
@@ -222,7 +224,7 @@ int clean_spectrum(float_spec* spectrum, int spectrum_length,
             }
         }
         float_spec noise_threshold_intensity = noise_threshold * max_intensity;
-        if (__DEBUG__CLEAN_SPECTRUM__) printf("Remove the peaks with intensity less than %f * %f = %f:\n", noise_threshold, max_intensity, noise_threshold_intensity);
+        // if (__DEBUG__CLEAN_SPECTRUM__) printf("Remove the peaks with intensity less than %f * %f = %f:\n", noise_threshold, max_intensity, noise_threshold_intensity);
         for (int i = 0; i < spectrum_length; i++) {
             if (spectrum_2d[i][1] < noise_threshold_intensity) {
                 spectrum_2d[i][1] = 0;

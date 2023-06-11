@@ -25,7 +25,7 @@ calculate_unweighted_entropy_similarity(
 
 \item{ms2_tolerance_in_ppm}{The MS2 tolerance in ppm, set to -1 to disable}
 
-\item{clean_spectra}{Whether to clean the spectra before calculating the entropy similarity, see \code{\link{cleanSpectrum}}}
+\item{clean_spectra}{Whether to clean the spectra before calculating the entropy similarity, see \code{\link{clean_spectrum}}}
 
 \item{min_mz}{The minimum mz value to keep, set to -1 to disable}
 
@@ -48,8 +48,10 @@ mz_b <- c(120.212, 169.071, 186.066)
 intensity_b <- c(37.16, 66.83, 999.0)
 peaks_a <- matrix(c(mz_a, intensity_a), ncol = 2, byrow = FALSE)
 peaks_b <- matrix(c(mz_b, intensity_b), ncol = 2, byrow = FALSE)
-calculate_unweighted_entropy_similarity(peaks_a, peaks_b, ms2_tolerance_in_da = 0.02, ms2_tolerance_in_ppm = -1,
-                                        clean_spectra = TRUE, min_mz = 0, max_mz = 1000, noise_threshold = 0.01,
-                                        max_peak_num = 100)
+calculate_unweighted_entropy_similarity(peaks_a, peaks_b,
+                                       ms2_tolerance_in_da = 0.02, ms2_tolerance_in_ppm = -1,
+                                       clean_spectra = TRUE, min_mz = 0, max_mz = 1000,
+                                       noise_threshold = 0.01,
+                                       max_peak_num = 100)
 
 }
