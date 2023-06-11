@@ -1,12 +1,13 @@
 Package: msentropy
 Type: Package
 Title: Spectral Entropy for Mass Spectrometry Data
-Version: 1.0
+Version: 0.1.0
 Date: 2023-06-10
 Author: Yuanyue Li
 Maintainer: Yuanyue Li <liyuanyue@gmail.com>
 Description: Calculate spectral entropy, entropy similarity for mass spectrometry data.
 License: Apache (>= 2)
+Depends: R (>= 3.5.0), Rcpp (>= 1.0.10)
 Imports: Rcpp (>= 1.0.10)
 LinkingTo: Rcpp
 RoxygenNote: 7.2.3
