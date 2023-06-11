@@ -4,9 +4,9 @@
 #include <stdlib.h>
 
 // Print spectrum 2d array
-void print_spectrum(char* info, float_spec (*spectrum_2d)[2], int spectrum_len) {
+void print_spectrum(const char* info, float_spec (*spectrum_2d)[2], int spectrum_len) {
     printf("%s", info);
-    int i, j;
+    int i;
     for (i = 0; i < spectrum_len; i++) {
         printf("%d\t%f\t%f\n", i, spectrum_2d[i][0], spectrum_2d[i][1]);
     }
@@ -107,20 +107,6 @@ void inline calculate_spectrum_argsort(float_spec (*spectrum_2d)[2], int spectru
 
     quicksort(spectrum_2d, spectrum_argsort, 0, spectrum_len - 1);
 }
-
-// void inline calculate_spectrum_argsort(float_spec (*spectrum_2d)[2], int spectrum_len, int* spectrum_argsort) {
-//     for (int i = 0; i < spectrum_len; i++) {
-//         spectrum_argsort[i] = i;
-//     }
-//     for (int i = 0; i < spectrum_len - 1; i++) {
-//         for (int j = 0; j < spectrum_len - 1 - i; j++) {
-//             int *a = &(spectrum_argsort[j]), *b = &(spectrum_argsort[j + 1]);
-//             if (spectrum_2d[*a][1] < spectrum_2d[*b][1]) {
-//                 swap_int(a, b);
-//             }
-//         }
-//     }
-// }
 
 bool inline need_centroid(float_spec (*spectrum_2d)[2], int spectrum_len, float min_ms2_difference_in_da, float min_ms2_difference_in_ppm) {
     for (int i = 0; i < spectrum_len - 1; i++) {

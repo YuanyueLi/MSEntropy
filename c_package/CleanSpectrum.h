@@ -46,7 +46,7 @@ int clean_spectrum(float_spec* peaks, int peaks_length,
                    int max_peak_num,
                    bool normalize_intensity);
 
-void print_spectrum(char* info, float_spec (*spectrum_2d)[2], int spectrum_len);
+void print_spectrum(const char* info, float_spec (*spectrum_2d)[2], int spectrum_len);
 void swap(float_spec* a, float_spec* b);
 void swap_int(int* a, int* b);
 void sort_spectrum_by_mz(float_spec (*spectrum_2d)[2], int spectrum_len);

@@ -161,3 +161,4 @@ cython_debug/
 #.idea/
 r_package/msentropy/src/CleanSpectrum.o
 r_package/msentropy/src/RcppExports.cpp
+ms_entropy/spectra/entropy_cython.c
