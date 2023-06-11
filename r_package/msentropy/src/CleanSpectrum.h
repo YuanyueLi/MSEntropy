@@ -2,11 +2,12 @@
 // or project specific include files.
 
 #pragma once
-#define __DEBUG__CLEAN_SPECTRUM__ 1
+#define __DEBUG__CLEAN_SPECTRUM__ 0
+#include <stdbool.h>
 
 #define false 0
 #define true 1
-#define bool int
+// #define bool int
 // typedef int bool;  // or #define bool int
 typedef double float_spec;
 // static_assert(sizeof(float_spec) == 4);

@@ -10,13 +10,13 @@ void print_spectrum(char* info, float_spec (*spectrum_2d)[2], int spectrum_len) 
     for (i = 0; i < spectrum_len; i++) {
         printf("%d\t%f\t%f\n", i, spectrum_2d[i][0], spectrum_2d[i][1]);
     }
-};
+}
 
 void swap(float_spec* a, float_spec* b) {
     float_spec c = *a;
     *a = *b;
     *b = c;
-};
+}
 
 void inline swap_int(int* a, int* b) {
     int c = *a;
