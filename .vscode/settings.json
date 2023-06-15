@@ -9,7 +9,7 @@
     "python.testing.pytestEnabled": false,
     "python.testing.unittestEnabled": true,
     "liveServer.settings.port": 5501,
-    "cmake.sourceDirectory": "/p/MSEntropy/c_code",
+    "cmake.sourceDirectory": "/p/MSEntropy/c_package",
     "files.associations": {
         "*.rmd": "markdown",
         "*.ipynb": "python",
@@ -25,6 +25,7 @@
         "vector": "cpp",
         "string_view": "cpp",
         "initializer_list": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "type_traits": "c"
     }
 }
