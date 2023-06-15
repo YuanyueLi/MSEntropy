@@ -1,0 +1,13 @@
+[package]
+name = "entropy"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+wasm-bindgen = "0.2"
+
+[lib]
+path = "src/spectral_entropy.rs"
+crate-type = ["cdylib", "rlib"]

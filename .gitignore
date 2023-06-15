@@ -5,6 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
+*.o
 
 # Distribution / packaging
 .Python
@@ -158,3 +159,6 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+r_package/msentropy/src/CleanSpectrum.o
+r_package/msentropy/src/RcppExports.cpp
+ms_entropy/spectra/entropy_cython.c
