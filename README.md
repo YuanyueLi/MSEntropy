@@ -1,1 +1,121 @@
-# MSEntropy
+[![DOI](https://zenodo.org/badge/232434019.svg)](https://zenodo.org/badge/latestdoi/232434019)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7972082.svg)](https://doi.org/10.5281/zenodo.7972082)
+
+When use this package, please cite these manuscripts:
+
+Li, Y., Fiehn, O., Flash entropy search to query all mass spectral
+libraries in real time. 04 April 2023, PREPRINT (Version 1) available at Research Square. [https://doi.org/10.21203/rs.3.rs-2693233/v1](https://doi.org/10.21203/rs.3.rs-2693233/v1)
+
+Li, Y., Kind, T., Folz, J. _et al._ Spectral entropy outperforms MS/MS dot product similarity for small-molecule compound identification. _Nat Methods_ **18**, 1524–1531 (2021). [https://doi.org/10.1038/s41592-021-01331-z](https://doi.org/10.1038/s41592-021-01331-z)
+
+# Theoritical Background
+
+`Spectral entropy` is an useful property to measure the complexity of a spectrum. It is inspried by the concept of Shannon entropy in information theory. [(ref)](https://doi.org/10.1038/s41592-021-01331-z)
+
+`Entropy similarity`, which measured spectral similarity based on spectral entropy, has been shown to outperform dot product similarity in compound identification. [(ref)](https://doi.org/10.1038/s41592-021-01331-z)
+
+The calculation of entropy similarity can be accelerated by using the `Flash Entropy Search` algorithm. [(ref)](https://doi.org/10.21203/rs.3.rs-2693233/v1)
+
+# Overview
+
+This repository contains the source code to calculate spectral entropy and entropy similarity in various programming languages. Also implemented the Flash Entropy Search algorithm in Python.
+
+## For Python users
+
+A detailed tutorial is available here: [https://flashentropysearch.readthedocs.io](https://flashentropysearch.readthedocs.io)
+
+### Installation
+
+```bash
+pip install ms_entropy
+```
+
+### Usage
+
+```python
+from ms_entropy import FlashEntropySearch
+entropy_search = FlashEntropySearch()
+entropy_search.build_index(spectral_library)
+entropy_similarity = entropy_search.search(
+    precursor_mz=query_spectrum_precursor_mz, peaks=query_spectrum_peaks)
+```
+
+## For R users
+
+### Installation
+
+```R
+install.packages("msentropy")
+```
+
+### Usage
+
+```R
+library(msentropy)
+
+# Peaks A
+mz_a <- c(169.071, 186.066, 186.0769)
+intensity_a <- c(7.917962, 1.021589, 100.0)
+peaks_a <- matrix(c(mz_a, intensity_a), ncol = 2, byrow = FALSE)
+
+# Peaks B
+mz_b <- c(120.212, 169.071, 186.066)
+intensity_b <- c(37.16, 66.83, 999.0)
+peaks_b <- matrix(c(mz_b, intensity_b), ncol = 2, byrow = FALSE)
+
+# Calculate spectral entropy
+spectral_entropy_a <- calculate_spectral_entropy(clean_spectrum(peaks_a, min_ms2_difference_in_da = 0.02))
+spectral_entropy_b <- calculate_spectral_entropy(clean_spectrum(peaks_b, min_ms2_difference_in_da = 0.02))
+
+# Calculate entropy similarity
+entropy_similarity <- calculate_entropy_similarity(peaks_a, peaks_b, ms2_tolerance_in_da = 0.02)
+```
+
+## For C/C++ users
+
+### Usage
+
+```C
+#include "SpectralEntropy.h"
+
+// Calculate spectral entropy
+{
+    int spec_a_len = 3;
+    float spec_a[3][2] = {{169.071, 7.917962}, {186.066, 1.021589}, {186.0769, 100.0}};
+    
+    // The parameters for clean_spectrum function
+    int normalize_intensity = 1;
+    float ms2_tolerance_in_da = 0.02, ms2_tolerance_in_ppm = -1;
+    float min_mz= -1, max_mz = -1;
+    float noise_threshold = 0.01;
+    int max_peak_num = -1;
+
+    // Alway clean the spectrum before calculating spectral entropy
+    spec_a_len = clean_spectrum(*spec_a, spec_a_len, min_mz, max_mz, noise_threshold, max_peak_num, ms2_tolerance_in_da, ms2_tolerance_in_ppm, max_peak_num, normalize_intensity);
+
+    // Calculate spectral entropy
+    float spectral_entropy = calculate_spectral_entropy(*spec_a, spec_a_len);
+
+    printf("Spectral Entropy: %f\n", spectral_entropy);
+}
+
+// Calculate entropy similarity
+{
+    int spec_a_len = 3;
+    float spec_a[3][2] = {{169.071, 7.917962}, {186.066, 1.021589}, {186.0769, 100.0}};
+
+    int spec_b_len = 3;
+    float spec_b[3][2] = {{120.212, 37.16}, {169.071, 66.83}, {186.066, 999.0}};
+
+    // The parameters for calculate_entropy_similarity function.
+    int clean_spectra = 1;
+    float ms2_tolerance_in_da = 0.02, ms2_tolerance_in_ppm = -1;
+    float min_mz= -1, max_mz = -1;
+    float noise_threshold = 0.01;
+    int max_peak_num = -1;
+
+    // Calculate entropy similarity, the data in spec_a and spec_b will modified.
+    float similarity = calculate_entropy_similarity(*spec_a, spec_a_len, *spec_b, spec_b_len, ms2_tolerance_in_da, ms2_tolerance_in_ppm, clean_spectra, min_mz, max_mz, noise_threshold, max_peak_num);
+    printf("Entropy Similarity: %f\n", similarity);
+}
+```
