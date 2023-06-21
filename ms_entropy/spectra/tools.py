@@ -4,15 +4,15 @@ import numpy as np
 
 
 def clean_spectrum(
-    peaks: Union[list[list[float, float]], np.ndarray],
-    min_mz: float = None,
-    max_mz: float = None,
-    noise_threshold: float = 0.01,
-    min_ms2_difference_in_da: float = 0.05,
-    min_ms2_difference_in_ppm: float = -1,
-    max_peak_num: int = None,
-    normalize_intensity: bool = True,
-    **kwargs
+        peaks: Union[list[list[float, float]], np.ndarray],
+        min_mz: float = -1.,
+        max_mz: float = -1.,
+        noise_threshold: float = 0.01,
+        min_ms2_difference_in_da: float = 0.05,
+        min_ms2_difference_in_ppm: float = -1.,
+        max_peak_num: int = -1,
+        normalize_intensity: bool = True,
+        **kwargs
 ) -> np.ndarray:
     """
     Clean, centroid, and normalize a spectrum with the following steps:
@@ -73,10 +73,10 @@ def clean_spectrum(
     peaks = peaks[np.bitwise_and(peaks[:, 0] > 0, peaks[:, 1] > 0)]
 
     # Step 2. Remove peaks with m/z >= max_mz or m/z < min_mz.
-    if min_mz is not None:
+    if min_mz is not None and min_mz > 0:
         peaks = peaks[peaks[:, 0] >= min_mz]
 
-    if max_mz is not None:
+    if max_mz is not None and max_mz > 0:
         peaks = peaks[peaks[:, 0] <= max_mz]
 
     if peaks.shape[0] == 0:
@@ -96,7 +96,7 @@ def clean_spectrum(
         peaks = peaks[peaks[:, 1] >= noise_threshold * np.max(peaks[:, 1])]
 
     # Step 5. Keep only the top max_peak_num peaks.
-    if max_peak_num is not None:
+    if max_peak_num is not None and max_peak_num > 0:
         # Sort the spectrum by intensity.
         peaks = peaks[np.argsort(peaks[:, 1])[-max_peak_num:]]
         # Sort the spectrum by m/z.
