@@ -1,1 +1,1 @@
-../../c_package/SpectralEntropy.h
+../../language_c/SpectralEntropy.h

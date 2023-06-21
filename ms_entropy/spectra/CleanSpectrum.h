@@ -1,1 +1,1 @@
-../../c_package/CleanSpectrum.h
+../../language_c/CleanSpectrum.h
