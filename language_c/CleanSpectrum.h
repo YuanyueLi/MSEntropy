@@ -4,11 +4,15 @@
 #pragma once
 #define __DEBUG__CLEAN_SPECTRUM__ 0
 
-#define false 0
-#define true 1
-#define bool int
+#include <stdbool.h>
+// #define false 0
+// #define true 1
+// #define bool int
 // typedef int bool;  // or #define bool int
+#ifdef SPEC_TYPE
+#else
 typedef float float_spec;
+#endif
 // static_assert(sizeof(float_spec) == 4);
 
 /**

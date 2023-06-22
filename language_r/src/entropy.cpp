@@ -1,5 +1,9 @@
+#define SPEC_TYPE
+typedef double float_spec;
+
 #include <Rcpp.h>
 using namespace Rcpp;
+
 #include "CleanSpectrum.c"
 #include "SpectralEntropy.c"
 
