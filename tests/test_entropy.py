@@ -10,10 +10,12 @@ class TestSpectralEntropy(unittest.TestCase):
         peaks = me.clean_spectrum(peaks, max_mz=85, noise_threshold=0.01, min_ms2_difference_in_da=0.05)
         np.testing.assert_allclose(peaks, np.array([[69.071, 1.0]], dtype=np.float32), atol=1e-4)
 
+        print("*"*80)
+        print("Test start")
         # Test
         peaks = np.array([[41.04, 0.3716], [69.070, 0.917962], [69.071, 100.0], [86.0969, 66.83]], dtype=np.float32)
         peaks = me.clean_spectrum(peaks, max_mz=85, noise_threshold=0.01, min_ms2_difference_in_ppm=50)
-        np.testing.assert_allclose(peaks, np.array([[69.071, 1.0]], dtype=np.float32), atol=1e-4)
+        np.testing.assert_allclose(peaks, np.array([[69.07099, 1.0]], dtype=np.float32), atol=1e-4)
 
         # Test
         peaks = np.array([[41.04, 1.3716], [69.071, 100.0], [86.0969, 66.83]], dtype=np.float32)

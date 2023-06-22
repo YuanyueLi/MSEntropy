@@ -26,6 +26,8 @@
         "string_view": "cpp",
         "initializer_list": "cpp",
         "utility": "cpp",
-        "type_traits": "c"
+        "type_traits": "c",
+        "stdio.h": "c",
+        "immintrin.h": "c"
     }
 }

@@ -133,25 +133,30 @@ int inline centroid_spectrum(float_spec (*spectrum_2d)[2], int spectrum_length, 
         int idx = spectrum_argsort[i];
         if (min_ms2_difference_in_ppm > 0) {
             mz_delta_allowed_left = spectrum_2d[idx][0] * min_ms2_difference_in_ppm * 1e-6;
-            mz_delta_allowed_right = spectrum_2d[idx][0] / (1 - min_ms2_difference_in_ppm * 1e-6);
+            mz_delta_allowed_right = spectrum_2d[idx][0] / (1 - min_ms2_difference_in_ppm * 1e-6) - spectrum_2d[idx][0];
+            if (__DEBUG__CLEAN_SPECTRUM__) printf("mz: %f, mz_delta_allowed_left: %f, mz_delta_allowed_right: %f\n", spectrum_2d[idx][0], mz_delta_allowed_left, mz_delta_allowed_right);
         }
+        if (__DEBUG__CLEAN_SPECTRUM__) print_spectrum("Input:\n", spectrum_2d, spectrum_length);
         if (spectrum_2d[idx][1] > 0) {
             // Find left board for current peak
             int idx_left = idx - 1;
             while (idx_left >= 0 && spectrum_2d[idx][0] - spectrum_2d[idx_left][0] <= mz_delta_allowed_left) {
                 idx_left--;
             }
+            if (__DEBUG__CLEAN_SPECTRUM__) printf("idx_left: %d\n", idx_left);
 
             // Find right board for current peak
             int idx_right = idx + 1;
             while (idx_right < spectrum_length && spectrum_2d[idx_right][0] - spectrum_2d[idx][0] <= mz_delta_allowed_right) {
                 idx_right++;
             }
+            if (__DEBUG__CLEAN_SPECTRUM__) printf("idx_right: %d\n", idx_right);
 
             // Merge the peaks in the board
             float_spec intensity_sum = 0;
             float_spec intensity_weighted_sum = 0;
             for (int i = idx_left + 1; i < idx_right; i++) {
+                if (__DEBUG__CLEAN_SPECTRUM__) printf("i: %d, mz: %f, intensity: %f\n", i, spectrum_2d[i][0], spectrum_2d[i][1]);
                 intensity_sum += spectrum_2d[i][1];
                 intensity_weighted_sum += spectrum_2d[i][1] * spectrum_2d[i][0];
                 spectrum_2d[i][1] = 0;
@@ -161,6 +166,7 @@ int inline centroid_spectrum(float_spec (*spectrum_2d)[2], int spectrum_length, 
             spectrum_2d[idx][0] = intensity_weighted_sum / intensity_sum;
             spectrum_2d[idx][1] = intensity_sum;
         }
+        if (__DEBUG__CLEAN_SPECTRUM__) print_spectrum("Input:\n", spectrum_2d, spectrum_length);
     }
     spectrum_length = sort_spectrum_by_mz_and_zero_intensity(spectrum_2d, spectrum_length);
     return spectrum_length;

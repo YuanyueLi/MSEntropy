@@ -40,8 +40,8 @@ setup(
                 [r"ms_entropy/spectra/entropy_cython.pyx", r"ms_entropy/spectra/CleanSpectrum.c", r"ms_entropy/spectra/SpectralEntropy.c"],
             ),
             Extension(
-                "ms_entropy.entropy_search.flash_entropy_search_identity_search_cpy",
-                [r"ms_entropy/entropy_search/flash_entropy_search_identity_search_cpy.pyx"],
+                "ms_entropy.entropy_search.fast_flash_entropy_search_cpython",
+                [r"ms_entropy/entropy_search/fast_flash_entropy_search_cpython.pyx"],
             ),
         ],
         annotate=False,

@@ -88,7 +88,7 @@ class FlashEntropySearch:
                                   precursor_ions_removal_da: float = 1.6,
                                   noise_threshold=0.01,
                                   min_ms2_difference_in_da: float = 0.05,
-                                  max_peak_num: int = None):
+                                  max_peak_num: int = 0):
         """
         Clean the MS/MS spectrum, need to be called before any search.
 
@@ -99,14 +99,14 @@ class FlashEntropySearch:
         :param noise_threshold: The intensity threshold for removing the noise peaks. The peaks with intensity smaller than noise_threshold * max(intensity)
                                 will be removed. Default is 0.01.
         :param min_ms2_difference_in_da:    The minimum difference between two peaks in the MS/MS spectrum. Default is 0.05.
-        :param max_peak_num:    The maximum number of peaks in the MS/MS spectrum. Default is None, which means no limit.
+        :param max_peak_num:    The maximum number of peaks in the MS/MS spectrum. Default is 0, which means no limit.
         """
         if precursor_ions_removal_da is not None:
             max_mz = precursor_mz - precursor_ions_removal_da
         else:
             max_mz = None
         return clean_spectrum(peaks=peaks,
-                              min_mz=None,
+                              min_mz=-1,
                               max_mz=max_mz,
                               noise_threshold=noise_threshold,
                               min_ms2_difference_in_da=min_ms2_difference_in_da,
@@ -186,7 +186,7 @@ class FlashEntropySearch:
                     precursor_ions_removal_da: float = 1.6,
                     noise_threshold=0.01,
                     min_ms2_difference_in_da: float = 0.05,
-                    max_peak_num: int = None,
+                    max_peak_num: int = 0,
                     clean_spectra: bool = True):
         """
         Set the library spectra for entropy search.
@@ -210,7 +210,7 @@ class FlashEntropySearch:
         :param noise_threshold: The intensity threshold for removing the noise peaks. The peaks with intensity smaller than noise_threshold * max(intensity)
                                 will be removed. Default is 0.01.
         :param min_ms2_difference_in_da:    The minimum difference between two peaks in the MS/MS spectrum. Default is 0.05.
-        :param max_peak_num:    The maximum number of peaks in the MS/MS spectrum. Default is None, which means no limit.
+        :param max_peak_num:    The maximum number of peaks in the MS/MS spectrum. Default is 0, which means no limit.
         :param clean_spectra:   If True, the spectra will be cleaned before indexing. Default is True. If ALL spectra in the library are pre-cleaned with the
                                 function `clean_spectrum` or `clean_spectrum_for_search`, set this parameter to False. ALWAYS set this parameter to true if
                                 the spectra are not pre-prepossessed with the function `clean_spectrum` or `clean_spectrum_for_search`.

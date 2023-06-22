@@ -5,7 +5,7 @@ from pathlib import Path
 from functools import reduce
 import multiprocessing
 from ..spectra import apply_weight_to_intensity
-from .flash_entropy_search_identity_search import entropy_similarity_search_identity
+from .fast_flash_entropy_search import entropy_similarity_search, entropy_similarity_search_identity
 
 
 class FlashEntropySearchCore:
@@ -144,9 +144,12 @@ class FlashEntropySearchCore:
             )
 
             if target == "cpu" and search_type == 0:
-                intensity_library = library_peaks_intensity[product_mz_idx_min:product_mz_idx_max]
-                modified_idx = library_spec_idx[product_mz_idx_min:product_mz_idx_max]
-                entropy_similarity[modified_idx] += self._score_peaks_with_cpu(intensity_query, intensity_library)
+                # intensity_library = library_peaks_intensity[product_mz_idx_min:product_mz_idx_max]
+                # modified_idx = library_spec_idx[product_mz_idx_min:product_mz_idx_max]
+                # entropy_similarity[modified_idx] += self._score_peaks_with_cpu(intensity_query, intensity_library)
+                entropy_similarity_search(
+                    product_mz_idx_min, product_mz_idx_max, intensity_query, entropy_similarity, library_peaks_intensity, library_spec_idx
+                )
             elif target == "cpu" and search_type == 1:
                 entropy_similarity_search_identity(
                     product_mz_idx_min,

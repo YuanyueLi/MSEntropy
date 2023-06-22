@@ -92,6 +92,11 @@ cpdef np.ndarray[float32, ndim=2] cy_clean_spectrum(
         The cleaned spectrum will be guaranteed to be sorted by m/z in ascending order.
 
     """
+    if len(peaks) == 0:
+        return np.zeros((0, 2), dtype=np.float32)
+    if min_ms2_difference_in_da < 0 and min_ms2_difference_in_ppm < 0:
+        raise ValueError("Either min_ms2_difference_in_da or min_ms2_difference_in_ppm must be positive.")
+
     cdef np.ndarray[float32, ndim=2] clean_peaks = np.array(peaks, dtype=np.float32, copy=True, order="C")
     min_mz = -1 if min_mz is None else min_mz
     max_mz = -1 if max_mz is None else max_mz
