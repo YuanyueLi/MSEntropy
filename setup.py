@@ -39,6 +39,10 @@ setup(
                 "ms_entropy.spectra.entropy_cython",
                 [r"ms_entropy/spectra/entropy_cython.pyx", r"ms_entropy/spectra/CleanSpectrum.c", r"ms_entropy/spectra/SpectralEntropy.c"],
             ),
+            Extension(
+                "ms_entropy.entropy_search.flash_entropy_search_identity_search_cpy",
+                [r"ms_entropy/entropy_search/flash_entropy_search_identity_search_cpy.pyx"],
+            ),
         ],
         annotate=False,
         compiler_directives={
