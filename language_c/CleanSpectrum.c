@@ -5,11 +5,13 @@
 
 // Print spectrum 2d array
 void print_spectrum(const char* info, float_spec (*spectrum_2d)[2], int spectrum_len) {
+#ifdef __DEBUG__
     printf("%s", info);
     int i;
     for (i = 0; i < spectrum_len; i++) {
         printf("%d\t%f\t%f\n", i, spectrum_2d[i][0], spectrum_2d[i][1]);
     }
+#endif
 }
 
 void swap(float_spec* a, float_spec* b) {

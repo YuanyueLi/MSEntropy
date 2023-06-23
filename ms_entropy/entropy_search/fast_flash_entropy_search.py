@@ -1,23 +1,9 @@
 import numpy as np
 
 try:
-    from .fast_flash_entropy_search_cpython import \
-        entropy_similarity_search_fast as entropy_similarity_search, \
-        entropy_similarity_identity_search_fast as entropy_similarity_search_identity
+    from .fast_flash_entropy_search_cpython import  cy_entropy_similarity_identity_search as entropy_similarity_search_identity
 
 except ImportError:
-    print("ImportError: cannot import cython code, use python instead.")
-
-    def entropy_similarity_search(
-            product_mz_idx_min, product_mz_idx_max,
-            intensity_query, entropy_similarity,
-            library_peaks_intensity, library_spec_idx_array):
-        intensity_library = library_peaks_intensity[product_mz_idx_min:product_mz_idx_max]
-        modified_idx = library_spec_idx_array[product_mz_idx_min:product_mz_idx_max]
-        intensity_mix = intensity_library + intensity_query
-        modified_value = intensity_mix * np.log2(intensity_mix) - intensity_library * np.log2(intensity_library) - intensity_query * np.log2(intensity_query)
-        entropy_similarity[modified_idx] += modified_value
-
     def entropy_similarity_search_identity(
         product_mz_idx_min,
         product_mz_idx_max,

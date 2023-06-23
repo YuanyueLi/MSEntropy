@@ -28,6 +28,9 @@
         "utility": "cpp",
         "type_traits": "c",
         "stdio.h": "c",
-        "immintrin.h": "c"
+        "immintrin.h": "c",
+        "cmath": "c",
+        "flashentropysearch.h": "c",
+        "functional": "c"
     }
 }
