@@ -16,7 +16,7 @@ Li, Y., Kind, T., Folz, J. _et al._ Spectral entropy outperforms MS/MS dot produ
 
 The calculation of entropy similarity can be accelerated by using the `Flash Entropy Search` algorithm. [(ref)](https://doi.org/10.21203/rs.3.rs-2693233/v1)
 
-# Overview
+# How to use this package
 
 This repository contains the source code to calculate spectral entropy and entropy similarity in various programming languages. Also implemented the Flash Entropy Search algorithm in Python.
 

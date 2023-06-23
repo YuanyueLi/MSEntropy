@@ -36,11 +36,13 @@
 
     Module.onRuntimeInitialized = async () => {
       const api = {
-        clean_spectrum: Module.cwrap("clean_spectrum", "number",
+        clean_spectrum: Module.cwrap("wasm_clean_spectrum", "number",
           ["number", "number", "number", "number", "number", "number", "number", "number", "number",]),
-        calculate_entropy_similarity: Module.cwrap("calculate_entropy_similarity", "number",
+        calculate_entropy_similarity: Module.cwrap("wasm_calculate_entropy_similarity", "number",
           ["number", "number", "number", "number", "number", "number", "number", "number", "number", "number", "number", "number",]),
-        calculate_unweighted_entropy_similarity: Module.cwrap("calculate_unweighted_entropy_similarity", "number",
+        calculate_unweighted_entropy_similarity: Module.cwrap("wasm_calculate_unweighted_entropy_similarity", "number",
+          ["number", "number", "number", "number", "number", "number", "number", "number", "number", "number", "number", "number",]),
+        calculate_entropy_similarity: Module.cwrap("wasm_calculate_entropy_similarity", "number",
           ["number", "number", "number", "number", "number", "number", "number", "number", "number", "number", "number", "number",]),
       };
 
