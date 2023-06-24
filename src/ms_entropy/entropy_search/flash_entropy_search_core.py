@@ -560,7 +560,7 @@ class FlashEntropySearchCore:
         path_data = Path(path_data)
         path_data.mkdir(parents=True, exist_ok=True)
         for i, name in enumerate(self.index_names):
-            self.index[i].tofile(path_data / f"{name}.npy")
+            self.index[i].tofile(str(path_data / f"{name}.npy"))
         information = {
             "mz_index_step": float(self.mz_index_step),
             "total_spectra_num": int(self.total_spectra_num),

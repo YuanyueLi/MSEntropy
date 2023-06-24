@@ -4,8 +4,8 @@ from . import tools
 
 
 def calculate_entropy_similarity(
-    peaks_a: Union[list[list[float, float]], np.ndarray],
-    peaks_b: Union[list[list[float, float]], np.ndarray],
+    peaks_a,
+    peaks_b,
     ms2_tolerance_in_da: float = 0.02,
     ms2_tolerance_in_ppm: float = -1,
     clean_spectra: bool = True,
@@ -82,8 +82,8 @@ def calculate_entropy_similarity(
 
 
 def calculate_unweighted_entropy_similarity(
-    peaks_a: Union[list[list[float, float]], np.ndarray],
-    peaks_b: Union[list[list[float, float]], np.ndarray],
+    peaks_a,
+    peaks_b,
     ms2_tolerance_in_da: float = 0.02,
     ms2_tolerance_in_ppm: float = -1,
     clean_spectra: bool = True,
@@ -224,7 +224,7 @@ def apply_weight_to_intensity(peaks: np.ndarray) -> np.ndarray:
     return weighted_peaks
 
 
-def calculate_spectral_entropy(peaks: Union[list[list[float, float]], np.ndarray], clean_spectrum=True, **kwargs) -> float:
+def calculate_spectral_entropy(peaks, clean_spectrum=True, **kwargs) -> float:
     """Calculate the spectral entropy of a spectrum.
 
     Parameters

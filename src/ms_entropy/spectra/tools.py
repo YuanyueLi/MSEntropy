@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-from typing import Union
 import numpy as np
 
 
 def clean_spectrum(
-        peaks: Union[list[list[float, float]], np.ndarray],
+        peaks,
         min_mz: float = -1.,
         max_mz: float = -1.,
         noise_threshold: float = 0.01,

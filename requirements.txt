@@ -1,2 +1,2 @@
-numpy >= 1.22
+numpy >= 1.16.6
 pyteomics >= 4.6

@@ -303,9 +303,9 @@ class FlashEntropySearch:
         path_data = Path(path_data)
         path_data.mkdir(parents=True, exist_ok=True)
 
-        self.precursor_mz_array.tofile(path_data/"precursor_mz.npy")
-        self.metadata.tofile(path_data/"metadata.npy")
-        self.metadata_loc.tofile(path_data/"metadata_loc.npy")
+        self.precursor_mz_array.tofile(str(path_data/"precursor_mz.npy"))
+        self.metadata.tofile(str(path_data/"metadata.npy"))
+        self.metadata_loc.tofile(str(path_data/"metadata_loc.npy"))
 
         self.entropy_search.write(path_data)
 
@@ -326,9 +326,9 @@ class FlashEntropySearch:
             self.metadata = np.memmap(path_data/"metadata.npy", dtype=np.uint8, mode="r")
             self.metadata_loc = np.memmap(path_data/"metadata_loc.npy", dtype=np.uint64, mode="r")
         else:
-            self.precursor_mz_array = np.fromfile(path_data/"precursor_mz.npy", dtype=np.float32)
-            self.metadata = np.fromfile(path_data/"metadata.npy", dtype=np.uint8)
-            self.metadata_loc = np.fromfile(path_data/"metadata_loc.npy", dtype=np.uint64)
+            self.precursor_mz_array = np.fromfile(str(path_data/"precursor_mz.npy"), dtype=np.float32)
+            self.metadata = np.fromfile(str(path_data/"metadata.npy"), dtype=np.uint8)
+            self.metadata_loc = np.fromfile(str(path_data/"metadata_loc.npy"), dtype=np.uint64)
 
         return self.entropy_search.read(path_data)
 

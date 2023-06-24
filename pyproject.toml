@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "MS-Entropy"
+version = "0.9.0"
+authors = [{ name = "Yuanyue Li", email = "liyuanyue@gmail.com" }]
+description = "This package provides a Python implementation of calculating spectral entropy, entropy similarity, and Flash entropy search for mass spectrometry data."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+license = { file = "LICENSE" }
+keywords = [
+    "mass spectrometry",
+    "ms entropy",
+    "entropy",
+    "spectral entropy",
+    "entropy similarity",
+    "flash entropy",
+    "flash entropy similarity",
+    "flash entropy search",
+]
+dependencies = ["numpy >= 1.16.6"]
+
+[project.optional-dependencies]
+all = [
+    "cython >= 0.29",
+    "lz4 >= 4.3.2",
+    "msgpack >= 1.0.5",
+    "pyteomics == 4.6",
+    "cupy >= 12.0.0",
+]
+gpu = ["cupy >= 12.0.0"]
+
+
+[project.urls]
+"Homepage" = "https://github.com/YuanyueLi/MSEntropy"
+"Bug Tracker" = "https://github.com/YuanyueLi/MSEntropy/issues"
