@@ -1,3 +1,2 @@
-numpy >= 1.16.6
-cython >= 0.28.4
-pyteomics >= 4.6
+numpy >= 1.9.3
+cython >= 0.26.1
