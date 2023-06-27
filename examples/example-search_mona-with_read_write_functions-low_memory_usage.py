@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import zipfile
 
-from ms_entropy.flash_entropy_search import FlashEntropySearch
+from ms_entropy import FlashEntropySearch
 
 
 url_mona = r'https://mona.fiehnlab.ucdavis.edu/rest/downloads/retrieve/03d5a22c-c1e1-4101-ac70-9a4eae437ef5'
