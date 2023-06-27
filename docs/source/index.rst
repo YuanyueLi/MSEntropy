@@ -15,6 +15,7 @@ You can also find some examples in the `examples <https://github.com/YuanyueLi/F
 
 .. toctree::
    :maxdepth: 2
+   :numbered:
    :caption: Contents:
 
    install
