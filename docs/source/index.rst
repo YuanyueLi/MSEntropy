@@ -26,5 +26,6 @@ Additionally, you may find practical examples in the `examples <https://github.c
    :caption: Contents:
 
    install
+   basic_usage_for_entropy_search
    api
    api_pipe
