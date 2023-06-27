@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Introduction to MS Entropy!
-===========================
+Introduction to MS Entropy
+==========================
 
 Thank you for using the MS Entropy package, you can download the code from `MS Entropy Github repository <https://github.com/YuanyueLi/MSEntropy>`_.
 If you encounter any issues, queries or need support, don't hesitate to contact :email:`Yuanyue Li <liyuanyue@gmail.com>`
@@ -25,8 +25,10 @@ Additionally, you may find practical examples in the `examples <https://github.c
    :numbered:
    :caption: Contents:
 
+   self
    install
    basic_usage_for_entropy_search
+   advanced_usage_for_entropy_search
    useful_functions
    api
    api_pipe

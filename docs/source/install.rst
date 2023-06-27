@@ -21,6 +21,7 @@ Installing from PyPI
 ====================
 
 Before starting the installation process, ensure that you have a ``C compiler and Python development headers`` installed:
+
 - On Linux, install the ``gcc`` and ``python-dev`` (for apt) or ``python-devel`` (for yum) packages.
 - On Windows, install the `Microsoft Visual C++ 14.0 or greater Build Tools <https://visualstudio.microsoft.com/visual-cpp-build-tools/>`_.
 - On macOS, install the ``Xcode Command Line Tools``.
