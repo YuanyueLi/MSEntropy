@@ -22,7 +22,6 @@ Before installing the package, you will need to have ``C compiler and Python dev
   - On macOS, you will need to install the ``Xcode Command Line Tools`` first.
 
 
-
 From source
 ============
 
