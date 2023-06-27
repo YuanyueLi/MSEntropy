@@ -6,9 +6,17 @@
 Welcome to MS Entropy's documentation!
 ======================================
 
+Welcome to use this package, you can download the code from `MS Entropy Github repository <https://github.com/YuanyueLi/MSEntropy>`_.
+If you have any question, please send E-mail to :email:`Yuanyue Li <liyuanyue@gmail.com>`
+
+You can find the documentation of this package at `Read the Docs <https://msentropy.readthedocs.io>`_.
+
+You can also find some examples in the `examples <https://github.com/YuanyueLi/FlashEntropySearch/tree/main/examples>`_ folder.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   install
    api
    api_pipe

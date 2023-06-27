@@ -31,5 +31,6 @@
         "cmath": "c",
         "flashentropysearch.h": "c",
         "functional": "c"
-    }
+    },
+    "esbonio.sphinx.confDir": ""
 }
