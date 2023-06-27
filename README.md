@@ -1,5 +1,6 @@
 [![DOI](https://zenodo.org/badge/232434019.svg)](https://zenodo.org/badge/latestdoi/232434019)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7972082.svg)](https://doi.org/10.5281/zenodo.7972082)
+[![Test MS Entropy package](https://github.com/YuanyueLi/MSEntropy/actions/workflows/run_test.yml/badge.svg)](https://github.com/YuanyueLi/MSEntropy/actions/workflows/run_test.yml)
 
 When use this package, please cite these manuscripts:
 
