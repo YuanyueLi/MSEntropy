@@ -19,7 +19,13 @@ release = "0.1.0"
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.doctest", "sphinx.ext.autosummary", "sphinx.ext.viewcode", "sphinx.ext.githubpages", "numpydoc"]
+extensions = ["sphinx.ext.autodoc", 
+              "sphinx.ext.doctest", 
+              "sphinx.ext.autosummary", 
+              "sphinx.ext.viewcode", 
+              "sphinx.ext.githubpages",
+              "sphinxcontrib.email",
+              "numpydoc"]
 
 # apidoc_module_dir = "../../ms_entropy"
 # apidoc_output_dir = "./api"
