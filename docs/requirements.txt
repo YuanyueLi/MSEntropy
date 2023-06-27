@@ -1,3 +1,4 @@
 myst_parser
 numpydoc
 sphinxcontrib-email
+numpy
