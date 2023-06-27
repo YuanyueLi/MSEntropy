@@ -11,7 +11,7 @@ If you have any question, please send E-mail to :email:`Yuanyue Li <liyuanyue@gm
 
 You can find the documentation of this package at `Read the Docs <https://msentropy.readthedocs.io>`_.
 
-You can also find some examples in the `examples <https://github.com/YuanyueLi/FlashEntropySearch/tree/main/examples>`_ folder.
+You can also find some examples in the `examples <https://github.com/YuanyueLi/MSEntropy/tree/main/examples>`_ folder.
 
 .. toctree::
    :maxdepth: 2
