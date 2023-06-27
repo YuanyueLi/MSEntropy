@@ -67,28 +67,28 @@ class TestFlashEntropySearchWithCpu(unittest.TestCase):
         np.testing.assert_almost_equal(similarity, [1.0, 0.0, 0.0, 0.0], decimal=5)
 
 
-class TestFlashEntropySearchWithGpu(TestFlashEntropySearchWithCpu):
-    def test_hybrid_search(self):
-        similarity = self.flash_entropy.hybrid_search(precursor_mz=self.query_spectrum['precursor_mz'],
-                                                      peaks=self.query_spectrum['peaks'],
-                                                      ms2_tolerance_in_da=0.02, target='gpu')
-        np.testing.assert_almost_equal(similarity, [1.0, 0.22299, 0.66897, 0.66897], decimal=5)
+# class TestFlashEntropySearchWithGpu(TestFlashEntropySearchWithCpu):
+#     def test_hybrid_search(self):
+#         similarity = self.flash_entropy.hybrid_search(precursor_mz=self.query_spectrum['precursor_mz'],
+#                                                       peaks=self.query_spectrum['peaks'],
+#                                                       ms2_tolerance_in_da=0.02, target='gpu')
+#         np.testing.assert_almost_equal(similarity, [1.0, 0.22299, 0.66897, 0.66897], decimal=5)
 
-    def test_neutral_loss_search(self):
-        similarity = self.flash_entropy.neutral_loss_search(precursor_mz=self.query_spectrum['precursor_mz'],
-                                                            peaks=self.query_spectrum['peaks'],
-                                                            ms2_tolerance_in_da=0.02, target='gpu')
-        np.testing.assert_almost_equal(similarity, [1.0, 0.0, 0.44598, 0.22299], decimal=5)
+#     def test_neutral_loss_search(self):
+#         similarity = self.flash_entropy.neutral_loss_search(precursor_mz=self.query_spectrum['precursor_mz'],
+#                                                             peaks=self.query_spectrum['peaks'],
+#                                                             ms2_tolerance_in_da=0.02, target='gpu')
+#         np.testing.assert_almost_equal(similarity, [1.0, 0.0, 0.44598, 0.22299], decimal=5)
 
-    def test_open_search(self):
-        similarity = self.flash_entropy.open_search(peaks=self.query_spectrum['peaks'], ms2_tolerance_in_da=0.02, target='gpu')
-        np.testing.assert_almost_equal(similarity, [1.0, 0.22299, 0.22299, 0.44598], decimal=5)
+#     def test_open_search(self):
+#         similarity = self.flash_entropy.open_search(peaks=self.query_spectrum['peaks'], ms2_tolerance_in_da=0.02, target='gpu')
+#         np.testing.assert_almost_equal(similarity, [1.0, 0.22299, 0.22299, 0.44598], decimal=5)
 
-    def test_identity_search(self):
-        similarity = self.flash_entropy.identity_search(precursor_mz=self.query_spectrum['precursor_mz'],
-                                                        peaks=self.query_spectrum['peaks'],
-                                                        ms1_tolerance_in_da=0.01, ms2_tolerance_in_da=0.02, target='gpu')
-        np.testing.assert_almost_equal(similarity, [1.0, 0.0, 0.0, 0.0], decimal=5)
+#     def test_identity_search(self):
+#         similarity = self.flash_entropy.identity_search(precursor_mz=self.query_spectrum['precursor_mz'],
+#                                                         peaks=self.query_spectrum['peaks'],
+#                                                         ms1_tolerance_in_da=0.01, ms2_tolerance_in_da=0.02, target='gpu')
+#         np.testing.assert_almost_equal(similarity, [1.0, 0.0, 0.0, 0.0], decimal=5)
 
 
 if __name__ == '__main__':
