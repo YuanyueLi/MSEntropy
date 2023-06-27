@@ -22,9 +22,9 @@ def calculate_entropy_similarity(
     The formula for entropy similarity is as follows:
 
     .. math::
-        Similarity = \\frac{1}{2} \\begin{cases}
+        Similarity = \\frac{1}{2} \\sum_{i,j}{ \\begin{cases}
         0 & \\text{ if } mz_{A,i} \\neq mz_{B,j} \\\\
-        \\sum_{i,j} {f(I_{A,i}+I_{B,j}) - f(I_{A,i}) - f(I_{B,j})} & \\text{ if } mz_{A,i} = mz_{B,j}
+        f(I_{A,i}+I_{B,j}) - f(I_{A,i}) - f(I_{B,j}) & \\text{ if } mz_{A,i} = mz_{B,j}}
         \\end{cases}
 
     .. math::
