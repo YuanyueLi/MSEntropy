@@ -23,7 +23,7 @@ This repository contains the source code to calculate spectral entropy and entro
 
 ## For Python users
 
-A detailed tutorial is available here: [https://flashentropysearch.readthedocs.io](https://flashentropysearch.readthedocs.io)
+A detailed tutorial is available here: [https://msentropy.readthedocs.io](https://msentropy.readthedocs.io)
 
 ### Installation
 

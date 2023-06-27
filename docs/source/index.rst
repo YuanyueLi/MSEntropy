@@ -21,10 +21,11 @@ Additionally, you may find practical examples in the `examples <https://github.c
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :numbered:
    :caption: Contents:
 
+   index
    install
    basic_usage_for_entropy_search
    api
