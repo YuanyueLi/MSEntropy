@@ -1,8 +1,8 @@
 [![DOI](https://zenodo.org/badge/232434019.svg)](https://zenodo.org/badge/latestdoi/232434019)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7972082.svg)](https://doi.org/10.5281/zenodo.7972082)
-[![Test MS Entropy package](https://github.com/YuanyueLi/MSEntropy/actions/workflows/run_test.yml/badge.svg)](https://github.com/YuanyueLi/MSEntropy/actions/workflows/run_test.yml)
+[![Test MS Entropy package](https://github.com/YuanyueLi/MSEntropy/actions/workflows/run_test.yml/badge.svg?branch=main)](https://github.com/YuanyueLi/MSEntropy/actions/workflows/run_test.yml)
 
-When use this package, please cite these manuscripts:
+If you find this package useful, please consider citing the following papers:
 
 Li, Y., Fiehn, O., Flash entropy search to query all mass spectral
 libraries in real time. 04 April 2023, PREPRINT (Version 1) available at Research Square. [https://doi.org/10.21203/rs.3.rs-2693233/v1](https://doi.org/10.21203/rs.3.rs-2693233/v1)
