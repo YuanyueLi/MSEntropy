@@ -27,5 +27,6 @@ Additionally, you may find practical examples in the `examples <https://github.c
 
    install
    basic_usage_for_entropy_search
+   useful_functions
    api
    api_pipe
