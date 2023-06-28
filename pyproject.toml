@@ -4,7 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ms_entropy"
-version = "0.9.1"
+# version = "0.9.1"
+dynamic = ["version"]
 authors = [{ name = "Yuanyue Li", email = "liyuanyue@gmail.com" }]
 description = "This package provides a Python implementation of calculating spectral entropy, entropy similarity, and Flash entropy search for mass spectrometry data."
 readme = "README.md"
@@ -35,3 +36,6 @@ gpu = ["cupy >= 12.0.0"]
 [project.urls]
 "Homepage" = "https://github.com/YuanyueLi/MSEntropy"
 "Bug Tracker" = "https://github.com/YuanyueLi/MSEntropy/issues"
+
+[tool.setuptools.dynamic]
+version = {attr = "ms_entropy.__version__"}

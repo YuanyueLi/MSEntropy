@@ -6,3 +6,4 @@ from .spectra import (
     apply_weight_to_intensity,
 )
 from .entropy_search import FlashEntropySearch, FlashEntropySearchCore, FlashEntropySearchCoreLowMemory
+from .version import __version__
