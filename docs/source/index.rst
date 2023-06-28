@@ -13,7 +13,7 @@ This package comprises the following modules:
 
 1.  **Classical entropy functions:** These functions are ideal for calculating the classical spectral entropy and entropy similarity for a small set of spectrum pairs.
 
-3.  **Flash Entropy Search Algorithm Functions:** If your task involves searching spectra against a large spectral library, this algorithm will significantly improve the speed of the search process.
+2.  **Flash Entropy Search Algorithm Functions:** If your task involves searching spectra against a large spectral library, this algorithm will significantly improve the speed of the search process.
 
 
 For a comprehensive understanding of the package, refer to our documentation hosted on `Read the Docs <https://msentropy.readthedocs.io>`_.
@@ -30,6 +30,8 @@ Additionally, you may find practical examples in the `examples <https://github.c
    :maxdepth: 1
    :caption: 📊 Classical entropy functions:
 
+   classical_spectral_entropy
+   classical_entropy_similarity
    classical_useful_functions
    classical_api
 

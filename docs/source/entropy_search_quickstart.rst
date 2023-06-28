@@ -3,14 +3,20 @@ Quick start
 ===========
 
 
-Super quick start
-=================
+Overview
+========
 
 .. code-block:: python
 
     from ms_entropy import FlashEntropySearch
+
+    # Construct the FlashEntropySearch class
     entropy_search = FlashEntropySearch()
+
+    # Step 1: Build the index from the library spectra
     entropy_search.build_index(spectral_library)
+
+    # Step 2: Search the library
     entropy_similarity = entropy_search.search(
         precursor_mz = query_spectrum_precursor_mz, peaks = query_spectrum_peaks)
 
