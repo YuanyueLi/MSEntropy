@@ -21,18 +21,21 @@ jobs:
         env:
           CIBW_ARCHS_MACOS: x86_64 arm64
           CIBW_ARCHS_LINUX: auto
-          CIBW_ARCHS_WINDOWS: AMD64 x86 ARM64
+          CIBW_ARCHS_WINDOWS: AMD64 x86
+          CIBW_SKIP: pp*
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: dist/*.tar.gz
 
       - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
-      
 
   upload_pypi:
     name: Upload to PyPI
     needs: [build_wheels]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.repository == 'scikit-build/ninja-python-distributions' && startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/download-artifact@v3
         with:
