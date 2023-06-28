@@ -1,6 +1,9 @@
-name: Build
+name: Build and Publish
 
-on: [create]
+on:
+  push:
+    paths:
+    - 'ms_entropy/version.py'
 
 jobs:
   build_wheels:
@@ -8,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-2019, ubuntu-20.04, macos-11]
+        os: [windows-2019]
 
     steps:
       - uses: actions/checkout@v3
@@ -19,23 +22,25 @@ jobs:
           CIBW_ARCHS_MACOS: x86_64 arm64
           CIBW_ARCHS_LINUX: auto
           CIBW_ARCHS_WINDOWS: AMD64 x86 ARM64
-        # env:
-        #   CIBW_SOME_OPTION: value
-        #    ...
-        # with:
-        #   package-dir: .
-        #   output-dir: wheelhouse
-        #   config-file: "{package}/pyproject.toml"
 
       - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
       
-      - name: Push wheel
-        run: |
-          git config --global user.name "YuanyueLi"
-          git config --global user.email "liyuanyue@gmail.com"
-          git checkout -b wheels
-          git add .
-          git commit -m "Add wheels"
-          git push origin wheels
+
+  upload_pypi:
+    name: Upload to PyPI
+    needs: [build_wheels]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.repository == 'scikit-build/ninja-python-distributions' && startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: artifact
+          path: dist
+
+      - name: Upload to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_PASSWORD }}
