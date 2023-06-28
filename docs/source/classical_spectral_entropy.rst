@@ -3,9 +3,9 @@ Spectral entropy
 ================
 
 
-Before we calculate spectral entropy, the spectrum need to be centroid first. Which means one fragment ion should only have one peak. When you are focusing on fragment ion's information, the precursor ion may need to be removed from the spectrum before calculating spectral entropy.
+Prior to calculating spectral entropy, the spectrum needs to be centroided, meaning that each fragment ion should only have one corresponding peak. When focusing on fragment ion information, it may be necessary to remove the precursor ion from the spectrum before performing the spectral entropy calculation.
 
-The ``calculate_spectral_entropy`` function will do the centroid step and calculate the spectral entropy. For example:
+The ``calculate_spectral_entropy`` function carries out the centroiding step and then computes the spectral entropy. Here's an example:
 
 .. code-block:: python
 
@@ -16,9 +16,9 @@ The ``calculate_spectral_entropy`` function will do the centroid step and calcul
 
     entropy = me.calculate_spectral_entropy(peaks, clean_spectrum = True, min_ms2_difference_in_da = 0.05)
 
-    print("Spectral entropy is {}.".format(entropy))
+    print(f"Spectral entropy is {entropy}.")
 
-If you want to seprate the centroid step and entropy calculation step, you can use ``clean_spectrum`` and ``calculate_spectral_entropy`` function. For example:
+If you want to separate the centroiding and entropy calculation steps, you can use the ``clean_spectrum`` and ``calculate_spectral_entropy`` functions respectively. Here's how to do it:
 
 .. code-block:: python
 
@@ -31,10 +31,9 @@ If you want to seprate the centroid step and entropy calculation step, you can u
 
     entropy = me.calculate_spectral_entropy(peaks, clean_spectrum = False)
 
-    print("Spectral entropy is {}.".format(entropy))
+    print(f"Spectral entropy is {entropy}.")
 
-
-If your spectrum is already centroid, you can skip the ``clean_spectrum`` step. For example:
+If your spectrum is already centroided, you can skip the ``clean_spectrum`` step and directly use the ``entropy`` function from ``scipy.stats`` to compute the spectral entropy. Here's an example:
 
 .. code-block:: python
 
@@ -43,9 +42,9 @@ If your spectrum is already centroid, you can skip the ``clean_spectrum`` step. 
 
     peaks = np.array([[41.04, 37.16], [69.07, 66.83], [86.1, 999.0]], dtype = np.float32)
 
-    entropy = me.calculate_spectral_entropy(peaks, clean_spectrum = False)
+    entropy = scipy.stats.entropy(peaks[:, 1])
 
-    print("Spectral entropy is {}.".format(entropy))
+    print(f"Spectral entropy is {entropy}.")
 
 
 References

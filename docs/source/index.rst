@@ -9,15 +9,19 @@ Introduction to MS Entropy
 Thank you for using the MS Entropy package, you can download the code from `MS Entropy Github repository <https://github.com/YuanyueLi/MSEntropy>`_.
 If you encounter any issues, queries or need support, don't hesitate to contact :email:`Yuanyue Li <liyuanyue@gmail.com>`
 
-This package comprises the following modules:
+If you find this package useful, please consider citing the following papers:
+
+Li, Y., Fiehn, O., Flash entropy search to query all mass spectral libraries in real time. 04 April 2023, PREPRINT (Version 1) available at Research Square. `https://doi.org/10.21203/rs.3.rs-2693233/v1 <https://doi.org/10.21203/rs.3.rs-2693233/v1>`_
+
+Li, Y., Kind, T., Folz, J. _et al._ Spectral entropy outperforms MS/MS dot product similarity for small-molecule compound identification. *Nat Methods* **18**, 1524-1531 (2021). `https://doi.org/10.1038/s41592-021-01331-z <https://doi.org/10.1038/s41592-021-01331-z>`_
+
+
+This package contains the following modules:
 
 1.  **Classical entropy functions:** These functions are ideal for calculating the classical spectral entropy and entropy similarity for a small set of spectrum pairs.
 
+
 2.  **Flash Entropy Search Algorithm Functions:** If your task involves searching spectra against a large spectral library, this algorithm will significantly improve the speed of the search process.
-
-
-For a comprehensive understanding of the package, refer to our documentation hosted on `Read the Docs <https://msentropy.readthedocs.io>`_.
-Additionally, you may find practical examples in the `examples <https://github.com/YuanyueLi/MSEntropy/tree/main/examples>`_ folder on our Github repository.
 
 
 .. toctree::
@@ -28,7 +32,7 @@ Additionally, you may find practical examples in the `examples <https://github.c
 
 .. toctree::
    :maxdepth: 1
-   :caption: 📊 Classical entropy functions:
+   :caption: 📊 Classical entropy functions 📊
 
    classical_spectral_entropy
    classical_entropy_similarity
@@ -37,7 +41,7 @@ Additionally, you may find practical examples in the `examples <https://github.c
 
 .. toctree::
    :maxdepth: 1
-   :caption: ⚡ Flash Entropy Search:
+   :caption: ⚡ Flash Entropy Search ⚡
 
    entropy_search_quickstart
    entropy_search_basic_usage

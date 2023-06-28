@@ -28,7 +28,7 @@ keywords = [
 dependencies = ["numpy >= 1.9.3"]
 
 [project.optional-dependencies]
-all = ["lz4 >= 4.3.2", "msgpack >= 1.0.5", "pyteomics >= 4.6", "cupy >= 12.0.0"]
+all = ["lz4 >= 4.3.2", "msgpack >= 1.0.5", "pyteomics >= 4.6"]
 gpu = ["cupy >= 12.0.0"]
 
 

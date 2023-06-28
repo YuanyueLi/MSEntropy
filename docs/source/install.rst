@@ -5,18 +5,6 @@ Installation
 MS Entropy requires ``Python >= 3.7`` installed on your system. It has been tested on Windows, Linux, and macOS platforms.
 
 
-Dependencies
-============
-
-If you install MS Entropy from PyPI, the necessary dependencies will be installed automatically. However, if you are installing from the source, install these manually:
-
-- ``Numpy >= 1.9.3``
-- ``Cython >= 0.26.1`` (Optional: required for Cython mode)
-- ``Cupy >= 12.0.0`` (Optional: required for GPU acceleration)
-- ``pyteomics >= 4.6`` (Optional: required for reading mzML files)
-- ``lz4 >= 4.3.2``, ``msgpack >= 1.0.5`` (Optional: required for reading .lbm2 file format from MS-DIAL)
-
-
 Installing from PyPI
 ====================
 
@@ -32,12 +20,35 @@ To install the latest version of MS Entropy from PyPI, use the following command
 
   pip install ms_entropy
 
+MS Entropy package also provides many useful functions like reading .mzML/.msp/.mgf/.lbm2 files, to keep the package lightweight, these functions are not installed by default. If you need to use these functions, you can install the package with the ``all`` extra:
+
+.. code-block:: bash
+
+  pip install ms_entropy[all]
 
 If you need to use **GPU** acceleration, you need to install the latest version of CuPy first (recommended). Or you can install the latest version of MS Entropy with GPU support from PyPI:
 
 .. code-block:: bash
 
   pip install ms_entropy[gpu]
+
+If you want to use the full functionality of MS Entropy, you can install the latest version of MS Entropy with GPU support and all extra from PyPI:
+
+.. code-block:: bash
+
+  pip install ms_entropy[gpu,all]
+
+
+Dependencies
+============
+
+If you install MS Entropy from PyPI, the necessary dependencies will be installed automatically. However, if you are installing from the source, install these manually:
+
+- ``Numpy >= 1.9.3``
+- ``Cython >= 0.26.1`` (Optional: required for Cython mode)
+- ``Cupy >= 12.0.0`` (Optional: required for GPU acceleration)
+- ``pyteomics >= 4.6`` (Optional: required for reading mzML files)
+- ``lz4 >= 4.3.2``, ``msgpack >= 1.0.5`` (Optional: required for reading .lbm2 file format from MS-DIAL)
 
 
 Installing from Source
