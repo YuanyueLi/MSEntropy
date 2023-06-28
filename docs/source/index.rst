@@ -21,23 +21,23 @@ Additionally, you may find practical examples in the `examples <https://github.c
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    self
    install
-   quickstart
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: 📊 Classical entropy functions:
 
    classical_useful_functions
    classical_api
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: ⚡ Flash Entropy Search:
 
+   entropy_search_quickstart
    entropy_search_basic_usage
    entropy_search_advanced_usage
    entropy_search_useful_functions

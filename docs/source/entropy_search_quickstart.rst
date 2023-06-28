@@ -6,18 +6,6 @@ Quick start
 Super quick start
 =================
 
-Installation
-------------
-Python >= 3.7 is required.
-
-.. code-block:: bash
-
-    pip install ms_entropy
-
-
-Basic usage for Flash entropy search
-------------------------------------
-
 .. code-block:: python
 
     from ms_entropy import FlashEntropySearch
