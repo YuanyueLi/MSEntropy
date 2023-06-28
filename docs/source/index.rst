@@ -22,7 +22,6 @@ Additionally, you may find practical examples in the `examples <https://github.c
 
 .. toctree::
    :maxdepth: 2
-   :numbered:
 
    self
    install
@@ -30,7 +29,6 @@ Additionally, you may find practical examples in the `examples <https://github.c
 
 .. toctree::
    :maxdepth: 2
-   :numbered:
    :caption: 📊 Classical entropy functions:
 
    classical_useful_functions
@@ -38,7 +36,6 @@ Additionally, you may find practical examples in the `examples <https://github.c
 
 .. toctree::
    :maxdepth: 2
-   :numbered:
    :caption: ⚡ Flash Entropy Search:
 
    entropy_search_basic_usage
