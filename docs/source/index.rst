@@ -21,7 +21,7 @@ Additionally, you may find practical examples in the `examples <https://github.c
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :numbered:
    :caption: Contents:
 
@@ -30,5 +30,6 @@ Additionally, you may find practical examples in the `examples <https://github.c
    basic_usage_for_entropy_search
    advanced_usage_for_entropy_search
    useful_functions
+   examples_for_entropy_search
    api
    api_pipe
