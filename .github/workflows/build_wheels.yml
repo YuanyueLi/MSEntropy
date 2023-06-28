@@ -1,9 +1,6 @@
 name: Build and Publish
 
-on:
-  push:
-    paths:
-    - 'ms_entropy/version.py'
+on: [workflow_dispatch]
 
 jobs:
   build_wheels:
