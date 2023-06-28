@@ -2,3 +2,5 @@ recursive-include ms_entropy *.py
 recursive-include ms_entropy *.pyx
 recursive-include ms_entropy *.c
 recursive-include ms_entropy *.h
+recursive-exclude mypackage *.so
+

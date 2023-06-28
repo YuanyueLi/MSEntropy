@@ -38,12 +38,12 @@ cdef extern from "SpectralEntropy.h":
 
 cpdef np.ndarray[float32, ndim=2] cy_clean_spectrum(
     peaks,
-    float min_mz = -1,
-    float max_mz = -1,
+    min_mz = -1,
+    max_mz = -1,
     float noise_threshold = 0.01,
     float min_ms2_difference_in_da = 0.05,
     float min_ms2_difference_in_ppm = -1,
-    int max_peak_num = -1,
+    max_peak_num = -1,
     int normalize_intensity = True,
 ):
     """

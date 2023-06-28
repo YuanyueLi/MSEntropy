@@ -144,9 +144,9 @@ class FlashEntropySearch:
         if precursor_ions_removal_da is not None:
             max_mz = precursor_mz - precursor_ions_removal_da
         else:
-            max_mz = None
+            max_mz = -1
         peaks = clean_spectrum(peaks=peaks,
-                               min_mz=None,
+                               min_mz=0,
                                max_mz=max_mz,
                                noise_threshold=noise_threshold,
                                min_ms2_difference_in_da=min_ms2_difference_in_da,
