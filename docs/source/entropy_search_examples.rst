@@ -1,6 +1,6 @@
-================================
-Examples for Fast Entropy Search
-================================
+========
+Examples
+========
 
 This package provides several examples in the Github root directory to help users understand its usage. These examples cover a variety of use cases, including building an index, searching spectra, and evaluating the performance of search functions.
 

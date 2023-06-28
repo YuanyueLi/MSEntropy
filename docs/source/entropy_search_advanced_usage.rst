@@ -1,6 +1,6 @@
-=======================================
-Advanced usage for Flash entropy search
-=======================================
+==============
+Advanced usage
+==============
 
 
 Run Flash entropy search with limited memory

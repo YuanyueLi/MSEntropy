@@ -11,7 +11,7 @@ If you encounter any issues, queries or need support, don't hesitate to contact 
 
 This package comprises the following modules:
 
-1.  **Classical entropy calculation functions:** These functions are ideal for calculating the classical spectral entropy and entropy similarity for a small set of spectrum pairs.
+1.  **Classical entropy functions:** These functions are ideal for calculating the classical spectral entropy and entropy similarity for a small set of spectrum pairs.
 
 3.  **Flash Entropy Search Algorithm Functions:** If your task involves searching spectra against a large spectral library, this algorithm will significantly improve the speed of the search process.
 
@@ -23,13 +23,27 @@ Additionally, you may find practical examples in the `examples <https://github.c
 .. toctree::
    :maxdepth: 2
    :numbered:
-   :caption: Contents:
 
    self
    install
-   basic_usage_for_entropy_search
-   advanced_usage_for_entropy_search
-   useful_functions
-   examples_for_entropy_search
-   api
-   api_pipe
+   quickstart
+
+.. toctree::
+   :maxdepth: 2
+   :numbered:
+   :caption: 📊 Classical entropy functions:
+
+   classical_useful_functions
+   classical_api
+
+.. toctree::
+   :maxdepth: 2
+   :numbered:
+   :caption: ⚡ Flash Entropy Search:
+
+   entropy_search_basic_usage
+   entropy_search_advanced_usage
+   entropy_search_useful_functions
+   entropy_search_examples
+   entropy_search_api
+
