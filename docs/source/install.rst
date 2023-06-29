@@ -8,12 +8,6 @@ MS Entropy requires ``Python >= 3.7`` installed on your system. It has been test
 Installing from PyPI
 ====================
 
-Before starting the installation process, ensure that you have a ``C compiler and Python development headers`` installed:
-
-- On Linux, install the ``gcc`` and ``python-dev`` (for apt) or ``python-devel`` (for yum) packages.
-- On Windows, install the `Microsoft Visual C++ 14.0 or greater Build Tools <https://visualstudio.microsoft.com/visual-cpp-build-tools/>`_.
-- On macOS, install the ``Xcode Command Line Tools``.
-
 To install the latest version of MS Entropy from PyPI, use the following command:
 
 .. code-block:: bash
