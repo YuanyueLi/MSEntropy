@@ -1,4 +1,4 @@
-name: Test MS Entropy package
+name: Python package
 
 on: [push]
 
