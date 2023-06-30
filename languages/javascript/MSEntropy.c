@@ -2,7 +2,7 @@
 #include "SpectralEntropy.h"
 #include "emscripten.h"
 
-EMSCRIPTEN_KEEPALIVE int main() {
+EMSCRIPTEN_KEEPALIVE int test() {
     return 1;
 }
 
