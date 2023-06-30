@@ -2,6 +2,10 @@
 #include "SpectralEntropy.h"
 #include "emscripten.h"
 
+EMSCRIPTEN_KEEPALIVE int main() {
+    return 1;
+}
+
 EMSCRIPTEN_KEEPALIVE int wasm_clean_spectrum(float_spec* spectrum, int spectrum_length,
                                              float min_mz, float max_mz,
                                              float noise_threshold,
