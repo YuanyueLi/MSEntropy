@@ -125,7 +125,7 @@ entropy_similarity <- calculate_entropy_similarity(peaks_a, peaks_b, ms2_toleran
 
 An example is available in folder [languages/c folder](https://github.com/YuanyueLi/MSEntropy/tree/main/languages/c) and [Example.c](https://github.com/YuanyueLi/MSEntropy/blob/main/languages/c/Example.c), [CMakeLists.txt](https://github.com/YuanyueLi/MSEntropy/blob/main/languages/c/CMakeLists.txt)
 
-## For JavaScrip users
+## For JavaScript users
 
 An example is available in folder [languages/javascript folder](https://github.com/YuanyueLi/MSEntropy/tree/main/languages/javascript) and [example.js](https://github.com/YuanyueLi/MSEntropy/blob/main/languages/javascript/example.js)
 
