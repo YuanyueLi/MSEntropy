@@ -2,12 +2,14 @@ from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 import numpy as np
 import os
+from ms_entropy import __version__
 
 
 os.environ["CFLAGS"] = "-O3 -Wno-cpp -Wno-unused-function"
 
 setup(
     name="ms_entropy",
+    version=__version__,
     package_dir={"": "."},
     ext_modules=cythonize(
         [

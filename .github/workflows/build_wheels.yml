@@ -25,7 +25,7 @@ jobs:
           CIBW_ARCHS_MACOS: x86_64 arm64
           CIBW_ARCHS_LINUX: auto
           CIBW_ARCHS_WINDOWS: AMD64 x86
-          CIBW_SKIP: pp*
+          CIBW_SKIP: pp* *i686
 
       - uses: actions/upload-artifact@v3
         with:
