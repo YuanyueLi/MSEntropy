@@ -1,15 +1,22 @@
 from setuptools import find_packages, setup, Extension
+from distutils.util import convert_path
 from Cython.Build import cythonize
 import numpy as np
 import os
-from ms_entropy import __version__
 
 
 os.environ["CFLAGS"] = "-O3 -Wno-cpp -Wno-unused-function"
 
+# Read the version from the package file
+main_ns = {}
+ver_path = convert_path("ms_entropy/version.py")
+with open(ver_path) as ver_file:
+    exec(ver_file.read(), main_ns)
+
+
 setup(
     name="ms_entropy",
-    version=__version__,
+    version=main_ns["__version__"],
     package_dir={"": "."},
     ext_modules=cythonize(
         [
