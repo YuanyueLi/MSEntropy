@@ -4,10 +4,10 @@
 
 If you find this package useful, please consider citing the following papers:
 
-Li, Y., Fiehn, O., Flash entropy search to query all mass spectral
+> Li, Y., Fiehn, O., Flash entropy search to query all mass spectral
 libraries in real time. 04 April 2023, PREPRINT (Version 1) available at Research Square. [https://doi.org/10.21203/rs.3.rs-2693233/v1](https://doi.org/10.21203/rs.3.rs-2693233/v1)
-
-Li, Y., Kind, T., Folz, J. _et al._ Spectral entropy outperforms MS/MS dot product similarity for small-molecule compound identification. _Nat Methods_ **18**, 1524–1531 (2021). [https://doi.org/10.1038/s41592-021-01331-z](https://doi.org/10.1038/s41592-021-01331-z)
+>
+> Li, Y., Kind, T., Folz, J. _et al._ Spectral entropy outperforms MS/MS dot product similarity for small-molecule compound identification. _Nat Methods_ **18**, 1524–1531 (2021). [https://doi.org/10.1038/s41592-021-01331-z](https://doi.org/10.1038/s41592-021-01331-z)
 
 # Theoritical Background
 
@@ -42,6 +42,8 @@ entropy_similarity = entropy_search.search(
 ```
 
 ## For R users
+
+A document is available here: [https://cran.r-project.org/web/packages/msentropy/msentropy.pdf](https://cran.r-project.org/web/packages/msentropy/msentropy.pdf)
 
 ### Installation
 
@@ -120,3 +122,11 @@ entropy_similarity <- calculate_entropy_similarity(peaks_a, peaks_b, ms2_toleran
     printf("Entropy Similarity: %f\n", similarity);
 }
 ```
+
+An example is available in folder [languages/c folder](https://github.com/YuanyueLi/MSEntropy/tree/main/languages/c) and [Example.c](https://github.com/YuanyueLi/MSEntropy/blob/main/languages/c/Example.c), [CMakeLists.txt](https://github.com/YuanyueLi/MSEntropy/blob/main/languages/c/CMakeLists.txt)
+
+## For JavaScrip users
+
+An example is available in folder [languages/javascript folder](https://github.com/YuanyueLi/MSEntropy/tree/main/languages/javascript) and [example.js](https://github.com/YuanyueLi/MSEntropy/blob/main/languages/javascript/example.js)
+
+Also, refer to [MSViewer repository](https://github.com/YuanyueLi/MSViewer) for a working example of using this package in a web application.
