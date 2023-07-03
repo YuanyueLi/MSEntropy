@@ -7,6 +7,7 @@ import os
 os.environ["CFLAGS"] = "-O3 -Wno-cpp -Wno-unused-function"
 
 setup(
+    name="ms_entropy",
     package_dir={"": "."},
     ext_modules=cythonize(
         [
