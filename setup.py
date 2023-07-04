@@ -17,7 +17,22 @@ with open(ver_path) as ver_file:
 setup(
     name="ms_entropy",
     version=main_ns["__version__"],
+    url="https://github.com/YuanyueLi/MSEntropy",
+    license="Apache License 2.0",
+    license_file="LICENSE",
+    platforms=["Linux", "MacOS", "Windows"],
+    packages=find_packages(where='.', exclude=['tests', 'docs', 'examples', 'manuscript', 'dist', 'build']),
     package_dir={"": "."},
+
+    python_requires=">=3.7",
+    install_requires=[
+        "numpy >= 1.9.3",
+    ],
+    extras_require={
+        "all": ["lz4 >= 4.3.2", "msgpack >= 1.0.5", "pyteomics >= 4.6"],
+        "gpu": ["cupy >= 12.0.0"]
+    },
+
     ext_modules=cythonize(
         [
             Extension(
