@@ -101,6 +101,7 @@ Rcpp::NumericMatrix r_clean_spectrum(const Rcpp::NumericMatrix peaks,
                                   max_peak_num,
                                   normalize_intensity);
     Rcpp::NumericMatrix peaks_mat = convert_vector_to_matrix(peaks_vec, peaks_length);
+    colnames(peaks_mat) = CharacterVector::create("mz", "intensity");
     return peaks_mat;
 }
 
