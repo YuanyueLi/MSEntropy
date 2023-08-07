@@ -31,7 +31,7 @@ def read_one_spectrum(file_input, file_encoding='utf-8', **kwargs) -> dict:
             continue
         elif line == "END IONS":
             spectrum_start = False
-            spectrum_info['peaks'] = np.array(spectrum_info['peaks']).astype(np.float32)
+            # spectrum_info['peaks'] = np.array(spectrum_info['peaks']).astype(np.float32)
             yield spectrum_info
             continue
 
@@ -48,5 +48,8 @@ def read_one_spectrum(file_input, file_encoding='utf-8', **kwargs) -> dict:
                 items = line.split()
                 if len(items)>=2:
                     spectrum_info['peaks'].append([items[0], items[1]])
+
+    if len(spectrum_info['peaks']) > 0 or len(spectrum_info) > 3:
+        yield spectrum_info
 
     fi.close()

@@ -36,7 +36,7 @@ def read_one_spectrum(file_input, file_encoding='utf-8', **kwargs) -> dict:
                 spectrum_info['peaks'].append([items[0], items[1]])
                 peak_num -= 1
             if peak_num == 0:
-                spectrum_info['peaks'] = np.array(spectrum_info['peaks']).astype(np.float32)
+                # spectrum_info['peaks'] = np.array(spectrum_info['peaks']).astype(np.float32)
                 yield spectrum_info
                 scan_number += 1
                 spectrum_info = {
@@ -58,4 +58,6 @@ def read_one_spectrum(file_input, file_encoding='utf-8', **kwargs) -> dict:
                     peak_num = int(value)
                     continue
 
+    if len(spectrum_info['peaks']) > 0 or len(spectrum_info) > 3:
+        yield spectrum_info
     fi.close()
