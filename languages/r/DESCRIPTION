@@ -6,9 +6,9 @@ Date: 2023-06-22
 Authors@R: c( person(given = "Yuanyue", family = "Li", email = "liyuanyue@gmail.com", role = c("aut", "cre")) )
 Description: Clean the MS/MS spectrum, calculate spectral entropy, unweighted entropy similarity, and entropy similarity for mass spectrometry data. The entropy similarity is a novel similarity measure for MS/MS spectra which outperform the widely used dot product similarity in compound identification. For more details, please refer to the paper: Yuanyue Li et al. (2021) "Spectral entropy outperforms MS/MS dot product similarity for small-molecule compound identification" <doi:10.1038/s41592-021-01331-z>.
 License: Apache License (== 2.0)
-Depends: R (>= 3.5.0), Rcpp (>= 1.0.10)
+Depends: R (>= 3.5.0)
 Suggests: testthat
 LinkingTo: Rcpp
 RoxygenNote: 7.2.3
 Encoding: UTF-8
-URL: https://github.com/YuanyueLi/SpectralEntropy
+URL: https://github.com/YuanyueLi/MSEntropy
