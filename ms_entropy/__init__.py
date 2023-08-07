@@ -5,5 +5,8 @@ from .spectra import (
     calculate_unweighted_entropy_similarity,
     apply_weight_to_intensity,
 )
+from .file_io import (
+    read_one_spectrum, standardize_spectrum
+)
 from .entropy_search import FlashEntropySearch, FlashEntropySearchCore, FlashEntropySearchCoreLowMemory
 from .version import __version__
