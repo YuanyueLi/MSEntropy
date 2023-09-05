@@ -2,6 +2,7 @@
 import gzip
 import bz2
 import zipfile
+import codecs
 
 
 def smart_open_file(file_input, file_encoding='utf-8'):
@@ -24,5 +25,5 @@ def smart_open_file(file_input, file_encoding='utf-8'):
         fzip_list = zipfile.ZipFile.namelist(fzip_all)
         fi = fzip_all.open(fzip_list[0], "r")
     else:
-        fi = open(file_input, "rt", encoding=file_encoding)
+        fi = codecs.open(file_input, "r", encoding=file_encoding, errors='ignore')
     return fi
