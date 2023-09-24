@@ -14,7 +14,7 @@ If you find this package useful, please consider citing the following papers:
 
 `Entropy similarity`, which measured spectral similarity based on spectral entropy, has been shown to outperform dot product similarity in compound identification. [(ref)](https://doi.org/10.1038/s41592-021-01331-z)
 
-The calculation of entropy similarity can be accelerated by using the `Flash Entropy Search` algorithm. [(ref)](https://doi.org/10.21203/rs.3.rs-2693233/v1)
+The calculation of entropy similarity can be accelerated by using the `Flash Entropy Search` algorithm. [(ref)](https://doi.org/10.1038/s41592-023-02012-9)
 
 # How to use this package
 
@@ -30,7 +30,29 @@ A detailed tutorial is available here: [https://msentropy.readthedocs.io](https:
 pip install ms_entropy
 ```
 
-### Usage
+### Usage of Classical entropy functions
+
+```python
+import numpy as np
+import ms_entropy as me
+
+peaks_query = np.array([[69.071, 7.917962], [86.066, 1.021589], [86.0969, 100.0]], dtype = np.float32)
+peaks_reference = np.array([[41.04, 37.16], [69.07, 66.83], [86.1, 999.0]], dtype = np.float32)
+
+# Calculate entropy similarity.
+entropy = me.calculate_spectral_entropy(peaks_query, clean_spectrum = True, min_ms2_difference_in_da = 0.05)
+print(f"Spectral entropy is {entropy}.")
+
+# Calculate unweighted entropy similarity.
+unweighted_similarity = me.calculate_unweighted_entropy_similarity(peaks_query, peaks_reference, ms2_tolerance_in_da = 0.05)
+print(f"Unweighted entropy similarity: {unweighted_similarity}.")
+
+# Calculate entropy similarity.
+similarity = me.calculate_entropy_similarity(peaks_query, peaks_reference, ms2_tolerance_in_da = 0.05)
+print(f"Entropy similarity: {similarity}.")
+```
+
+### Usage of Flash Entropy Search
 
 ```python
 from ms_entropy import FlashEntropySearch
