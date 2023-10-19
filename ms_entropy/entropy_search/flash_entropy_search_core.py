@@ -390,6 +390,13 @@ class FlashEntropySearchCore:
         self.total_peaks_num = total_peaks_num
 
         ############## Step 1: Collect the precursor m/z and peaks information. ##############
+        peak_data = self._merge_all_spectra_to_peak_data(all_spectra_list)
+
+        ############## Step 2: Build the index by sort with product ions. ##############
+        self.index = self._generate_index_from_peak_data(peak_data, max_indexed_mz)
+        return self.index
+    
+    def _merge_all_spectra_to_peak_data(self, all_spectra_list):
         dtype_peak_data = np.dtype(
             [
                 ("ion_mz", np.float32),  # The m/z of the fragment ion.
@@ -402,7 +409,7 @@ class FlashEntropySearchCore:
         )  # The index of the fragment ion.
 
         # Initialize the peak data array.
-        peak_data = np.zeros(total_peaks_num, dtype=dtype_peak_data)
+        peak_data = np.zeros(self.total_peaks_num, dtype=dtype_peak_data)
         peak_idx = 0
 
         # Adding the precursor m/z and peaks information to the peak data array.
@@ -431,10 +438,7 @@ class FlashEntropySearchCore:
             peak_data_item["spec_idx"] = idx
             # Set the peak index
             peak_idx += peaks.shape[0]
-
-        ############## Step 2: Build the index by sort with product ions. ##############
-        self.index = self._generate_index_from_peak_data(peak_data, max_indexed_mz)
-        return self.index
+        return peak_data
 
     def _generate_index_from_peak_data(self, peak_data, max_indexed_mz):
         # Sort with precursor m/z.
