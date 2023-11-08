@@ -367,7 +367,7 @@ class FlashEntropySearchCore:
             duplicate_idx = cp.where(note[array_2] == 1)[0]
             return duplicate_idx
 
-    def build_index(self, all_spectra_list: list, max_indexed_mz: float = 1500.00005):
+    def build_index(self, all_spectra_list: list, max_indexed_mz: float = 1500.00005, append: bool = False):
         """
         Build the index for the MS/MS spectra library.
 
@@ -378,25 +378,31 @@ class FlashEntropySearchCore:
         :param all_spectra_list:    A list of dictionaries in the format of {"precursor_mz": precursor_mz, "peaks": peaks},
                                     the spectra in the list need to be sorted by the precursor m/z.
         :param max_indexed_mz: The maximum m/z value that will be indexed. Default is 1500.00005.
+        :param append:  Not implemented yet.
         """
 
         # Get the total number of spectra and peaks
         total_peaks_num = np.sum([spectrum["peaks"].shape[0] for spectrum in all_spectra_list])
         total_spectra_num = len(all_spectra_list)
+        if append:
+            self.total_spectra_num += total_spectra_num
+            self.total_peaks_num += total_peaks_num
+        else:
+            self.total_spectra_num = total_spectra_num
+            self.total_peaks_num = total_peaks_num
+
         # total_spectra_num can not be bigger than 2^32-1 (uint32), total_peak_num can not be bigger than 2^63-1 (int64)
-        assert total_spectra_num < 2**32 - 1, "The total spectra number is too big."
-        assert total_peaks_num < 2**63 - 1, "The total peaks number is too big."
-        self.total_spectra_num = total_spectra_num
-        self.total_peaks_num = total_peaks_num
+        assert self.total_spectra_num < 2**32 - 1, "The total spectra number is too big."
+        assert self.total_peaks_num < 2**63 - 1, "The total peaks number is too big."
 
         ############## Step 1: Collect the precursor m/z and peaks information. ##############
-        peak_data = self._merge_all_spectra_to_peak_data(all_spectra_list)
+        peak_data = self._merge_all_spectra_to_peak_data(all_spectra_list, total_peaks_num)
 
         ############## Step 2: Build the index by sort with product ions. ##############
-        self.index = self._generate_index_from_peak_data(peak_data, max_indexed_mz)
+        self.index = self._generate_index_from_peak_data(peak_data, max_indexed_mz, append = append)
         return self.index
     
-    def _merge_all_spectra_to_peak_data(self, all_spectra_list):
+    def _merge_all_spectra_to_peak_data(self, all_spectra_list, total_peaks_num):
         dtype_peak_data = np.dtype(
             [
                 ("ion_mz", np.float32),  # The m/z of the fragment ion.
@@ -409,7 +415,7 @@ class FlashEntropySearchCore:
         )  # The index of the fragment ion.
 
         # Initialize the peak data array.
-        peak_data = np.zeros(self.total_peaks_num, dtype=dtype_peak_data)
+        peak_data = np.zeros(total_peaks_num, dtype=dtype_peak_data)
         peak_idx = 0
 
         # Adding the precursor m/z and peaks information to the peak data array.
@@ -440,7 +446,7 @@ class FlashEntropySearchCore:
             peak_idx += peaks.shape[0]
         return peak_data
 
-    def _generate_index_from_peak_data(self, peak_data, max_indexed_mz):
+    def _generate_index_from_peak_data(self, peak_data, max_indexed_mz, append):
         # Sort with precursor m/z.
         peak_data.sort(order="ion_mz")
 
