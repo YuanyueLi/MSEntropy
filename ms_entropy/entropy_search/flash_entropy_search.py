@@ -95,7 +95,7 @@ class FlashEntropySearch:
         :param precursor_mz:    The precursor m/z of the spectrum.
         :param peaks:           The peaks of the spectrum, should be a list or numpy array with shape (N, 2), N is the number of peaks. The format of the peaks is [[mz1, intensity1], [mz2, intensity2], ...].
         :param precursor_ions_removal_da:   The ions with m/z larger than precursor_mz - precursor_ions_removal_da will be removed.
-                                            Default is 1.6.
+                                            Default is 1.6. Set to None to not remove any ions.
         :param noise_threshold: The intensity threshold for removing the noise peaks. The peaks with intensity smaller than noise_threshold * max(intensity)
                                 will be removed. Default is 0.01.
         :param min_ms2_difference_in_da:    The minimum difference between two peaks in the MS/MS spectrum. Default is 0.05.
@@ -206,7 +206,7 @@ class FlashEntropySearch:
 
         :param max_indexed_mz: The maximum m/z value that will be indexed. Default is 1500.00005.
         :param precursor_ions_removal_da:   The ions with m/z larger than precursor_mz - precursor_ions_removal_da will be removed.
-                                            Default is 1.6.
+                                            Default is 1.6. Set to None to not remove any ions.
         :param noise_threshold: The intensity threshold for removing the noise peaks. The peaks with intensity smaller than noise_threshold * max(intensity)
                                 will be removed. Default is 0.01.
         :param min_ms2_difference_in_da:    The minimum difference between two peaks in the MS/MS spectrum. Default is 0.05.
