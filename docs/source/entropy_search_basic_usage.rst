@@ -148,7 +148,7 @@ We also provide a separate function called ``clean_spectrum`` that performs the 
     from ms_entropy import clean_spectrum
     precursor_ions_removal_da = 1.6
     query_spectrum['peaks'] = clean_spectrum(
-        spectum = query_spectrum['peaks'],
+        peaks = query_spectrum['peaks'],
         max_mz = query_spectrum['precursor_mz'] - precursor_ions_removal_da
     )
 
