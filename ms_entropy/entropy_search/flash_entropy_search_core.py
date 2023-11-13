@@ -63,6 +63,7 @@ class FlashEntropySearchCore:
         search_type=0,
         search_spectra_idx_min=0,
         search_spectra_idx_max=0,
+        output_matched_peak_number=False,
     ):
         """
         Perform identity-, open- or neutral loss search on the MS/MS spectra library.
@@ -78,6 +79,8 @@ class FlashEntropySearchCore:
                             Set it to 1 for searching a range of the MS/MS spectra library,
         :param search_spectra_idx_min:  The minimum index of the MS/MS spectra to search, required when search_type is 1.
         :param search_spectra_idx_max:  The maximum index of the MS/MS spectra to search, required when search_type is 1.
+        :param output_matched_peak_number: Whether to output the number of matched peaks. Only supported when target is "cpu".
+                                            If set to True, the function will return a tuple of (entropy_similarity, matched_peak_number).
         """
         if not self.index:
             return np.zeros(0, dtype=np.float32)
@@ -122,6 +125,8 @@ class FlashEntropySearchCore:
         # Start searching
         if target == "cpu":
             entropy_similarity = np.zeros(self.total_spectra_num, dtype=np.float32)
+            if output_matched_peak_number:
+                matched_peak_number = np.zeros(self.total_spectra_num, dtype=np.uint16)
         else:
             import cupy as cp
 
@@ -147,6 +152,8 @@ class FlashEntropySearchCore:
                 intensity_library = library_peaks_intensity[product_mz_idx_min:product_mz_idx_max]
                 modified_idx = library_spec_idx[product_mz_idx_min:product_mz_idx_max]
                 entropy_similarity[modified_idx] += self._score_peaks_with_cpu(intensity_query, intensity_library)
+                if output_matched_peak_number:
+                    matched_peak_number[modified_idx] += 1
             elif target == "cpu" and search_type == 1:
                 entropy_similarity_search_identity(
                     product_mz_idx_min,
@@ -158,6 +165,8 @@ class FlashEntropySearchCore:
                     search_spectra_idx_min,
                     search_spectra_idx_max,
                 )
+                if output_matched_peak_number:
+                    matched_peak_number[library_spec_idx[product_mz_idx_min:product_mz_idx_max]] += 1
             elif target == "gpu":
                 intensity_library = cp.array(library_peaks_intensity[product_mz_idx_min:product_mz_idx_max])
                 modified_value = entropy_transform(intensity_library, intensity_query)
@@ -165,7 +174,13 @@ class FlashEntropySearchCore:
                 entropy_similarity.scatter_add(modified_idx, modified_value)
 
         if target == "cpu":
-            return entropy_similarity
+            if output_matched_peak_number:
+                if search_type == 1:
+                    matched_peak_number[:search_spectra_idx_min] = 0
+                    matched_peak_number[search_spectra_idx_max:] = 0
+                return entropy_similarity, matched_peak_number
+            else:
+                return entropy_similarity
         elif target == "gpu":
             entropy_similarity = entropy_similarity.get()
             if search_type == 1:
@@ -399,9 +414,9 @@ class FlashEntropySearchCore:
         peak_data = self._merge_all_spectra_to_peak_data(all_spectra_list, total_peaks_num)
 
         ############## Step 2: Build the index by sort with product ions. ##############
-        self.index = self._generate_index_from_peak_data(peak_data, max_indexed_mz, append = append)
+        self.index = self._generate_index_from_peak_data(peak_data, max_indexed_mz, append=append)
         return self.index
-    
+
     def _merge_all_spectra_to_peak_data(self, all_spectra_list, total_peaks_num):
         dtype_peak_data = np.dtype(
             [
@@ -434,7 +449,7 @@ class FlashEntropySearchCore:
             peaks = self._preprocess_peaks(peaks)
 
             # Assign the product ion m/z
-            peak_data_item = peak_data[peak_idx: (peak_idx + peaks.shape[0])]
+            peak_data_item = peak_data[peak_idx : (peak_idx + peaks.shape[0])]
             peak_data_item["ion_mz"] = peaks[:, 0]
             # Assign the neutral loss mass
             peak_data_item["nl_mass"] = precursor_mz - peaks[:, 0]

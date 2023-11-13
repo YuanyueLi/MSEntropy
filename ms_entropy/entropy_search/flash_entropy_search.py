@@ -8,16 +8,17 @@ from ..spectra import clean_spectrum
 
 
 class FlashEntropySearch:
-    def __init__(self,  max_ms2_tolerance_in_da=0.024, mz_index_step=0.0001, low_memory=False, path_data=None):
+    def __init__(self, max_ms2_tolerance_in_da=0.024, mz_index_step=0.0001, low_memory=False, path_data=None):
         self.precursor_mz_array = np.zeros(0, dtype=np.float32)
         self.low_memory = low_memory
         if low_memory:
             self.entropy_search = FlashEntropySearchCoreLowMemory(
-                path_data=path_data, max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step)
+                path_data=path_data, max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step
+            )
         else:
             self.entropy_search = FlashEntropySearchCore(path_data=path_data, max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step)
 
-    def identity_search(self, precursor_mz, peaks, ms1_tolerance_in_da, ms2_tolerance_in_da, target="cpu", **kwargs):
+    def identity_search(self, precursor_mz, peaks, ms1_tolerance_in_da, ms2_tolerance_in_da, target="cpu", output_matched_peak_number=False, **kwargs):
         """
         Run the identity search, the query spectrum should be preprocessed by `clean_spectrum()` function before calling this function.
 
@@ -29,33 +30,54 @@ class FlashEntropySearch:
         :param ms1_tolerance_in_da:  The MS1 tolerance in Da.
         :param ms2_tolerance_in_da:  The MS2 tolerance in Da.
         :param target:  The target device for the search, can be "cpu" or "gpu".
+        :param output_matched_peak_number:  If True, the number of matched peaks will be returned with the entropy similarity score.
 
         :return:    The entropy similarity score for each spectrum in the library, a numpy array with shape (N,), N is the number of spectra in the library.
+                    If `output_matched_peak_number` is True, the number of matched peaks will be returned with the entropy similarity score, i.e. the return
+                    will be a tuple of two numpy arrays, the first one is the entropy similarity score, and the second one is the number of matched peaks.
         """
         precursor_mz_min = precursor_mz - ms1_tolerance_in_da
         precursor_mz_max = precursor_mz + ms1_tolerance_in_da
-        spectra_idx_min = np.searchsorted(self.precursor_mz_array, precursor_mz_min, side='left')
-        spectra_idx_max = np.searchsorted(self.precursor_mz_array, precursor_mz_max, side='right')
+        spectra_idx_min = np.searchsorted(self.precursor_mz_array, precursor_mz_min, side="left")
+        spectra_idx_max = np.searchsorted(self.precursor_mz_array, precursor_mz_max, side="right")
         if spectra_idx_min >= spectra_idx_max:
             return np.zeros(self.entropy_search.total_spectra_num, dtype=np.float32)
         else:
-            entropy_similarity = self.entropy_search.search(method="open", target=target, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da,
-                                                            search_type=1, search_spectra_idx_min=spectra_idx_min, search_spectra_idx_max=spectra_idx_max)
+            entropy_similarity = self.entropy_search.search(
+                method="open",
+                target=target,
+                peaks=peaks,
+                ms2_tolerance_in_da=ms2_tolerance_in_da,
+                search_type=1,
+                search_spectra_idx_min=spectra_idx_min,
+                search_spectra_idx_max=spectra_idx_max,
+                output_matched_peak_number=output_matched_peak_number,
+            )
             return entropy_similarity
 
-    def open_search(self, peaks, ms2_tolerance_in_da, target="cpu", **kwargs):
+    def open_search(self, peaks, ms2_tolerance_in_da, target="cpu", output_matched_peak_number=False, **kwargs):
         """
         Run the open search, the query spectrum should be preprocessed by `clean_spectrum()` function before calling this function.
 
         :param peaks:           The peaks of the query spectrum, should be the output of `clean_spectrum()` function.
         :param ms2_tolerance_in_da:  The MS2 tolerance in Da.
         :param target:  The target device for the search, can be "cpu" or "gpu".
+        :param output_matched_peak_number:  If True, the number of matched peaks will be returned with the entropy similarity score.
 
         :return:    The entropy similarity score for each spectrum in the library, a numpy array with shape (N,), N is the number of spectra in the library.
+                    If `output_matched_peak_number` is True, the number of matched peaks will be returned with the entropy similarity score, i.e. the return
+                    will be a tuple of two numpy arrays, the first one is the entropy similarity score, and the second one is the number of matched peaks.
         """
-        return self.entropy_search.search(method="open", target=target, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, search_type=0)
+        return self.entropy_search.search(
+            method="open",
+            target=target,
+            peaks=peaks,
+            ms2_tolerance_in_da=ms2_tolerance_in_da,
+            search_type=0,
+            output_matched_peak_number=output_matched_peak_number,
+        )
 
-    def neutral_loss_search(self, precursor_mz, peaks, ms2_tolerance_in_da, target="cpu", **kwargs):
+    def neutral_loss_search(self, precursor_mz, peaks, ms2_tolerance_in_da, target="cpu", output_matched_peak_number=False, **kwargs):
         """
         Run the neutral loss search, the query spectrum should be preprocessed by `clean_spectrum()` function before calling this function.
 
@@ -63,11 +85,21 @@ class FlashEntropySearch:
         :param peaks:           The peaks of the query spectrum, should be the output of `clean_spectrum()` function.
         :param ms2_tolerance_in_da:  The MS2 tolerance in Da.
         :param target:  The target device for the search, can be "cpu" or "gpu".
+        :param output_matched_peak_number:  If True, the number of matched peaks will be returned with the entropy similarity score.
 
         :return:    The entropy similarity score for each spectrum in the library, a numpy array with shape (N,), N is the number of spectra in the library.
+                    If `output_matched_peak_number` is True, the number of matched peaks will be returned with the entropy similarity score, i.e. the return
+                    will be a tuple of two numpy arrays, the first one is the entropy similarity score, and the second one is the number of matched peaks.
         """
         return self.entropy_search.search(
-            method="neutral_loss", target=target, precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, search_type=0)
+            method="neutral_loss",
+            target=target,
+            precursor_mz=precursor_mz,
+            peaks=peaks,
+            ms2_tolerance_in_da=ms2_tolerance_in_da,
+            search_type=0,
+            output_matched_peak_number=output_matched_peak_number,
+        )
 
     def hybrid_search(self, precursor_mz, peaks, ms2_tolerance_in_da, target="cpu", **kwargs):
         """
@@ -82,13 +114,9 @@ class FlashEntropySearch:
         """
         return self.entropy_search.search_hybrid(target=target, precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da)
 
-    def clean_spectrum_for_search(self,
-                                  precursor_mz,
-                                  peaks,
-                                  precursor_ions_removal_da: float = 1.6,
-                                  noise_threshold=0.01,
-                                  min_ms2_difference_in_da: float = 0.05,
-                                  max_peak_num: int = 0):
+    def clean_spectrum_for_search(
+        self, precursor_mz, peaks, precursor_ions_removal_da: float = 1.6, noise_threshold=0.01, min_ms2_difference_in_da: float = 0.05, max_peak_num: int = 0
+    ):
         """
         Clean the MS/MS spectrum, need to be called before any search.
 
@@ -105,24 +133,29 @@ class FlashEntropySearch:
             max_mz = precursor_mz - precursor_ions_removal_da
         else:
             max_mz = None
-        return clean_spectrum(peaks=peaks,
-                              min_mz=-1,
-                              max_mz=max_mz,
-                              noise_threshold=noise_threshold,
-                              min_ms2_difference_in_da=min_ms2_difference_in_da,
-                              max_peak_num=max_peak_num,
-                              normalize_intensity=True)
+        return clean_spectrum(
+            peaks=peaks,
+            min_mz=-1,
+            max_mz=max_mz,
+            noise_threshold=noise_threshold,
+            min_ms2_difference_in_da=min_ms2_difference_in_da,
+            max_peak_num=max_peak_num,
+            normalize_intensity=True,
+        )
 
-    def search(self,
-               precursor_mz, peaks,
-               ms1_tolerance_in_da=0.01,
-               ms2_tolerance_in_da=0.02,
-               method="all",  # "identity", "open", "neutral_loss", "hybrid", "all", or list of the above
-               target="cpu",
-               precursor_ions_removal_da: float = 1.6,
-               noise_threshold=0.01,
-               min_ms2_difference_in_da: float = 0.05,
-               max_peak_num: int = None):
+    def search(
+        self,
+        precursor_mz,
+        peaks,
+        ms1_tolerance_in_da=0.01,
+        ms2_tolerance_in_da=0.02,
+        method="all",  # "identity", "open", "neutral_loss", "hybrid", "all", or list of the above
+        target="cpu",
+        precursor_ions_removal_da: float = 1.6,
+        noise_threshold=0.01,
+        min_ms2_difference_in_da: float = 0.05,
+        max_peak_num: int = None,
+    ):
         """
         Run the Flash entropy search for the query spectrum.
 
@@ -145,13 +178,15 @@ class FlashEntropySearch:
             max_mz = precursor_mz - precursor_ions_removal_da
         else:
             max_mz = -1
-        peaks = clean_spectrum(peaks=peaks,
-                               min_mz=0,
-                               max_mz=max_mz,
-                               noise_threshold=noise_threshold,
-                               min_ms2_difference_in_da=min_ms2_difference_in_da,
-                               max_peak_num=max_peak_num,
-                               normalize_intensity=True)
+        peaks = clean_spectrum(
+            peaks=peaks,
+            min_mz=0,
+            max_mz=max_mz,
+            noise_threshold=noise_threshold,
+            min_ms2_difference_in_da=min_ms2_difference_in_da,
+            max_peak_num=max_peak_num,
+            normalize_intensity=True,
+        )
         if method == "all":
             method = {"identity", "open", "neutral_loss", "hybrid"}
         elif isinstance(method, str):
@@ -159,39 +194,33 @@ class FlashEntropySearch:
 
         result = {}
         if "identity" in method:
-            result["identity_search"] = self.identity_search(precursor_mz=precursor_mz,
-                                                             peaks=peaks,
-                                                             ms1_tolerance_in_da=ms1_tolerance_in_da,
-                                                             ms2_tolerance_in_da=ms2_tolerance_in_da,
-                                                             target=target)
+            result["identity_search"] = self.identity_search(
+                precursor_mz=precursor_mz, peaks=peaks, ms1_tolerance_in_da=ms1_tolerance_in_da, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target
+            )
         if "open" in method:
-            result["open_search"] = self.open_search(peaks=peaks,
-                                                     ms2_tolerance_in_da=ms2_tolerance_in_da,
-                                                     target=target)
+            result["open_search"] = self.open_search(peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target)
         if "neutral_loss" in method:
-            result["neutral_loss_search"] = self.neutral_loss_search(precursor_mz=precursor_mz,
-                                                                     peaks=peaks,
-                                                                     ms2_tolerance_in_da=ms2_tolerance_in_da,
-                                                                     target=target)
+            result["neutral_loss_search"] = self.neutral_loss_search(
+                precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target
+            )
         if "hybrid" in method:
-            result["hybrid_search"] = self.hybrid_search(precursor_mz=precursor_mz,
-                                                         peaks=peaks,
-                                                         ms2_tolerance_in_da=ms2_tolerance_in_da,
-                                                         target=target)
+            result["hybrid_search"] = self.hybrid_search(precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target)
         return result
 
-    def build_index(self,
-                    all_spectra_list: list = None,
-                    max_indexed_mz: float = 1500.00005,
-                    precursor_ions_removal_da: float = 1.6,
-                    noise_threshold=0.01,
-                    min_ms2_difference_in_da: float = 0.05,
-                    max_peak_num: int = 0,
-                    clean_spectra: bool = True):
+    def build_index(
+        self,
+        all_spectra_list: list = None,
+        max_indexed_mz: float = 1500.00005,
+        precursor_ions_removal_da: float = 1.6,
+        noise_threshold=0.01,
+        min_ms2_difference_in_da: float = 0.05,
+        max_peak_num: int = 0,
+        clean_spectra: bool = True,
+    ):
         """
         Set the library spectra for entropy search.
 
-        The `all_spectra_list` must be a list of dictionaries, with each dictionary containing at least two keys: "precursor_mz" and "peaks". 
+        The `all_spectra_list` must be a list of dictionaries, with each dictionary containing at least two keys: "precursor_mz" and "peaks".
         The dictionary should be in the format of {"precursor_mz": precursor_mz, "peaks": peaks, ...}, All keys in the dictionary, except "peaks,"
         will be saved as the metadata and can be accessed using the  __getitem__ function (e.g. entropy_search[0] returns the metadata for the
         first spectrum in the library).
@@ -227,12 +256,14 @@ class FlashEntropySearch:
         for spec in all_sorted_spectra_list:
             # Clean the peaks
             if clean_spectra:
-                spec["peaks"] = self.clean_spectrum_for_search(peaks=spec["peaks"],
-                                                               precursor_mz=spec["precursor_mz"],
-                                                               precursor_ions_removal_da=precursor_ions_removal_da,
-                                                               noise_threshold=noise_threshold,
-                                                               min_ms2_difference_in_da=min_ms2_difference_in_da,
-                                                               max_peak_num=max_peak_num)
+                spec["peaks"] = self.clean_spectrum_for_search(
+                    peaks=spec["peaks"],
+                    precursor_mz=spec["precursor_mz"],
+                    precursor_ions_removal_da=precursor_ions_removal_da,
+                    noise_threshold=noise_threshold,
+                    min_ms2_difference_in_da=min_ms2_difference_in_da,
+                    max_peak_num=max_peak_num,
+                )
             if len(spec["peaks"]) > 0:
                 all_spectra_list.append(spec)
                 all_metadata_list.append(pickle.dumps(spec))
@@ -241,9 +272,9 @@ class FlashEntropySearch:
         self.precursor_mz_array = np.array([spec["precursor_mz"] for spec in all_spectra_list], dtype=np.float32)
 
         # Extract metadata array
-        all_metadata_len = np.array([0]+[len(metadata) for metadata in all_metadata_list], dtype=np.uint64)
+        all_metadata_len = np.array([0] + [len(metadata) for metadata in all_metadata_list], dtype=np.uint64)
         self.metadata_loc = np.cumsum(all_metadata_len).astype(np.uint64)
-        self.metadata = np.frombuffer(b''.join(all_metadata_list), dtype=np.uint8)
+        self.metadata = np.frombuffer(b"".join(all_metadata_list), dtype=np.uint8)
 
         # Call father class to build the index.
         self.entropy_search.build_index(all_spectra_list, max_indexed_mz)
@@ -257,7 +288,7 @@ class FlashEntropySearch:
         :return:    The MS/MS spectrum in the format of {"precursor_mz": precursor_mz, "peaks": peaks}.
         """
         if self.metadata is not None:
-            spectrum = pickle.loads(self.metadata[self.metadata_loc[index]:self.metadata_loc[index+1]].tobytes())
+            spectrum = pickle.loads(self.metadata[self.metadata_loc[index] : self.metadata_loc[index + 1]].tobytes())
         else:
             spectrum = {"precursor_mz": self.precursor_mz_array[index]}
         return spectrum
@@ -303,9 +334,9 @@ class FlashEntropySearch:
         path_data = Path(path_data)
         path_data.mkdir(parents=True, exist_ok=True)
 
-        self.precursor_mz_array.tofile(str(path_data/"precursor_mz.npy"))
-        self.metadata.tofile(str(path_data/"metadata.npy"))
-        self.metadata_loc.tofile(str(path_data/"metadata_loc.npy"))
+        self.precursor_mz_array.tofile(str(path_data / "precursor_mz.npy"))
+        self.metadata.tofile(str(path_data / "metadata.npy"))
+        self.metadata_loc.tofile(str(path_data / "metadata_loc.npy"))
 
         self.entropy_search.write(path_data)
 
@@ -322,19 +353,19 @@ class FlashEntropySearch:
             path_data = Path(path_data)
 
         if self.low_memory:
-            self.precursor_mz_array = np.memmap(path_data/"precursor_mz.npy", dtype=np.float32, mode="r")
-            self.metadata = np.memmap(path_data/"metadata.npy", dtype=np.uint8, mode="r")
-            self.metadata_loc = np.memmap(path_data/"metadata_loc.npy", dtype=np.uint64, mode="r")
+            self.precursor_mz_array = np.memmap(path_data / "precursor_mz.npy", dtype=np.float32, mode="r")
+            self.metadata = np.memmap(path_data / "metadata.npy", dtype=np.uint8, mode="r")
+            self.metadata_loc = np.memmap(path_data / "metadata_loc.npy", dtype=np.uint64, mode="r")
         else:
-            self.precursor_mz_array = np.fromfile(str(path_data/"precursor_mz.npy"), dtype=np.float32)
-            self.metadata = np.fromfile(str(path_data/"metadata.npy"), dtype=np.uint8)
-            self.metadata_loc = np.fromfile(str(path_data/"metadata_loc.npy"), dtype=np.uint64)
+            self.precursor_mz_array = np.fromfile(str(path_data / "precursor_mz.npy"), dtype=np.float32)
+            self.metadata = np.fromfile(str(path_data / "metadata.npy"), dtype=np.uint8)
+            self.metadata_loc = np.fromfile(str(path_data / "metadata_loc.npy"), dtype=np.uint64)
 
         return self.entropy_search.read(path_data)
 
     def save_memory_for_multiprocessing(self):
         """
-        Save the memory for multiprocessing. This function will move the numpy array in the index to shared memory in order to save memory. 
+        Save the memory for multiprocessing. This function will move the numpy array in the index to shared memory in order to save memory.
 
         This function is not required when you only use one thread to search the MS/MS spectra.
         When use multiple threads, this function is also not required but highly recommended, as it avoids the memory copy and saves a lot of memory and time.
