@@ -3,3 +3,4 @@ numpydoc
 sphinxcontrib-email
 numpy
 pandas
+sphinx_rtd_theme
