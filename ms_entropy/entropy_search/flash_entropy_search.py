@@ -41,9 +41,12 @@ class FlashEntropySearch:
         spectra_idx_min = np.searchsorted(self.precursor_mz_array, precursor_mz_min, side="left")
         spectra_idx_max = np.searchsorted(self.precursor_mz_array, precursor_mz_max, side="right")
         if spectra_idx_min >= spectra_idx_max:
-            return np.zeros(self.entropy_search.total_spectra_num, dtype=np.float32)
+            if output_matched_peak_number:
+                return np.zeros(self.entropy_search.total_spectra_num, dtype=np.float32), np.zeros(self.entropy_search.total_spectra_num, dtype=np.uint16)
+            else:
+                return np.zeros(self.entropy_search.total_spectra_num, dtype=np.float32)
         else:
-            entropy_similarity = self.entropy_search.search(
+            return self.entropy_search.search(
                 method="open",
                 target=target,
                 peaks=peaks,
@@ -53,7 +56,6 @@ class FlashEntropySearch:
                 search_spectra_idx_max=spectra_idx_max,
                 output_matched_peak_number=output_matched_peak_number,
             )
-            return entropy_similarity
 
     def open_search(self, peaks, ms2_tolerance_in_da, target="cpu", output_matched_peak_number=False, **kwargs):
         """

@@ -66,6 +66,62 @@ The metadata was extracted and stored when you called the ``build_index`` functi
 
 ----------------
 
+Get the matched peaks number of query spectrum to the library Spectra
+=====================================================================
+
+If you also want to know the number of matched peaks between the query spectrum and the library spectra, you can set the ``get_matched_peaks_number`` parameters to ``True``. Then, the returned results will be a list of two numpy arrays. The first array contains the similarity scores, and the second array contains the number of matched peaks.
+
+At this moment, the ``get_matched_peaks_number`` parameter is only supported by the ``identity_search``, ``open_search``, and ``neutral_loss_search`` functions.
+
+Here's an example of how you can use the ``get_matched_peaks_number`` parameter:
+
+.. code-block:: python
+
+    import numpy as np
+    from ms_entropy import FlashEntropySearch
+
+    spectral_library = [{
+        "id": "Demo spectrum 1",
+        "precursor_mz": 150.0,
+        "peaks": [[100.0, 1.0], [101.0, 1.0], [103.0, 1.0]]
+    }, {
+        "id": "Demo spectrum 2",
+        "precursor_mz": 200.0,
+        "peaks": np.array([[100.0, 1.0], [101.0, 1.0], [102.0, 1.0]], dtype=np.float32),
+        "metadata": "ABC"
+    }, {
+        "id": "Demo spectrum 3",
+        "precursor_mz": 250.0,
+        "peaks": np.array([[200.0, 1.0], [101.0, 1.0], [202.0, 1.0]], dtype=np.float32),
+        "XXX": "YYY",
+    }, {
+        "precursor_mz": 350.0,
+        "peaks": [[100.0, 1.0], [101.0, 1.0], [302.0, 1.0]]}]
+    query_spectrum = {"precursor_mz": 150.0,
+                      "peaks": [[100.0, 1.0], [101.0, 1.0], [102.0, 1.0]]}
+
+    entropy_search = FlashEntropySearch()
+    # Step 1: Build the index from the library spectra
+    spectral_library = entropy_search.build_index(spectral_library)
+    # Step 2: Clean the query spectrum
+    query_spectrum['peaks'] = entropy_search.clean_spectrum_for_search(
+        precursor_mz = query_spectrum['precursor_mz'],
+        peaks = query_spectrum['peaks']
+    )
+    # Step 3: Search the library
+    # This parameter is supported by the identity_search, open_search, and neutral_loss_search functions
+    entropy_similarity, matched_peaks_number = entropy_search.identity_search(
+        precursor_mz = query_spectrum['precursor_mz'],
+        peaks = query_spectrum['peaks'],
+        ms1_tolerance_in_da = 0.01,
+        ms2_tolerance_in_da = 0.02,
+        output_matched_peak_number = True
+    )
+    print(entropy_similarity)
+    print(matched_peaks_number)
+
+----------------
+
 Save and load index for the Flash entropy search object
 =======================================================
 
