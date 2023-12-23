@@ -12,7 +12,7 @@ class FlashEntropySearchCoreLowMemory(FlashEntropySearchCore):
         self.path_data.mkdir(parents=True, exist_ok=True)
         self.index_file = []
 
-    def _generate_index_from_peak_data(self, peak_data, max_indexed_mz):
+    def _generate_index_from_peak_data(self, peak_data, max_indexed_mz, append):
         total_peaks_num = peak_data.shape[0]
 
         # Sort with precursor m/z.
@@ -217,6 +217,7 @@ class FlashEntropySearchCoreLowMemory(FlashEntropySearchCore):
 
         elif target == "gpu":
             import cupy as cp
+
             entropy_transform = cp.ElementwiseKernel(
                 "T intensity_a, T intensity_b",
                 "T similarity",
