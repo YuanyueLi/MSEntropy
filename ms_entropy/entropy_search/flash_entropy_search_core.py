@@ -397,7 +397,7 @@ class FlashEntropySearchCore:
         """
 
         # Get the total number of spectra and peaks
-        total_peaks_num = np.sum([spectrum["peaks"].shape[0] for spectrum in all_spectra_list])
+        total_peaks_num = int(np.sum([spectrum["peaks"].shape[0] for spectrum in all_spectra_list]))
         total_spectra_num = len(all_spectra_list)
         if append:
             self.total_spectra_num += total_spectra_num
