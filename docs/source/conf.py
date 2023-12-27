@@ -11,10 +11,12 @@ import sys
 sys.path.insert(0, os.path.abspath("../../"))
 sys.path.insert(0, os.path.abspath("../../ms_entropy"))
 
+from ms_entropy import __version__
+
 project = "MS Entropy"
 copyright = "2023, Yuanyue Li"
 author = "Yuanyue Li"
-release = "0.1.0"
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
