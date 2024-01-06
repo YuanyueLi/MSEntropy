@@ -49,7 +49,7 @@ Get the metadata of a specifical spectrum from the Flash entropy search object
 
 After you've conducted a search in your spectral library, you may want to retrieve the metadata of a specific spectrum. For this, you can use the ``__getitem__`` function.
 
-For instance, let's say that after a search, you found that the second spectrum (0-indexed) in the library has the highest similarity score. You can call ``entropy_search[2]`` to retrieve the metadata of the second spectrum.
+For instance, let's say that after a search, you found that the third spectrum (index start from 0) in the library has the highest similarity score. You can call ``entropy_search[2]`` to retrieve the metadata of the third spectrum.
 
 Here's an example of how you can use the ``__getitem__`` function:
 
@@ -59,7 +59,7 @@ Here's an example of how you can use the ``__getitem__`` function:
     entropy_search = FlashEntropySearch()
     entropy_search.build_index(spectral_library)
 
-    # Get the metadata of the second spectrum
+    # Get the metadata of the third spectrum
     metadata = entropy_search[2]
 
 The metadata was extracted and stored when you called the ``build_index`` function. The data will remain available even if you save and reload the index using either the pickle module or the read and write functions.
