@@ -70,9 +70,9 @@ You can call the ``FlashEntropySearch`` class to search the library like this:
         precursor_mz=150.0, peaks=[[100.0, 1.0], [101.0, 1.0], [102.0, 1.0]])
 
 .. warning::
-    It is important to note that for efficient identity searching, all spectra in the ``spectral_library`` get **re-sorted** based on their precursor m/z values during the indexing process, and the ``search`` function returns the similarity scores in the same order as the **re-sorted** spectra. The ``build_index`` function returns a list of these **re-sorted spectra**, useful for mapping results back to the original spectra.
+    It is important to note that for efficient identity searching, all spectra in the ``spectral_library`` get **re-sorted** based on their precursor m/z values during the indexing process, and the ``search`` function returns the similarity scores in the same order as the **re-sorted spectra**. The ``build_index`` function returns a list of these **re-sorted spectra**, useful for mapping results back to the original spectra.
 
-    In this example, the original order of the spectra is `"Demo spectrum 1-A", "Demo spectrum 2-C", "Demo spectrum 3-B", ...` After indexing, the spectra are re-sorted by precursor m/z, so the order becomes `"Demo spectrum 1-A", "Demo spectrum 3-B", "Demo spectrum 2-C", ...` You can check the difference by printing the ``spectral_library_new`` variable: ``print(spectral_library_new)``. The ``entropy_similarity`` variable will have the same order as ``spectral_library_new``.
+    In this example, the original order of the spectra is `"Demo spectrum 1-A", "Demo spectrum 2-C", "Demo spectrum 3-B", ...` After indexing, the spectra are re-sorted by precursor m/z, so the order becomes `"Demo spectrum 1-A", "Demo spectrum 3-B", "Demo spectrum 2-C", ...` You can check the difference by printing the ``spectral_library_new`` variable: ``print(spectral_library_new)``. The variable ``entropy_similarity`` will have the same order as ``spectral_library_new``.
 
 After that, you can print the results like this:
 
@@ -90,7 +90,7 @@ The result will look like this:
     'neutral_loss_search': array([0.6666666, 0.       , 0.6666666, 0.3333333], dtype=float32),
     'open_search': array([0.6666666 , 0.99999994, 0.3333333 , 0.6666666 ], dtype=float32)}
 
-The values are the similarity scores for each spectrum in the ``spectral_library_new`` list. For example, the array ``[0.6666666 , 0.99999994, 0.3333333 , 0.6666666]`` in the ``open_search`` key means that the query spectrum has a similarity score of `0.6666666` with the first spectrum in the ``spectral_library_new`` list, which is **"Demo spectrum 1-A"** or ``entropy_search[0]``, a similarity score of `0.99999994` with the second spectrum in the ``spectral_library_new`` list, which is **"Demo spectrum 3-B"** or ``entropy_search[1]``, and a similarity score of `0.3333333` with the third spectrum in the ``spectral_library_new`` list, and so on.
+The values are the similarity scores for each spectrum in the ``spectral_library_new`` list. For example, the array ``[0.6666666 , 0.99999994, 0.3333333 , 0.6666666]`` in the ``open_search`` key means that the query spectrum has a similarity score of `0.6666666` with the first spectrum in the ``spectral_library_new`` list, which is **"Demo spectrum 1-A"** or ``entropy_search[0]``, a similarity score of `0.99999994` with the second spectrum in the ``spectral_library_new`` list, which is **"Demo spectrum 3-B"** or ``entropy_search[1]``, and a similarity score of `0.3333333` with the third spectrum in the ``spectral_library_new`` list (``entropy_search[2]``), and so on.
 
 .. note::
     In default, the ``search`` function will return the similarity scores for all four search modes, which are ``identity_search``, ``open_search``, ``neutral_loss_search``, and ``hybrid_search``. To save time, you can specify the search mode by setting the ``method`` parameter, for example, ``method = {'identity', 'open'}`` will only return the similarity scores for ``identity_search`` and ``open_search``. `Click here <./entropy_search_basic_usage.html#search-function>`_ for more details.
