@@ -60,6 +60,7 @@ Step 2: Searching the library
 
 After building the index, you can search your query spectrum against the library spectra using the ``search`` function. This function takes the query spectrum as input, returning the similarity score of each spectrum in the library, in the same order as the spectral library returned by the ``build_index`` function.
 
+.. _search-function:
 
 The ``search`` function accepts the following parameters:
 

@@ -1,6 +1,8 @@
 [![DOI](https://zenodo.org/badge/232434019.svg)](https://zenodo.org/badge/latestdoi/232434019)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7972082.svg)](https://doi.org/10.5281/zenodo.7972082)
 [![Test MS Entropy package](https://github.com/YuanyueLi/MSEntropy/actions/workflows/run_test.yml/badge.svg?branch=main)](https://github.com/YuanyueLi/MSEntropy/actions/workflows/run_test.yml)
+[![Documentation Status](https://readthedocs.org/projects/msentropy/badge/?version=latest)](https://msentropy.readthedocs.io/en/latest/?badge=latest)
+
 
 If you have any questions, feel free to send me E-mails: mail@yli.one. If you find this package useful, please consider citing the following papers:
 
