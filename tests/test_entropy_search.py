@@ -33,10 +33,33 @@ class TestFlashEntropySearchWithCpu(unittest.TestCase):
         self.flash_entropy.read(path_test)
 
     def test_hybrid_search(self):
-        similarity = self.flash_entropy.hybrid_search(
+        similarity, matched_peaks = self.flash_entropy.hybrid_search(
             precursor_mz=self.query_spectrum["precursor_mz"], peaks=self.query_spectrum["peaks"], ms2_tolerance_in_da=0.02
         )
         np.testing.assert_almost_equal(similarity, [1.0, 0.22299, 0.66897, 0.66897], decimal=5)
+        similarity, matched_peaks = self.flash_entropy.hybrid_search(
+            precursor_mz=self.query_spectrum["precursor_mz"],
+            peaks=self.query_spectrum["peaks"],
+            ms2_tolerance_in_da=0.02,
+            output_matched_peak_number=True,
+        )
+        np.testing.assert_almost_equal(similarity, [1.0, 0.22299, 0.66897, 0.66897], decimal=5)
+        np.testing.assert_almost_equal(matched_peaks, [4, 1, 3, 3], decimal=5)
+
+
+    def test_hybrid_search_MP(self):
+        similarity = self.flash_entropy.neutral_loss_search(
+            precursor_mz=self.query_spectrum["precursor_mz"], peaks=self.query_spectrum["peaks"], ms2_tolerance_in_da=0.02
+        )
+        np.testing.assert_almost_equal(similarity, [1.0, 0.0, 0.44598, 0.22299], decimal=5)
+        similarity, matched_peaks = self.flash_entropy.hybrid_search(
+            precursor_mz=self.query_spectrum["precursor_mz"],
+            peaks=self.query_spectrum["peaks"],
+            ms2_tolerance_in_da=0.02,
+            output_matched_peak_number=True,
+        )
+        np.testing.assert_almost_equal(similarity, [1.0, 0.0, 0.44598, 0.22299], decimal=5)
+        np.testing.assert_almost_equal(matched_peaks, [4, 0, 2, 1], decimal=5)
 
     def test_neutral_loss_search(self):
         similarity = self.flash_entropy.neutral_loss_search(
