@@ -114,7 +114,7 @@ class FlashEntropySearch:
 
         :return:    The entropy similarity score for each spectrum in the library, a numpy array with shape (N,), N is the number of spectra in the library.
         """
-        return self.entropy_search.search_hybrid(target=target, precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da)
+        return self.entropy_search.search_hybrid(target=target, precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da,**kwargs)
 
     def clean_spectrum_for_search(
         self, precursor_mz, peaks, precursor_ions_removal_da: float = 1.6, noise_threshold=0.01, min_ms2_difference_in_da: float = 0.05, max_peak_num: int = 0
@@ -157,6 +157,7 @@ class FlashEntropySearch:
         noise_threshold=0.01,
         min_ms2_difference_in_da: float = 0.05,
         max_peak_num: int = None,
+        **kwargs,
     ):
         """
         Run the Flash entropy search for the query spectrum.
@@ -195,18 +196,40 @@ class FlashEntropySearch:
             method = {method}
 
         result = {}
+        
         if "identity" in method:
-            result["identity_search"] = self.identity_search(
-                precursor_mz=precursor_mz, peaks=peaks, ms1_tolerance_in_da=ms1_tolerance_in_da, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target
+            tmp = self.identity_search(
+                precursor_mz=precursor_mz, peaks=peaks, ms1_tolerance_in_da=ms1_tolerance_in_da, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,**kwargs
             )
+            if len(tmp) == 1:
+                result["identity_search"] = tmp
+            else:
+                result["identity_search"] = tmp[0]
+                result["identity_MP"] = tmp[1]
         if "open" in method:
-            result["open_search"] = self.open_search(peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target)
+            tmp = self.open_search(peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,**kwargs)
+            if len(tmp) == 1:
+                result["open_search"] = tmp
+            else:
+                result["open_search"] = tmp[0]
+                result["open_MP"] = tmp[1]
+
         if "neutral_loss" in method:
-            result["neutral_loss_search"] = self.neutral_loss_search(
-                precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target
+            tmp = self.neutral_loss_search(
+                precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,**kwargs
             )
+            if len(tmp) == 1:
+                result["neutral_loss_search"] = tmp
+            else:
+                result["neutral_loss_search"] = tmp[0]
+                result["neutral_loss_MP"] = tmp[1]
         if "hybrid" in method:
-            result["hybrid_search"] = self.hybrid_search(precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target)
+            tmp = self.hybrid_search(precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,**kwargs)
+            if len(tmp) == 1:
+                result["hybrid_search"] = tmp
+            else:
+                result["hybrid_search"] = tmp[0]
+                result["hybrid_MP"] = tmp[1]
         return result
 
     def build_index(

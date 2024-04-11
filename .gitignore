@@ -165,3 +165,6 @@ r_package/msentropy/src/RcppExports.cpp
 ms_entropy/spectra/entropy_cython.c
 local/
 ms_entropy/entropy_search/fast_flash_entropy_search_cpython.c
+ms_entropy/entropy_search/entropy_search.csv
+ms_entropy/entropy_search/entropy_search.xlsx
+ms_entropy/entropy_search/Untitled-1.ipynb

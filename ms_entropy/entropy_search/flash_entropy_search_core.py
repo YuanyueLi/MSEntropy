@@ -188,7 +188,7 @@ class FlashEntropySearchCore:
                 entropy_similarity[search_spectra_idx_max:] = 0
             return entropy_similarity
 
-    def search_hybrid(self, target="cpu", precursor_mz=None, peaks=None, ms2_tolerance_in_da=0.02):
+    def search_hybrid(self, target="cpu", precursor_mz=None, peaks=None, ms2_tolerance_in_da=0.02, output_matched_peak_number=False):
         """
         Perform the hybrid search for the MS/MS spectra.
 
@@ -241,6 +241,8 @@ class FlashEntropySearchCore:
 
         if target == "cpu":
             entropy_similarity = np.zeros(self.total_spectra_num, dtype=np.float32)
+            if output_matched_peak_number:
+                matched_peak_number = np.zeros(self.total_spectra_num, dtype=np.int32)
             # Go through all the peaks in the spectrum and calculate the entropy similarity
             for peak_idx, (mz, intensity) in enumerate(peaks):
                 ###############################################################
@@ -253,7 +255,8 @@ class FlashEntropySearchCore:
                 modified_value_product = self._score_peaks_with_cpu(intensity, all_ions_intensity[product_mz_idx_min:product_mz_idx_max])
 
                 entropy_similarity[modified_idx_product] += modified_value_product
-
+                if output_matched_peak_number:
+                    matched_peak_number[modified_idx_product] += 1
                 ###############################################################
                 # Match the neutral loss ions
                 mz_nl = precursor_mz - mz
@@ -268,19 +271,32 @@ class FlashEntropySearchCore:
                 # Calculate the entropy similarity for this matched peak
                 modified_idx_nl = all_nl_spec_idx[neutral_loss_mz_idx_min:neutral_loss_mz_idx_max]
                 modified_value_nl = self._score_peaks_with_cpu(intensity, all_nl_intensity[neutral_loss_mz_idx_min:neutral_loss_mz_idx_max])
+                if output_matched_peak_number:
+                    matched_peak_number[modified_idx_nl] += 1
 
                 # Check if the neutral loss ion is already matched to other query peak as a product ion
                 nl_matched_product_ion_idx = all_ions_idx_for_nl[neutral_loss_mz_idx_min:neutral_loss_mz_idx_max]
                 s1 = np.searchsorted(product_peak_match_idx_min, nl_matched_product_ion_idx, side="right")
                 s2 = np.searchsorted(product_peak_match_idx_max - 1, nl_matched_product_ion_idx, side="left")
+                
                 modified_value_nl[s1 > s2] = 0
+                
+                if output_matched_peak_number:
+                    
+                    matched_peak_number[modified_idx_nl][s1 > s2] += -1
 
                 # Check if this query peak is already matched to a product ion in the same library spectrum
                 duplicate_idx_in_nl = self._remove_duplicate_with_cpu(modified_idx_product, modified_idx_nl, self.total_spectra_num)
                 modified_value_nl[duplicate_idx_in_nl] = 0
-
+                if output_matched_peak_number:
+                    matched_peak_number[duplicate_idx_in_nl] += -1
+                    # convert negative number to 0
+                    matched_peak_number[matched_peak_number < 0] = 0
                 entropy_similarity[modified_idx_nl] += modified_value_nl
-            return entropy_similarity
+            if output_matched_peak_number:
+                return entropy_similarity, matched_peak_number
+            else:
+                return entropy_similarity
 
         elif target == "gpu":
             import cupy as cp
