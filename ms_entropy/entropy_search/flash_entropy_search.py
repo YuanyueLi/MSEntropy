@@ -157,6 +157,7 @@ class FlashEntropySearch:
         noise_threshold=0.01,
         min_ms2_difference_in_da: float = 0.05,
         max_peak_num: int = None,
+        output_matched_peak_number=False,
         **kwargs,
     ):
         """
@@ -198,36 +199,44 @@ class FlashEntropySearch:
         result = {}
         
         if "identity" in method:
-            tmp = self.identity_search(
-                precursor_mz=precursor_mz, peaks=peaks, ms1_tolerance_in_da=ms1_tolerance_in_da, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,**kwargs
+            
+            if not output_matched_peak_number:
+                result["identity_search"] = self.identity_search(
+                precursor_mz=precursor_mz, peaks=peaks, ms1_tolerance_in_da=ms1_tolerance_in_da, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,
             )
-            if len(tmp) == 1:
-                result["identity_search"] = tmp
             else:
+                tmp = self.identity_search(
+                precursor_mz=precursor_mz, peaks=peaks, ms1_tolerance_in_da=ms1_tolerance_in_da, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,output_matched_peak_number=output_matched_peak_number,
+            )
                 result["identity_search"] = tmp[0]
                 result["identity_MP"] = tmp[1]
         if "open" in method:
-            tmp = self.open_search(peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,**kwargs)
-            if len(tmp) == 1:
-                result["open_search"] = tmp
+
+            if not output_matched_peak_number:
+                result["open_search"] = self.open_search(peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,)
             else:
+                tmp = self.open_search(peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,output_matched_peak_number=output_matched_peak_number,)
                 result["open_search"] = tmp[0]
                 result["open_MP"] = tmp[1]
 
         if "neutral_loss" in method:
-            tmp = self.neutral_loss_search(
-                precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,**kwargs
+            
+            if not output_matched_peak_number:
+                result["neutral_loss_search"] = self.neutral_loss_search(
+                precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,
             )
-            if len(tmp) == 1:
-                result["neutral_loss_search"] = tmp
             else:
+                tmp = self.neutral_loss_search(
+                precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,output_matched_peak_number=output_matched_peak_number,
+            )
                 result["neutral_loss_search"] = tmp[0]
                 result["neutral_loss_MP"] = tmp[1]
         if "hybrid" in method:
-            tmp = self.hybrid_search(precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,**kwargs)
-            if len(tmp) == 1:
-                result["hybrid_search"] = tmp
+            
+            if not output_matched_peak_number:
+                result["hybrid_search"] = self.hybrid_search(precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,)
             else:
+                tmp = self.hybrid_search(precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target,output_matched_peak_number=output_matched_peak_number,)
                 result["hybrid_search"] = tmp[0]
                 result["hybrid_MP"] = tmp[1]
         return result
