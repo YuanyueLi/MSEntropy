@@ -47,7 +47,7 @@ class FlashEntropySearch:
                 return np.zeros(self.entropy_search.total_spectra_num, dtype=np.float32)
         else:
             return self.entropy_search.search(
-                method="open",
+                method="identity",
                 target=target,
                 peaks=peaks,
                 ms2_tolerance_in_da=ms2_tolerance_in_da,
