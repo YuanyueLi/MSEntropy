@@ -79,7 +79,8 @@ class FlashEntropySearchCoreLowMemory(FlashEntropySearchCore):
                 file_cur.data_type = np.dtype(self.index_dtypes[name])
                 self.index_file.append(file_cur)
 
-            information = json.load(open(self.path_data / "information.json", "r"))
+            with open(self.path_data / "information.json", "r") as f:
+                information = json.load(f)
             self.mz_index_step = information["mz_index_step"]
             self.total_spectra_num = information["total_spectra_num"]
             self.total_peaks_num = information["total_peaks_num"]

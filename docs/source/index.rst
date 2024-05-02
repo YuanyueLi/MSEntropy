@@ -7,7 +7,7 @@ Introduction to MS Entropy
 ==========================
 
 Thank you for using the MS Entropy package, you can download the code from `MS Entropy Github repository <https://github.com/YuanyueLi/MSEntropy>`_.
-If you encounter any issues, queries or need support, don't hesitate to contact :email:`Yuanyue Li <liyuanyue@gmail.com>`
+If you encounter any issues, queries or need support, don't hesitate to contact :email:`Yuanyue Li <mail@yli.one>`
 
 If you find this package useful, please consider citing the following papers:
 
