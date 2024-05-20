@@ -11,7 +11,7 @@ If you encounter any issues, queries or need support, don't hesitate to contact 
 
 If you find this package useful, please consider citing the following papers:
 
-Li, Y., Fiehn, O., Flash entropy search to query all mass spectral libraries in real time. 04 April 2023, PREPRINT (Version 1) available at Research Square. `https://doi.org/10.21203/rs.3.rs-2693233/v1 <https://doi.org/10.21203/rs.3.rs-2693233/v1>`_
+Li, Y., Fiehn, O., Flash entropy search to query all mass spectral libraries in real time.  *Nat Methods* **20**, 1475-1478 (2023). `https://doi.org/10.1038/s41592-023-02012-9 <https://doi.org/10.1038/s41592-023-02012-9>`_
 
 Li, Y., Kind, T., Folz, J. _et al._ Spectral entropy outperforms MS/MS dot product similarity for small-molecule compound identification. *Nat Methods* **18**, 1524-1531 (2021). `https://doi.org/10.1038/s41592-021-01331-z <https://doi.org/10.1038/s41592-021-01331-z>`_
 
