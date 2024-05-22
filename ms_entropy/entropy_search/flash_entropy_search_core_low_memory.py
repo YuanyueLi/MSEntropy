@@ -12,6 +12,10 @@ class FlashEntropySearchCoreLowMemory(FlashEntropySearchCore):
         self.path_data.mkdir(parents=True, exist_ok=True)
         self.index_file = []
 
+    def __del__(self):
+        for file in self.index_file:
+            file.close()
+
     def _generate_index_from_peak_data(self, peak_data, max_indexed_mz, append):
         total_peaks_num = peak_data.shape[0]
 

@@ -8,7 +8,12 @@ Run Flash entropy search with limited memory
 
 This method is useful when you are dealing with a very large spectral library and your computer's memory is limited.
 
-To achieve this, while constructing the ``FlashEntropySearch`` object, you need to set the ``path_data`` parameter to the path of the index file, and set the ``low_memory`` parameter to ``True``. Then read the pre-built index file by calling the ``read`` method. After that, the rest of the code is the same as usual.
+To achieve this, while constructing the ``FlashEntropySearch`` object, you need to set the ``path_data`` parameter to the path of the index file, and set the ``low_memory`` parameter to ``1`` or ``2``. Then read the pre-built index file by calling the ``read`` method. After that, the rest of the code is the same as usual.
+
+The ``low_memory`` parameter has three values:
+    - False or 0: Normal mode. All the index will be loaded into memory, this is the default mode and the fastest mode.
+    - True or 1: Low memory mode. Only load the nessessary data into memory, this mode needs the lowest memory, but the search speed will be the slowest, as it will read all the data from the disk every time.
+    - 2: Low memory mode use memmap. This mode is similar to mode 1, but it will use the ``numpy.memmap`` to map the index file to memory, which will be faster than mode 1 if the memory is not too small.
 
 .. code-block:: python
 
@@ -17,14 +22,14 @@ To achieve this, while constructing the ``FlashEntropySearch`` object, you need 
     # Instead of using this:
     # entropy_search = FlashEntropySearch()
     # Use this:
-    entropy_search = FlashEntropySearch(path_data='path/to/library/index', low_memory=True)
+    entropy_search = FlashEntropySearch(path_data='path/to/library/index', low_memory=1)
     entropy_search.read()
 
     # Then the reset of the code is the same as usual.
     # entropy_search.search(...)
     # ...... (the reset of the code is the same as usual)
 
-The index built in normal mode and low memory mode is identical. If you use our ``write`` and ``read`` methods to save and load the index, you can use the index in normal mode and low memory mode interchangeably. For example, you can build the index in normal mode, save it to disk with the ``write`` method. After that, you can initialize the ``FlashEntropySearch`` object with ``path_data`` parameter which points to the index file, and set ``low_memory`` parameter to ``True``, then call the ``read`` method to load the index, and proceed with the search as usual.
+The index built in normal mode and low memory mode is identical. If you use our ``write`` and ``read`` methods to save and load the index, you can use the index in normal mode and low memory mode interchangeably. For example, you can build the index in normal mode, save it to disk with the ``write`` method. After that, you can initialize the ``FlashEntropySearch`` object with ``path_data`` parameter which points to the index file, and set ``low_memory`` parameter to ``1``, then call the ``read`` method to load the index, and proceed with the search as usual.
 
 
 Run Flash entropy search with multiple cores

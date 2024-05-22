@@ -4,6 +4,7 @@ import pickle
 from pathlib import Path
 from .flash_entropy_search_core import FlashEntropySearchCore
 from .flash_entropy_search_core_low_memory import FlashEntropySearchCoreLowMemory
+from .flash_entropy_search_core_medium_memory import FlashEntropySearchCoreMediumMemory
 from ..spectra import clean_spectrum
 
 
@@ -11,8 +12,12 @@ class FlashEntropySearch:
     def __init__(self, max_ms2_tolerance_in_da=0.024, mz_index_step=0.0001, low_memory=False, path_data=None):
         self.precursor_mz_array = np.zeros(0, dtype=np.float32)
         self.low_memory = low_memory
-        if low_memory:
+        if low_memory==1:
             self.entropy_search = FlashEntropySearchCoreLowMemory(
+                path_data=path_data, max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step
+            )
+        elif low_memory==2:
+            self.entropy_search = FlashEntropySearchCoreMediumMemory(
                 path_data=path_data, max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step
             )
         else:
