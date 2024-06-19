@@ -30,6 +30,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           path: ./wheelhouse/*.whl
+          overwrite: true
 
   build:
     name: Build
@@ -54,7 +55,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: dist/*.tar.gz
-          if-no-files-found: error # Options: warn, error, ignore
           overwrite: true
 
   upload_pypi:
