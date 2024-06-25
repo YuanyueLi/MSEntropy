@@ -18,6 +18,7 @@ class FlashEntropySearchCore:
     ) -> None:
         """
         Initialize the EntropySearch class.
+    
         :param path_array: The path array of the index files.
         :param max_ms2_tolerance_in_da: The maximum MS2 tolerance used when searching the MS/MS spectra, in Dalton. Default is 0.024.
         :param mz_index_step:   The step size of the m/z index, in Dalton. Default is 0.0001.

@@ -7,6 +7,17 @@ from .flash_entropy_search_core import FlashEntropySearchCore
 
 class FlashEntropySearchCoreMediumMemory(FlashEntropySearchCore):
     def __init__(self, path_data, max_ms2_tolerance_in_da=0.024, mz_index_step=0.0001, intensity_weight="entropy") -> None:
+        """
+        Initialize the EntropySearch class.
+        This class is use memmap function to read data from the disk, which is suitable for most of the cases, unless the data is super large.
+        
+        :param path_data:   The path to save the index data.
+        :param max_ms2_tolerance_in_da:  The maximum MS2 tolerance in Da.
+        :param mz_index_step:   The step size for the m/z index.
+        :param intensity_weight:    The weight for the intensity in the entropy calculation, can be "entropy" or None. Default is "entropy".
+            - None: The intensity will not be weighted, then the unweighted similarity will be calculated.
+            - "entropy": The intensity will be weighted by the entropy, then the entropy similarity will be calculated.
+        """
         super().__init__(max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step, intensity_weight=intensity_weight)
         self.path_data = Path(str(path_data))
         self.path_data.mkdir(parents=True, exist_ok=True)

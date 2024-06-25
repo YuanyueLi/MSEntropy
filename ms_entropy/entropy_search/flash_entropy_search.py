@@ -19,6 +19,7 @@ class FlashEntropySearch:
     ):
         """
         Initialize the EntropySearch class.
+        
         :param max_ms2_tolerance_in_da:  The maximum MS2 tolerance in Da.
         :param mz_index_step:   The step size for the m/z index.
         :param low_memory:  The memory usage mode, can be 0, 1, or 2. 0 means normal mode, 1 means low memory mode, and 2 means medium memory mode.
