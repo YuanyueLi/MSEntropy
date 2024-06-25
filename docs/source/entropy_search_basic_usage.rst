@@ -55,6 +55,16 @@ The initial step in using the Flash Entropy Search algorithm involves building a
     If you need to maintain the original order of spectra, consider adding metadata, such as an ``id`` field, to your spectra. This metadata will help keep track of the original sequence even after re-sorting.
 
 
+.. note::
+    If you want to calcualte unweighted entropy similarity instead of weighted entropy similarity, you can set the ``intensity_weight`` parameter to ``None`` when constructing the ``FlashEntropySearch`` object. For example:
+
+    .. code-block:: python
+
+        entropy_search = FlashEntropySearch(intensity_weight=None)
+        entropy_search.build_index(spectral_library)
+        ...
+
+
 Step 2: Searching the library
 =============================
 
