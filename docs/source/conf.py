@@ -34,6 +34,7 @@ extensions = ["sphinx.ext.autodoc",
 # apidoc_separate_modules = True
 # apidoc_module_first = True
 numpydoc_show_class_members = False
+autoclass_content = 'both'
 
 templates_path = ["_templates"]
 exclude_patterns = []
