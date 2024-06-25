@@ -6,8 +6,8 @@ from .flash_entropy_search_core import FlashEntropySearchCore
 
 
 class FlashEntropySearchCoreLowMemory(FlashEntropySearchCore):
-    def __init__(self, path_data, max_ms2_tolerance_in_da=0.024, mz_index_step=0.0001) -> None:
-        super().__init__(max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step)
+    def __init__(self, path_data, max_ms2_tolerance_in_da=0.024, mz_index_step=0.0001, intensity_weight="entropy") -> None:
+        super().__init__(max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step, intensity_weight=intensity_weight)
         self.path_data = Path(str(path_data))
         self.path_data.mkdir(parents=True, exist_ok=True)
         self.index_file = []

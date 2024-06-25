@@ -9,17 +9,26 @@ from .fast_flash_entropy_search import entropy_similarity_search_identity
 
 
 class FlashEntropySearchCore:
-    def __init__(self, path_data=None, max_ms2_tolerance_in_da=0.024, mz_index_step=0.0001) -> None:
+    def __init__(
+        self,
+        path_data=None,
+        max_ms2_tolerance_in_da=0.024,
+        mz_index_step=0.0001,
+        intensity_weight="entropy", # "entropy" or None
+    ) -> None:
         """
         Initialize the EntropySearch class.
         :param path_array: The path array of the index files.
         :param max_ms2_tolerance_in_da: The maximum MS2 tolerance used when searching the MS/MS spectra, in Dalton. Default is 0.024.
         :param mz_index_step:   The step size of the m/z index, in Dalton. Default is 0.0001.
                                 The smaller the step size, the faster the search, but the larger the index size and longer the index building time.
+        :param intensity_weight: The weight of the intensity, can be "entropy" or None. If set to "entropy", the intensity will be weighted by the entropy.
+                                If set to None, the intensity will not be weighted, which is equivalent to the unweighted entropy similarity.
         """
         self.mz_index_step = mz_index_step
         self._init_for_multiprocessing = False
         self.max_ms2_tolerance_in_da = max_ms2_tolerance_in_da
+        self.intensity_weight = intensity_weight
 
         self.total_spectra_num = 0
         self.total_peaks_num = 0
@@ -511,8 +520,13 @@ class FlashEntropySearchCore:
         """
         Preprocess the peaks.
         """
-        peaks_clean = np.asarray(apply_weight_to_intensity(peaks))
-        peaks_clean[:, 1] /= 2
+        if self.intensity_weight == "entropy":
+            peaks_clean = np.asarray(apply_weight_to_intensity(peaks))
+            peaks_clean[:, 1] /= 2
+        elif self.intensity_weight is None:
+            peaks_clean = peaks.copy()
+            peaks_clean[:, 1] /= 2
+
         return peaks_clean
 
     def _score_peaks_with_cpu(self, intensity_query, intensity_library):

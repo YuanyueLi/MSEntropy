@@ -9,19 +9,38 @@ from ..spectra import clean_spectrum
 
 
 class FlashEntropySearch:
-    def __init__(self, max_ms2_tolerance_in_da=0.024, mz_index_step=0.0001, low_memory=False, path_data=None):
+    def __init__(
+        self,
+        max_ms2_tolerance_in_da=0.024,
+        mz_index_step=0.0001,
+        low_memory=False,
+        path_data=None,
+        intensity_weight="entropy",
+    ):
+        """
+        Initialize the EntropySearch class.
+        :param max_ms2_tolerance_in_da:  The maximum MS2 tolerance in Da.
+        :param mz_index_step:   The step size for the m/z index.
+        :param low_memory:  The memory usage mode, can be 0, 1, or 2. 0 means normal mode, 1 means low memory mode, and 2 means medium memory mode.
+        :param path_data:   The path to save the index data.
+        :param intensity_weight:    The weight for the intensity in the entropy calculation, can be "entropy" or None. Default is "entropy".
+            - None: The intensity will not be weighted, then the unweighted similarity will be calculated.
+            - "entropy": The intensity will be weighted by the entropy, then the entropy similarity will be calculated.
+        """
         self.precursor_mz_array = np.zeros(0, dtype=np.float32)
         self.low_memory = low_memory
-        if low_memory==1:
+        if low_memory == 1:
             self.entropy_search = FlashEntropySearchCoreLowMemory(
-                path_data=path_data, max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step
+                path_data=path_data, max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step, intensity_weight=intensity_weight
             )
-        elif low_memory==2:
+        elif low_memory == 2:
             self.entropy_search = FlashEntropySearchCoreMediumMemory(
-                path_data=path_data, max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step
+                path_data=path_data, max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step, intensity_weight=intensity_weight
             )
         else:
-            self.entropy_search = FlashEntropySearchCore(path_data=path_data, max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step)
+            self.entropy_search = FlashEntropySearchCore(
+                path_data=path_data, max_ms2_tolerance_in_da=max_ms2_tolerance_in_da, mz_index_step=mz_index_step, intensity_weight=intensity_weight
+            )
 
     def identity_search(self, precursor_mz, peaks, ms1_tolerance_in_da, ms2_tolerance_in_da, target="cpu", output_matched_peak_number=False, **kwargs):
         """
