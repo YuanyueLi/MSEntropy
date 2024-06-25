@@ -17,5 +17,10 @@ API Reference
    :undoc-members:
    :show-inheritance:
 
+.. autoclass:: ms_entropy.FlashEntropySearchCoreMediumMemory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 .. autofunction:: ms_entropy.clean_spectrum 
    :noindex:
