@@ -113,7 +113,10 @@ cpdef np.ndarray[float32, ndim=2] cy_clean_spectrum(
         max_peak_num,
         normalize_intensity,
     )
-    clean_peaks = clean_peaks[:clean_peaks_len]
+    if clean_peaks_len>0:
+        clean_peaks = clean_peaks[:clean_peaks_len]
+    else:
+        clean_peaks = np.zeros((0, 2), dtype=np.float32)
     return clean_peaks
 
 
