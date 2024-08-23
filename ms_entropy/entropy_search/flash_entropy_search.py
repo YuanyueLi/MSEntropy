@@ -16,6 +16,7 @@ class FlashEntropySearch:
         low_memory=False,
         path_data=None,
         intensity_weight="entropy",
+        **kwargs,
     ):
         """
         Initialize the EntropySearch class.
@@ -27,6 +28,7 @@ class FlashEntropySearch:
         :param intensity_weight:    The weight for the intensity in the entropy calculation, can be "entropy" or None. Default is "entropy".
             - None: The intensity will not be weighted, then the unweighted similarity will be calculated.
             - "entropy": The intensity will be weighted by the entropy, then the entropy similarity will be calculated.
+        :param kwargs:  Those parameters will be ignored.
         """
         self.precursor_mz_array = np.zeros(0, dtype=np.float32)
         self.low_memory = low_memory
