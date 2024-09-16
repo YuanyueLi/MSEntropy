@@ -178,6 +178,8 @@ cpdef float cy_calculate_entropy_similarity(
     float
         The entropy similarity between the two spectra.
     """
+    if len(peaks_a) == 0 or len(peaks_b) == 0:
+        return 0.0
     cdef np.ndarray[float32, ndim=2] peaks_a_np = np.array(peaks_a, dtype=np.float32, copy=True, order="C")
     cdef np.ndarray[float32, ndim=2] peaks_b_np = np.array(peaks_b, dtype=np.float32, copy=True, order="C")
 
@@ -248,6 +250,8 @@ cpdef float cy_calculate_unweighted_entropy_similarity(
     float
         The unweighted entropy similarity between the two spectra.
     """
+    if len(peaks_a) == 0 or len(peaks_b) == 0:
+        return 0.0
     cdef np.ndarray[float32, ndim=2] peaks_a_np
     cdef np.ndarray[float32, ndim=2] peaks_b_np
     if clean_spectra:

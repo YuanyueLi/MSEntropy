@@ -57,7 +57,13 @@ float calculate_unweighted_entropy_similarity(
             b++;
         }
     }
-    return similarity / 2;
+    similarity = similarity / 2;
+    if (similarity < 0) {
+        similarity = 0;
+    }elif(similarity > 1) {
+        similarity = 1;
+    }
+    return similarity;
 }
 
 // Calculate entropy similarity
