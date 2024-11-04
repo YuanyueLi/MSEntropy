@@ -135,4 +135,4 @@ Upon successful index construction, a second run of ``example-search_mona-with_r
 example-search_mona-with_pickle_functions.py
 ============================================
 
-An other example shows how to use the Flash entropy search to search the [MassBank.us (MoNA)](https://massbank.us/) database. This example use build-in pickle functions to save and load index.
+An other example shows how to use the Flash entropy search to search the [MassBank.us (MoNA)](https://massbank.us/) database. This example use built-in pickle functions to save and load index.

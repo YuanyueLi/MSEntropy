@@ -12,7 +12,7 @@ To achieve this, while constructing the ``FlashEntropySearch`` object, you need 
 
 The ``low_memory`` parameter has three values:
     - False or 0: Normal mode. All the index will be loaded into memory, this is the default mode and the fastest mode.
-    - True or 1: Low memory mode. Only load the nessessary data into memory, this mode needs the lowest memory, but the search speed will be the slowest, as it will read all the data from the disk every time.
+    - True or 1: Low memory mode. Only load the necessary data into memory, this mode needs the lowest memory, but the search speed will be the slowest, as it will read all the data from the disk every time.
     - 2: Low memory mode use memmap. This mode is similar to mode 1, but it will use the ``numpy.memmap`` to map the index file to memory, which will be faster than mode 1 if the memory is not too small.
 
 .. code-block:: python

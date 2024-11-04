@@ -68,7 +68,7 @@ To operate in Cython mode, compile the Cython code after cloning the repository:
   - On Windows, you will need to install the `Microsoft Visual C++ 14.0 or greater Build Tools <https://visualstudio.microsoft.com/visual-cpp-build-tools/>`_ first.
   - On macOS, you will need to install the ``Xcode Command Line Tools`` first.
 
-- Downlaod and compile
+- Download and compile
 
   .. code-block:: bash
 

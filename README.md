@@ -10,7 +10,7 @@ If you have any questions, feel free to send me E-mails: mail@yli.one. If you fi
 > 
 > Li, Y., Kind, T., Folz, J. _et al._ **Spectral entropy outperforms MS/MS dot product similarity for small-molecule compound identification**, _Nat Methods_ **18**, 1524-1531 (2021). [https://doi.org/10.1038/s41592-021-01331-z](https://doi.org/10.1038/s41592-021-01331-z)
 
-# Theoritical Background
+# Theoretical Background
 
 `Spectral entropy` is an useful property to measure the complexity of a spectrum. It is inspried by the concept of Shannon entropy in information theory. [(ref)](https://doi.org/10.1038/s41592-021-01331-z)
 
@@ -116,7 +116,7 @@ entropy_similarity <- calculate_entropy_similarity(peaks_a, peaks_b, ms2_toleran
     float noise_threshold = 0.01;
     int max_peak_num = -1;
 
-    // Alway clean the spectrum before calculating spectral entropy
+    // Always clean the spectrum before calculating spectral entropy
     spec_a_len = clean_spectrum(*spec_a, spec_a_len, min_mz, max_mz, noise_threshold, max_peak_num, ms2_tolerance_in_da, ms2_tolerance_in_ppm, max_peak_num, normalize_intensity);
 
     // Calculate spectral entropy
