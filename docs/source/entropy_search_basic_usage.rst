@@ -56,7 +56,7 @@ The initial step in using the Flash Entropy Search algorithm involves building a
 
 
 .. note::
-    If you want to calcualte unweighted entropy similarity instead of weighted entropy similarity, you can set the ``intensity_weight`` parameter to ``None`` when constructing the ``FlashEntropySearch`` object. For example:
+    If you want to calculate unweighted entropy similarity instead of weighted entropy similarity, you can set the ``intensity_weight`` parameter to ``None`` when constructing the ``FlashEntropySearch`` object. For example:
 
     .. code-block:: python
 
