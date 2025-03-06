@@ -159,7 +159,7 @@ def _centroid_spectrum(peaks: np.ndarray, ms2_da: float = -1, ms2_ppm: float = -
     for idx in intensity_order[::-1]:
         if ms2_ppm > 0:
             mz_delta_allowed_left = peaks[idx, 0] * ms2_ppm * 1e-6
-            # For the right boundary, the mz_delta_allowed_right = peaks[right_idx, 0] * ms2_ppm * 1e-6 = peaks[idx, 0] / (1 - ms2_ppm * 1e-6)
+            # For the right boundary, the mz_delta_allowed_right = peaks[right_idx, 0] * ms2_ppm * 1e-6 = peaks[idx, 0] / (1 - ms2_ppm * 1e-6) - peaks[idx, 0]
             mz_delta_allowed_right = peaks[idx, 0] / (1 - ms2_ppm * 1e-6) - peaks[idx, 0]
 
         if peaks[idx, 1] > 0:
