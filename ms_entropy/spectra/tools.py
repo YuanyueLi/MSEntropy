@@ -3,15 +3,15 @@ import numpy as np
 
 
 def clean_spectrum(
-        peaks,
-        min_mz: float = -1.,
-        max_mz: float = -1.,
-        noise_threshold: float = 0.01,
-        min_ms2_difference_in_da: float = 0.05,
-        min_ms2_difference_in_ppm: float = -1.,
-        max_peak_num: int = -1,
-        normalize_intensity: bool = True,
-        **kwargs
+    peaks,
+    min_mz: float = -1.0,
+    max_mz: float = -1.0,
+    noise_threshold: float = 0.01,
+    min_ms2_difference_in_da: float = 0.05,
+    min_ms2_difference_in_ppm: float = -1.0,
+    max_peak_num: int = -1,
+    normalize_intensity: bool = True,
+    **kwargs,
 ) -> np.ndarray:
     """
     Clean, centroid, and normalize a spectrum with the following steps:
@@ -160,7 +160,7 @@ def _centroid_spectrum(peaks: np.ndarray, ms2_da: float = -1, ms2_ppm: float = -
         if ms2_ppm > 0:
             mz_delta_allowed_left = peaks[idx, 0] * ms2_ppm * 1e-6
             # For the right boundary, the mz_delta_allowed_right = peaks[right_idx, 0] * ms2_ppm * 1e-6 = peaks[idx, 0] / (1 - ms2_ppm * 1e-6)
-            mz_delta_allowed_right = peaks[idx, 0] / (1 - ms2_ppm * 1e-6)
+            mz_delta_allowed_right = peaks[idx, 0] / (1 - ms2_ppm * 1e-6) - peaks[idx, 0]
 
         if peaks[idx, 1] > 0:
             # Find the left boundary.
