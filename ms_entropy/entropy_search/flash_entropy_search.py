@@ -130,7 +130,7 @@ class FlashEntropySearch:
             output_matched_peak_number=output_matched_peak_number,
         )
 
-    def hybrid_search(self, precursor_mz, peaks, ms2_tolerance_in_da, target="cpu", **kwargs):
+    def hybrid_search(self, precursor_mz, peaks, ms2_tolerance_in_da, target="cpu", output_matched_peak_number=False, **kwargs):
         """
         Run the hybrid search, the query spectrum should be preprocessed by `clean_spectrum()` function before calling this function.
 
@@ -138,10 +138,13 @@ class FlashEntropySearch:
         :param peaks:           The peaks of the query spectrum, should be the output of `clean_spectrum()` function.
         :param ms2_tolerance_in_da:  The MS2 tolerance in Da.
         :param target:  The target device for the search, can be "cpu" or "gpu".
+        :param output_matched_peak_number:  If True, the number of matched peaks will be returned with the entropy similarity score.
 
         :return:    The entropy similarity score for each spectrum in the library, a numpy array with shape (N,), N is the number of spectra in the library.
+                    If `output_matched_peak_number` is True, the number of matched peaks will be returned with the entropy similarity score, i.e. the return
+                    will be a tuple of two numpy arrays, the first one is the entropy similarity score, and the second one is the number of matched peaks.
         """
-        return self.entropy_search.search_hybrid(target=target, precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da)
+        return self.entropy_search.search_hybrid(target=target, precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, output_matched_peak_number=output_matched_peak_number)
 
     def clean_spectrum_for_search(
         self, precursor_mz, peaks, precursor_ions_removal_da: float = 1.6, noise_threshold=0.01, min_ms2_difference_in_da: float = 0.05, max_peak_num: int = 0
@@ -184,6 +187,7 @@ class FlashEntropySearch:
         noise_threshold=0.01,
         min_ms2_difference_in_da: float = 0.05,
         max_peak_num: int = None,
+        output_matched_peak_number=False,
     ):
         """
         Run the Flash entropy search for the query spectrum.
@@ -200,8 +204,10 @@ class FlashEntropySearch:
                                 will be removed. Default is 0.01.
         :param min_ms2_difference_in_da:    The minimum difference between two peaks in the MS/MS spectrum. Default is 0.05.
         :param max_peak_num:    The maximum number of peaks in the MS/MS spectrum. Default is None, which means no limit.
+        :param output_matched_peak_number:  If True, the number of matched peaks will be returned with the entropy similarity score.
 
         :return:    A dictionary with the search results. The keys are "identity_search", "open_search", "neutral_loss_search", "hybrid_search", and the values are the search results for each method.
+                    If `output_matched_peak_number` is True, each value will be a tuple of (similarity_scores, matched_peak_counts).
         """
         if precursor_ions_removal_da is not None:
             max_mz = precursor_mz - precursor_ions_removal_da
@@ -224,16 +230,16 @@ class FlashEntropySearch:
         result = {}
         if "identity" in method:
             result["identity_search"] = self.identity_search(
-                precursor_mz=precursor_mz, peaks=peaks, ms1_tolerance_in_da=ms1_tolerance_in_da, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target
+                precursor_mz=precursor_mz, peaks=peaks, ms1_tolerance_in_da=ms1_tolerance_in_da, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target, output_matched_peak_number=output_matched_peak_number
             )
         if "open" in method:
-            result["open_search"] = self.open_search(peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target)
+            result["open_search"] = self.open_search(peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target, output_matched_peak_number=output_matched_peak_number)
         if "neutral_loss" in method:
             result["neutral_loss_search"] = self.neutral_loss_search(
-                precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target
+                precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target, output_matched_peak_number=output_matched_peak_number
             )
         if "hybrid" in method:
-            result["hybrid_search"] = self.hybrid_search(precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target)
+            result["hybrid_search"] = self.hybrid_search(precursor_mz=precursor_mz, peaks=peaks, ms2_tolerance_in_da=ms2_tolerance_in_da, target=target, output_matched_peak_number=output_matched_peak_number)
         return result
 
     def build_index(
