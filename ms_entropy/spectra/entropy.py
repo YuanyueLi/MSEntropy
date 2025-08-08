@@ -187,7 +187,7 @@ def apply_weight_to_intensity(peaks: np.ndarray) -> np.ndarray:
     """
     Apply a weight to the intensity of a spectrum based on spectral entropy based on the method described in:
 
-    Li, Y., Kind, T., Folz, J. et al. Spectral entropy outperforms MS/MS dot product similarity for small-molecule compound identification. Nat Methods 18, 1524\-1531 (2021). https://doi.org/10.1038/s41592-021-01331-z.
+    Li, Y., Kind, T., Folz, J. et al. Spectral entropy outperforms MS/MS dot product similarity for small-molecule compound identification. Nat Methods 18, 1524\\-1531 (2021). https://doi.org/10.1038/s41592-021-01331-z.
 
     Parameters
     ----------
