@@ -32,5 +32,8 @@
         "flashentropysearch.h": "c",
         "functional": "c"
     },
-    "esbonio.sphinx.confDir": ""
+    "esbonio.sphinx.confDir": "",
+    "python-envs.defaultEnvManager": "ms-python.python:conda",
+    "python-envs.defaultPackageManager": "ms-python.python:conda",
+    "python-envs.pythonProjects": []
 }
