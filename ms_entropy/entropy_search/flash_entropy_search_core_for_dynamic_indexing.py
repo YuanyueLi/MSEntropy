@@ -77,6 +77,8 @@ class FlashEntropySearchCoreForDynamicIndexing:
         if method == "open":
             library_mz_idx_start, library_mz, library_peaks_intensity, library_spec_idx = self.index[0]
         elif method == "neutral_loss":
+            if self.index[1] is None:
+                raise RuntimeError("The index for neutral loss search is not built.")
             library_mz_idx_start, library_mz, library_peaks_intensity, library_spec_idx, _ = self.index[1]
             peaks[:, 0] = precursor_mz - peaks[:, 0]
 
@@ -155,8 +157,8 @@ class FlashEntropySearchCoreForDynamicIndexing:
         peaks = self._preprocess_peaks(peaks)
 
         # Go through all peak in the spectrum and determine the mz index range
-        product_peak_match_mz_min = peaks[0, :] - ms2_tolerance_in_da
-        product_peak_match_mz_max = peaks[0, :] + ms2_tolerance_in_da
+        product_peak_match_mz_min = peaks[:, 0] - ms2_tolerance_in_da
+        product_peak_match_mz_max = peaks[:, 0] + ms2_tolerance_in_da
 
         product_peak_match_idx_min = np.zeros(peaks.shape[0], dtype=np.uint64)
         product_peak_match_idx_max = np.zeros(peaks.shape[0], dtype=np.uint64)
@@ -478,9 +480,14 @@ class FlashEntropySearchCoreForDynamicIndexing:
         """
         if self._init_for_multiprocessing:
             return
-
-        for i, array in enumerate(self.index):
-            self.index[i] = _convert_numpy_array_to_shared_memory(array)
+        new_index = []
+        for entry in self.index:
+            if entry is None:
+                new_index.append(None)
+                continue
+            new_entry = tuple(_convert_numpy_array_to_shared_memory(a) for a in entry)
+            new_index.append(new_entry)
+        self.index = new_index
         self._init_for_multiprocessing = True
 
     def read(self, path_data=None):
@@ -506,12 +513,12 @@ class FlashEntropySearchCoreForDynamicIndexing:
                 if index_type == "all_nl" and not is_nl_indexed:
                     self.index.append(None)
                     continue
-                library_mz_idx_start = np.memmap(path_data / f"{index_type}_mz_idx_start.npy", dtype=np.int64, mode="r")
-                library_mz = np.memmap(path_data / f"{index_type}_mz.npy", dtype=np.float32, mode="r")
-                library_peaks_intensity = np.memmap(path_data / f"{index_type}_intensity.npy", dtype=np.float32, mode="r")
-                library_spec_idx = np.memmap(path_data / f"{index_type}_spec_idx.npy", dtype=np.uint32, mode="r")
+                library_mz_idx_start = np.memmap(path_data / f"{index_type}_mz_idx_start.bin", dtype=np.int64, mode="r")
+                library_mz = np.memmap(path_data / f"{index_type}_mz.bin", dtype=np.float32, mode="r")
+                library_peaks_intensity = np.memmap(path_data / f"{index_type}_intensity.bin", dtype=np.float32, mode="r")
+                library_spec_idx = np.memmap(path_data / f"{index_type}_spec_idx.bin", dtype=np.uint32, mode="r")
                 if index_type == "all_nl":
-                    ions_mz_for_nl = np.memmap(path_data / f"ions_mz_for_nl.npy", dtype=np.float32, mode="r")
+                    ions_mz_for_nl = np.memmap(path_data / f"ions_mz_for_nl.bin", dtype=np.float32, mode="r")
                     self.index.append((library_mz_idx_start, library_mz, library_peaks_intensity, library_spec_idx, ions_mz_for_nl))
                 else:
                     self.index.append((library_mz_idx_start, library_mz, library_peaks_intensity, library_spec_idx))
@@ -533,13 +540,13 @@ class FlashEntropySearchCoreForDynamicIndexing:
             if indexes is None:
                 continue
             library_mz_idx_start, library_mz, library_peaks_intensity, library_spec_idx = indexes[:4]
-            library_mz_idx_start.tofile(str(path_data / f"{index_type}_mz_idx_start.npy"))
-            library_mz.tofile(str(path_data / f"{index_type}_mz.npy"))
-            library_peaks_intensity.tofile(str(path_data / f"{index_type}_intensity.npy"))
-            library_spec_idx.tofile(str(path_data / f"{index_type}_spec_idx.npy"))
+            library_mz_idx_start.tofile(str(path_data / f"{index_type}_mz_idx_start.bin"))
+            library_mz.tofile(str(path_data / f"{index_type}_mz.bin"))
+            library_peaks_intensity.tofile(str(path_data / f"{index_type}_intensity.bin"))
+            library_spec_idx.tofile(str(path_data / f"{index_type}_spec_idx.bin"))
             if index_type == "all_nl":
                 ions_mz_for_nl = indexes[4]
-                ions_mz_for_nl.tofile(str(path_data / f"ions_mz_for_nl.npy"))
+                ions_mz_for_nl.tofile(str(path_data / f"ions_mz_for_nl.bin"))
 
         information = {
             "neutral_loss_indexed": self.index[1] is not None,
@@ -552,20 +559,9 @@ class FlashEntropySearchCoreForDynamicIndexing:
             json.dump(information, f)
 
 
-def _convert_numpy_array_to_shared_memory(np_array, array_c_type=None):
-    """
-    The char table of shared memory can be find at:
-    https://docs.python.org/3/library/struct.html#format-characters
-    https://docs.python.org/3/library/array.html#module-array (This one is wrong!)
-    The documentation of numpy.frombuffer can be find at:
-    https://docs.scipy.org/doc/numpy/reference/generated/numpy.frombuffer.html
-    Note: the char table is different from the char table in numpy
-    """
-    dim = np_array.shape
-    num = reduce(lambda x, y: x * y, dim)
-    if array_c_type is None:
-        array_c_type = np_array.dtype.char
-    base = multiprocessing.Array(array_c_type, num, lock=False)
-    np_array_new = np.frombuffer(base, dtype=np_array.dtype).reshape(dim)
-    np_array_new[:] = np_array
+def _convert_numpy_array_to_shared_memory(np_array):
+    c_type = np.ctypeslib.as_ctypes_type(np_array.dtype)
+    base = multiprocessing.RawArray(c_type, int(np_array.size))
+    np_array_new = np.frombuffer(base, dtype=np_array.dtype).reshape(np_array.shape)
+    np_array_new[...] = np_array
     return np_array_new
