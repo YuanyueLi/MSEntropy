@@ -6,5 +6,11 @@ from .spectra import (
     apply_weight_to_intensity,
 )
 from .file_io import read_one_spectrum, standardize_spectrum
-from .entropy_search import FlashEntropySearch, FlashEntropySearchCore, FlashEntropySearchCoreLowMemory, FlashEntropySearchCoreMediumMemory
+from .entropy_search import (
+    FlashEntropySearch,
+    FlashEntropySearchCore,
+    FlashEntropySearchCoreLowMemory,
+    FlashEntropySearchCoreMediumMemory,
+    FlashEntropySearchCoreForDynamicIndexing,
+)
 from .version import __version__

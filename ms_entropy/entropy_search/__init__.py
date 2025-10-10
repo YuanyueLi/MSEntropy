@@ -2,3 +2,4 @@ from .flash_entropy_search import FlashEntropySearch
 from .flash_entropy_search_core import FlashEntropySearchCore
 from .flash_entropy_search_core_low_memory import FlashEntropySearchCoreLowMemory
 from .flash_entropy_search_core_medium_memory import FlashEntropySearchCoreMediumMemory
+from .flash_entropy_search_core_for_dynamic_indexing import FlashEntropySearchCoreForDynamicIndexing
