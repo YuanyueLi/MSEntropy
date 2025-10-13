@@ -3,6 +3,7 @@
 
 #pragma once
 #define __DEBUG__CLEAN_SPECTRUM__ 0
+// #define __DEBUG__ 
 
 #include <stdbool.h>
 // #define false 0
@@ -23,13 +24,14 @@ typedef float float_spec;
  *
  * This function will clean the peaks by the following steps:
  * 1. Remove empty peaks (m/z <= 0 or intensity <= 0).
- * 2. Remove peaks with m/z >= max_mz or m/z < min_mz.
+ * 2. Remove peaks with m/z >= max_mz or m/z <= min_mz.
  * 3. Centroid the spectrum by merging peaks within min_ms2_difference_in_da or min_ms2_difference_in_ppm.
  * 4. Remove peaks with intensity < noise_threshold * max_intensity.
  * 5. Keep only the top max_peak_num peaks.
  * 6. Normalize the intensity to sum to 1.
  *
- * Note: The only one of min_ms2_difference_in_da and min_ms2_difference_in_ppm should be positive.
+ * Note: The only one of min_ms2_difference_in_da and min_ms2_difference_in_ppm should be positive, 
+ * if both are positive, this function will use min_ms2_difference_in_ppm.
 
  * @param peaks The peaks to be cleaned. A 2D array. peaks[x][0] is the m/z, peaks[x][1] is the intensity.
  * @param peaks_length The length of the peaks.

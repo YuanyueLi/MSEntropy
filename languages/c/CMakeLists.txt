@@ -22,5 +22,6 @@ TARGET_LINK_LIBRARIES(Example SpectralEntropy m)
 
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
+    set_property(TARGET SpectralEntropy PROPERTY C_STANDARD 99)
     set_property(TARGET Example PROPERTY C_STANDARD 99)
 endif()

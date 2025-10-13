@@ -27,19 +27,12 @@ void inline swap_int(int* a, int* b) {
 }
 
 // Comparator function for qsort
-int compare_by_mz(const void* a, const void* b) {
-    float_spec* spectrum_a = (float_spec*)a;
-    float_spec* spectrum_b = (float_spec*)b;
-
-    // MZ comparison
-    if (spectrum_a[0] < spectrum_b[0]) {
-        return -1;
-    } else if (spectrum_a[0] > spectrum_b[0]) {
-        return 1;
-    }
-
-    return 0;
+int compare_by_mz(const void* a, const void* b){
+    const float_spec (*A)[2] = a;
+    const float_spec (*B)[2] = b;
+    return ((*A)[0] > (*B)[0]) - ((*A)[0] < (*B)[0]);
 }
+
 
 void sort_spectrum_by_mz(float_spec (*spectrum_2d)[2], int spectrum_len) {
     // Sort the array using qsort
@@ -48,24 +41,18 @@ void sort_spectrum_by_mz(float_spec (*spectrum_2d)[2], int spectrum_len) {
 
 // Comparator function for qsort
 int compare_by_mz_with_zero_intensity(const void* a, const void* b) {
-    float_spec* spectrum_a = (float_spec*)a;
-    float_spec* spectrum_b = (float_spec*)b;
+    const float_spec* spectrum_a = (float_spec*)a;
+    const float_spec* spectrum_b = (float_spec*)b;
 
-    // Intensity check
-    if (spectrum_a[1] > 0 && spectrum_b[1] <= 0) {
-        return -1;
-    } else if (spectrum_a[1] <= 0 && spectrum_b[1] > 0) {
-        return 1;
-    }
+    // Prioritize nonzero-intensity peaks
+    int a_has_intensity = spectrum_a[1] > 0.0f;
+    int b_has_intensity = spectrum_b[1] > 0.0f;
+
+    if (a_has_intensity != b_has_intensity)
+        return b_has_intensity - a_has_intensity; // nonzero first
 
     // MZ comparison if intensities are the same
-    if (spectrum_a[0] < spectrum_b[0]) {
-        return -1;
-    } else if (spectrum_a[0] > spectrum_b[0]) {
-        return 1;
-    }
-
-    return 0;
+    return (spectrum_a[0] > spectrum_b[0]) - (spectrum_a[0] < spectrum_b[0]);
 }
 
 int sort_spectrum_by_mz_and_zero_intensity(float_spec (*spectrum_2d)[2], int spectrum_len) {
@@ -80,7 +67,7 @@ int sort_spectrum_by_mz_and_zero_intensity(float_spec (*spectrum_2d)[2], int spe
 }
 
 int partition(float_spec (*spectrum_2d)[2], int* spectrum_argsort, int low, int high) {
-    float pivot = spectrum_2d[spectrum_argsort[high]][1];
+    const float_spec pivot = spectrum_2d[spectrum_argsort[high]][1];
     int i = (low - 1);
 
     for (int j = low; j <= high - 1; j++) {
@@ -115,7 +102,7 @@ bool inline need_centroid(float_spec (*spectrum_2d)[2], int spectrum_len, float 
         if (min_ms2_difference_in_ppm > 0) {
             min_ms2_difference_in_da = spectrum_2d[i + 1][0] * min_ms2_difference_in_ppm * 1e-6;
         }
-        if (spectrum_2d[i + 1][0] - spectrum_2d[i][0] < min_ms2_difference_in_da) {
+        if (spectrum_2d[i + 1][0] - spectrum_2d[i][0] <= min_ms2_difference_in_da) {
             return true;
         }
     }
@@ -135,7 +122,8 @@ int inline centroid_spectrum(float_spec (*spectrum_2d)[2], int spectrum_length, 
         int idx = spectrum_argsort[i];
         if (min_ms2_difference_in_ppm > 0) {
             mz_delta_allowed_left = spectrum_2d[idx][0] * min_ms2_difference_in_ppm * 1e-6;
-            mz_delta_allowed_right = spectrum_2d[idx][0] / (1 - min_ms2_difference_in_ppm * 1e-6) - spectrum_2d[idx][0];
+            // spectrum_2d[idx][0] / (1 - min_ms2_difference_in_ppm * 1e-6) - spectrum_2d[idx][0];
+            mz_delta_allowed_right = spectrum_2d[idx][0] * min_ms2_difference_in_ppm / (1e6 - min_ms2_difference_in_ppm);
             if (__DEBUG__CLEAN_SPECTRUM__) printf("mz: %f, mz_delta_allowed_left: %f, mz_delta_allowed_right: %f\n", spectrum_2d[idx][0], mz_delta_allowed_left, mz_delta_allowed_right);
         }
         if (__DEBUG__CLEAN_SPECTRUM__) print_spectrum("Input:\n", spectrum_2d, spectrum_length);
@@ -165,7 +153,11 @@ int inline centroid_spectrum(float_spec (*spectrum_2d)[2], int spectrum_length, 
             }
 
             // Write the new peak into the output spectrum
-            spectrum_2d[idx][0] = intensity_weighted_sum / intensity_sum;
+            if (intensity_sum > 0){
+                spectrum_2d[idx][0] = intensity_weighted_sum / intensity_sum;
+            } else {
+                spectrum_2d[idx][0] = 0;
+            }
             spectrum_2d[idx][1] = intensity_sum;
         }
         if (__DEBUG__CLEAN_SPECTRUM__) print_spectrum("Input:\n", spectrum_2d, spectrum_length);
@@ -183,7 +175,7 @@ int clean_spectrum(float_spec* spectrum, int spectrum_length,
                    float min_ms2_difference_in_da, float min_ms2_difference_in_ppm,
                    int max_peak_num,
                    bool normalize_intensity) {
-    float_spec(*spectrum_2d)[2] = (float_spec(*)[2]) & spectrum[0];
+    float_spec(*spectrum_2d)[2] = (float_spec(*)[2]) spectrum;
     int* spectrum_argsort = (int*)malloc(spectrum_length * sizeof(int));
 
     if (__DEBUG__CLEAN_SPECTRUM__) print_spectrum("Input:\n", spectrum_2d, spectrum_length);
@@ -207,6 +199,7 @@ int clean_spectrum(float_spec* spectrum, int spectrum_length,
         spectrum_length = centroid_spectrum(spectrum_2d, spectrum_length, min_ms2_difference_in_da, min_ms2_difference_in_ppm, spectrum_argsort);
         if (__DEBUG__CLEAN_SPECTRUM__) print_spectrum("Centroid the spectrum:\n", spectrum_2d, spectrum_length);
     }
+    
     // 3. Remove the peaks with intensity less than the noise_threshold * maximum(intensity).
     if (noise_threshold > 0) {
         float_spec max_intensity = 0;

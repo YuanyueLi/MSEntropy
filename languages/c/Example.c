@@ -5,9 +5,8 @@
 
 int main() {
     {
-        float_spec spectrum_2d[7][2] = {{41.04, 0.3716}, {0., 0.3716}, {69.070, 7.917962}, {69.070, -7.917962}, {69.071, 100.}, {86.0969, 66.83}, {86.01, 10}};
-        int spectrum_len = 7;
-        int spectrum_output_len = 0;
+        float_spec spectrum_2d[8][2] = {{41.04, 0.3716}, {0., 0.3716}, {69.070, 7.917962}, {69.070, -7.917962}, {69.071, 100.}, {86.0969, 66.83}, {86.01, 10}, {86.015, 10}};
+        int spectrum_len = 8;
         print_spectrum("Origin spectrum:\n", spectrum_2d, spectrum_len);
         spectrum_len = clean_spectrum(*spectrum_2d, spectrum_len, 0, -1, 0.01, 0.05, -1, 5, true);
         print_spectrum("Final spectrum:\n", spectrum_2d, spectrum_len);
