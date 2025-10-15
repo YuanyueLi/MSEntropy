@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=77.0", "cython >= 0.26.1", "numpy >= 1.9.3"]
+requires = ["setuptools>=61.0", "cython >= 0.26.1", "numpy >= 1.9.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -14,7 +14,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
-license-files = ["LICENSE"]
+license = "Apache-2.0"
 keywords = [
     "mass spectrometry",
     "ms entropy",
@@ -37,4 +37,7 @@ gpu = ["cupy >= 12.0.0"]
 "Bug Tracker" = "https://github.com/YuanyueLi/MSEntropy/issues"
 
 [tool.setuptools.dynamic]
-version = {attr = "ms_entropy.__version__"}
+version = { attr = "ms_entropy.__version__" }
+
+[tool.setuptools]
+license-files = ["LICENSE*"]
