@@ -38,7 +38,6 @@ setup(
     name="ms_entropy",
     version=main_ns["__version__"],
     url="https://github.com/YuanyueLi/MSEntropy",
-    license="Apache-2.0",
     platforms=["Linux", "MacOS", "Windows"],
     packages=find_packages(where=".", exclude=["tests", "docs", "examples", "manuscript", "dist", "build"]),
     package_dir={"": "."},
