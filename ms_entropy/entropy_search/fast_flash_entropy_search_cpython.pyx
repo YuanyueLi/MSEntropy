@@ -11,7 +11,7 @@ from libc.math cimport log2
 cpdef void cy_entropy_similarity_identity_search(int_64 product_mz_idx_min, int_64 product_mz_idx_max,
                                                     float32 intensity, float32[:] entropy_similarity,
                                                     const float32[:] library_peaks_intensity, const uint_32[:] library_spec_idx_array,
-                                                    int_64 search_spectra_idx_min, int_64 search_spectra_idx_max) nogil:
+                                                    int_64 search_spectra_idx_min, int_64 search_spectra_idx_max) noexcept nogil:
     """
     The entropy_similarity will be modified in this function.
 
