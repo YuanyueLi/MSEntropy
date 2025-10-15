@@ -1,2 +1,1 @@
-numpy >= 1.9.3
-cython >= 0.26.1
+-e .[dev,all]

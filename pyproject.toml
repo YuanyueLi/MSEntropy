@@ -1,20 +1,15 @@
 [build-system]
-requires = ["setuptools>=61.0", "cython >= 0.26.1", "numpy >= 1.9.3"]
+requires = ["setuptools>=61.0", "cython >= 0.26.1", "numpy >= 1.9.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "ms_entropy"
-# version = "0.9.1"
 dynamic = ["version"]
-authors = [{ name = "Yuanyue Li", email = "yuanyueli@zju.edu.cn" }]
-description = "This package provides a Python implementation of calculating spectral entropy, entropy similarity, and Flash entropy search for mass spectrometry data."
+description = "Python implementation of spectral entropy, entropy similarity, and Flash entropy search for mass spectrometry data."
 readme = "README.md"
 requires-python = ">=3.7"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent",
-]
-license = "Apache-2.0"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Yuanyue Li", email = "yuanyueli@zju.edu.cn" }]
 keywords = [
     "mass spectrometry",
     "ms entropy",
@@ -25,16 +20,42 @@ keywords = [
     "flash entropy similarity",
     "flash entropy search",
 ]
-dependencies = ["numpy >= 1.9.3"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+
+# Runtime deps — avoid repeating in requirements.txt/setup.py
+dependencies = ["numpy>=1.9.13"]
 
 [project.optional-dependencies]
-all = ["lz4 >= 4.3.2", "msgpack >= 1.0.5", "pyteomics >= 4.6"]
-gpu = ["cupy >= 12.0.0"]
-
+all = ["lz4>=4.3.2", "msgpack>=1.0.5", "pyteomics>=4.6"]
+gpu = ["cupy>=12.0.0"]
 
 [project.urls]
-"Homepage" = "https://github.com/YuanyueLi/MSEntropy"
+Homepage = "https://github.com/YuanyueLi/MSEntropy"
 "Bug Tracker" = "https://github.com/YuanyueLi/MSEntropy/issues"
+
+[tool.setuptools]
+platforms = ["Linux", "MacOS", "Windows"]
+
+# Use package discovery instead of hardcoding
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests", "docs", "examples", "manuscript", "dist", "build"]
 
 [tool.setuptools.dynamic]
 version = { attr = "ms_entropy.__version__" }
+
+# Optional: default cython directives without touching env vars
+[tool.cython]
+language_level = "3"
+boundscheck = false
+wraparound = false
+cdivision = true
