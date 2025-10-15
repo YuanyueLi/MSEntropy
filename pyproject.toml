@@ -37,6 +37,7 @@ dependencies = ["numpy>=1.9.13"]
 [project.optional-dependencies]
 all = ["lz4>=4.3.2", "msgpack>=1.0.5", "pyteomics>=4.6"]
 gpu = ["cupy>=12.0.0"]
+dev = ["build", "pytest", "cython >= 0.26.1"]
 
 [project.urls]
 Homepage = "https://github.com/YuanyueLi/MSEntropy"

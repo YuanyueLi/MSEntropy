@@ -2,7 +2,9 @@ from setuptools import find_packages, setup, Extension
 from distutils.util import convert_path
 from Cython.Build import cythonize
 import numpy as np
+import os
 
+os.environ["CFLAGS"] = "-O3 -Wno-cpp -Wno-unused-function"
 main_ns = {}
 ver_path = convert_path("ms_entropy/version.py")
 with open(ver_path) as ver_file:
@@ -15,9 +17,6 @@ common_directives = dict(
     wraparound=False,
 )
 
-# Prefer per-extension flags (instead of global env CFLAGS)
-common_compile_args = ["-O3", "-Wno-cpp", "-Wno-unused-function"]
-
 extensions = [
     Extension(
         "ms_entropy.spectra.entropy_cython",
@@ -27,13 +26,11 @@ extensions = [
             "ms_entropy/spectra/SpectralEntropy.c",
         ],
         include_dirs=[np.get_include()],
-        extra_compile_args=common_compile_args,
     ),
     Extension(
         "ms_entropy.entropy_search.fast_flash_entropy_search_cpython",
         sources=["ms_entropy/entropy_search/fast_flash_entropy_search_cpython.pyx"],
         include_dirs=[np.get_include()],
-        extra_compile_args=common_compile_args,
     ),
 ]
 
