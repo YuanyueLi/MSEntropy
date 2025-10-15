@@ -38,6 +38,3 @@ gpu = ["cupy >= 12.0.0"]
 
 [tool.setuptools.dynamic]
 version = { attr = "ms_entropy.__version__" }
-
-[tool.setuptools]
-license-files = ["LICENSE*"]
