@@ -2,7 +2,8 @@
 Installation
 ============
 
-MS Entropy requires ``Python >= 3.7`` installed on your system. It has been tested on Windows, Linux, and macOS platforms.
+**MS Entropy** requires **Python >= 3.8**. While older versions like Python 3.7 *may* work, they are not guaranteed to be compatible.  
+The package has been tested on **Windows**, **Linux**, and **macOS**.
 
 
 Installing from PyPI
@@ -14,19 +15,28 @@ To install the latest version of MS Entropy from PyPI, use the following command
 
   pip install ms_entropy
 
-MS Entropy package also provides many useful functions like reading .mzML/.msp/.mgf/.lbm2 files, to keep the package lightweight, these functions are not installed by default. If you need to use these functions, you can install the package with the ``all`` extra:
+MS Entropy includes many useful features, such as support for reading ``.mzML``, ``.msp``, ``.mgf``, and ``.lbm2`` files.  
+These features are optional and not included by default to keep the package lightweight.  
+To install MS Entropy with all optional features, use:
+
 
 .. code-block:: bash
 
   pip install ms_entropy[all]
+GPU Support
+-----------
 
-If you need to use **GPU** acceleration, you need to install the latest version of CuPy first (recommended). Or you can install the latest version of MS Entropy with GPU support from PyPI:
+To enable **GPU acceleration**, it's recommended to install the latest version of **CuPy** separately.  
+Alternatively, you can install MS Entropy with GPU support via:
 
 .. code-block:: bash
 
   pip install ms_entropy[gpu]
 
-If you want to use the full functionality of MS Entropy, you can install the latest version of MS Entropy with GPU support and all extra from PyPI:
+Full Functionality (GPU + Extras)
+---------------------------------
+
+To install MS Entropy with both GPU support and all optional features:
 
 .. code-block:: bash
 
@@ -48,19 +58,21 @@ If you install MS Entropy from PyPI, the necessary dependencies will be installe
 Installing from Source
 ======================
 
-MS Entropy can operate in pure Python mode or in Cython mode for a performance boost.
+MS Entropy can operate in either **pure Python mode** or **Cython mode** for performance improvements.
 
 Pure Python Mode
 ----------------
 
-In this mode, simply copy the ``ms_entropy`` folder to your project directory or include the ``ms_entropy`` directory in your ``PYTHONPATH`` environment variable.
+In this mode, simply copy the ``ms_entropy`` folder to your project directory,  
+or include it in your ``PYTHONPATH`` environment variable.
 
 Cython mode
 -----------
 
 To operate in Cython mode, compile the Cython code after cloning the repository:
 
-- Requirements
+Requirements
+~~~~~~~~~~~~
 
   Before compiling, you will need to have ``C compiler and Python development headers.`` installed on your system:
 
@@ -68,7 +80,8 @@ To operate in Cython mode, compile the Cython code after cloning the repository:
   - On Windows, you will need to install the `Microsoft Visual C++ 14.0 or greater Build Tools <https://visualstudio.microsoft.com/visual-cpp-build-tools/>`_ first.
   - On macOS, you will need to install the ``Xcode Command Line Tools`` first.
 
-- Download and compile
+Download and Compile
+~~~~~~~~~~~~~~~~~~~~
 
   .. code-block:: bash
 
@@ -76,7 +89,8 @@ To operate in Cython mode, compile the Cython code after cloning the repository:
     cd MSEntropy
     python setup.py build_ext --inplace
     
-  Then, as in Pure Python Mode, you can either copy the ms_entropy folder to your project directory or include it in your PYTHONPATH environment variable.
+After compilation, you can either copy the ``ms_entropy`` folder to your project directory  
+or include it in your ``PYTHONPATH``.
 
 
 Testing

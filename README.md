@@ -4,7 +4,7 @@
 [![Documentation Status](https://readthedocs.org/projects/msentropy/badge/?version=latest)](https://msentropy.readthedocs.io/en/latest/?badge=latest)
 
 
-If you have any questions, feel free to send me E-mails: mail@yli.one. If you find this package useful, please consider citing the following papers:
+If you have any questions, feel free to contact me via email: yuanyueli@zju.edu.cn. If you find this package useful, please consider citing the following publications:
 
 > Li, Y., Fiehn, O. **Flash entropy search to query all mass spectral libraries in real time**, _Nat Methods_ **20**, 1475-1478 (2023). [https://doi.org/10.1038/s41592-023-02012-9](https://doi.org/10.1038/s41592-023-02012-9)
 > 
@@ -16,11 +16,11 @@ If you have any questions, feel free to send me E-mails: mail@yli.one. If you fi
 
 `Entropy similarity`, which measured spectral similarity based on spectral entropy, has been shown to outperform dot product similarity in compound identification. [(ref)](https://doi.org/10.1038/s41592-021-01331-z)
 
-The calculation of entropy similarity can be accelerated by using the `Flash Entropy Search` algorithm. [(ref)](https://doi.org/10.1038/s41592-023-02012-9)
+The `Flash Entropy Search` algorithm significantly accelerates the computation of entropy similarity [(ref)](https://doi.org/10.1038/s41592-023-02012-9)
 
 # How to use this package
 
-This repository contains the source code to calculate spectral entropy and entropy similarity in various programming languages. Also implemented the Flash Entropy Search algorithm in Python.
+This repository provides the source code for calculating `spectral entropy` and `entropy similarity` in multiple programming languages. The `Flash Entropy Search` algorithm is also implemented in Python.
 
 ## For Python users
 
@@ -66,7 +66,7 @@ entropy_similarity = entropy_search.search(
 
 ## For R users
 
-A document is available here: [https://cran.r-project.org/web/packages/msentropy/msentropy.pdf](https://cran.r-project.org/web/packages/msentropy/msentropy.pdf)
+Documentation is available at: [https://cran.r-project.org/web/packages/msentropy/msentropy.pdf](https://cran.r-project.org/web/packages/msentropy/msentropy.pdf)
 
 ### Installation
 
@@ -152,4 +152,4 @@ An example is available in folder [languages/c folder](https://github.com/Yuanyu
 
 An example is available in folder [languages/javascript folder](https://github.com/YuanyueLi/MSEntropy/tree/main/languages/javascript) and [example.js](https://github.com/YuanyueLi/MSEntropy/blob/main/languages/javascript/example.js)
 
-Also, refer to [MSViewer repository](https://github.com/YuanyueLi/MSViewer) for a working example of using this package in a web application.
+You can also refer to the [MSViewer repository](https://github.com/YuanyueLi/MSViewer) for an example of how to integrate this package into a web application.
