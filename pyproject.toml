@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "ms_entropy"
 # version = "0.9.1"
 dynamic = ["version"]
-authors = [{ name = "Yuanyue Li", email = "mail@yli.one" }]
+authors = [{ name = "Yuanyue Li", email = "yuanyueli@zju.edu.cn" }]
 description = "This package provides a Python implementation of calculating spectral entropy, entropy similarity, and Flash entropy search for mass spectrometry data."
 readme = "README.md"
 requires-python = ">=3.7"
@@ -14,7 +14,8 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
-license = { text = "Apache-2.0" }
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 keywords = [
     "mass spectrometry",
     "ms entropy",
