@@ -18,8 +18,7 @@ jobs:
           [
             ubuntu-latest,
             windows-latest,
-            macos-latest,
-            macos-15-intel,
+            macos-latest
           ]
 
     steps:
