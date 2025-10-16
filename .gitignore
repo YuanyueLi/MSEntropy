@@ -165,3 +165,7 @@ r_package/msentropy/src/RcppExports.cpp
 ms_entropy/spectra/entropy_cython.c
 local/
 ms_entropy/entropy_search/fast_flash_entropy_search_cpython.c
+.DS_Store
+
+# Example folder with data files and outputs
+example/

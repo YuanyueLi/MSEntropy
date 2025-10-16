@@ -119,7 +119,7 @@ class FlashEntropySearchCoreLowMemory(FlashEntropySearchCore):
         }
         json.dump(information, open(self.path_data / "information.json", "w"))
 
-    def search_hybrid(self, target="cpu", precursor_mz=None, peaks=None, ms2_tolerance_in_da=0.02):
+    def search_hybrid(self, target="cpu", precursor_mz=None, peaks=None, ms2_tolerance_in_da=0.02, output_matched_peak_number=False):
         """
         Perform the hybrid search for the MS/MS spectra.
 
@@ -127,11 +127,19 @@ class FlashEntropySearchCoreLowMemory(FlashEntropySearchCore):
         :param precursor_mz: The precursor m/z of the MS/MS spectra.
         :param peaks: The peaks of the MS/MS spectra, needs to be cleaned with the "clean_spectrum" function.
         :param ms2_tolerance_in_da: The MS/MS tolerance in Da.
+        :param output_matched_peak_number: Whether to output the number of matched peaks. Only supported when target is "cpu".
+                                            If set to True, the function will return a tuple of (entropy_similarity, matched_peak_number).
         """
         if not self.index:
-            return np.zeros(0, dtype=np.float32)
+            if output_matched_peak_number:
+                return np.zeros(0, dtype=np.float32), np.zeros(0, dtype=np.uint16)
+            else:
+                return np.zeros(0, dtype=np.float32)
         if len(peaks) == 0:
-            return np.zeros(self.total_spectra_num, dtype=np.float32)
+            if output_matched_peak_number:
+                return np.zeros(self.total_spectra_num, dtype=np.float32), np.zeros(self.total_spectra_num, dtype=np.uint16)
+            else:
+                return np.zeros(self.total_spectra_num, dtype=np.float32)
 
         # Check peaks
         assert ms2_tolerance_in_da <= self.max_ms2_tolerance_in_da, "The MS2 tolerance is larger than the maximum MS2 tolerance."
@@ -183,6 +191,9 @@ class FlashEntropySearchCoreLowMemory(FlashEntropySearchCore):
 
         if target == "cpu":
             entropy_similarity = np.zeros(self.total_spectra_num, dtype=np.float32)
+            if output_matched_peak_number:
+                matched_peak_number = np.zeros(self.total_spectra_num, dtype=np.uint16)
+            
             # Go through all the peaks in the spectrum and calculate the entropy similarity
             for peak_idx, (mz, intensity) in enumerate(peaks):
                 ###############################################################
@@ -199,6 +210,9 @@ class FlashEntropySearchCoreLowMemory(FlashEntropySearchCore):
                 modified_value_product = self._score_peaks_with_cpu(intensity, modified_value_product)
 
                 entropy_similarity[modified_idx_product] += modified_value_product
+                if output_matched_peak_number:
+                    # Count matched peaks (only count non-zero similarity contributions)
+                    matched_peak_number[modified_idx_product[modified_value_product > 0]] += 1
 
                 ###############################################################
                 # Match the neutral loss ions
@@ -229,9 +243,19 @@ class FlashEntropySearchCoreLowMemory(FlashEntropySearchCore):
                 modified_value_nl[duplicate_idx_in_nl] = 0
 
                 entropy_similarity[modified_idx_nl] += modified_value_nl
-            return entropy_similarity
+                if output_matched_peak_number:
+                    # Count matched peaks (only count non-zero similarity contributions)
+                    matched_peak_number[modified_idx_nl[modified_value_nl > 0]] += 1
+            
+            if output_matched_peak_number:
+                return entropy_similarity, matched_peak_number
+            else:
+                return entropy_similarity
 
         elif target == "gpu":
+            if output_matched_peak_number:
+                raise ValueError("output_matched_peak_number is not supported for GPU target")
+                
             import cupy as cp
 
             entropy_transform = cp.ElementwiseKernel(
