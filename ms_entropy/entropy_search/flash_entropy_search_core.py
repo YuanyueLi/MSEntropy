@@ -14,11 +14,11 @@ class FlashEntropySearchCore:
         path_data=None,
         max_ms2_tolerance_in_da=0.024,
         mz_index_step=0.0001,
-        intensity_weight="entropy", # "entropy" or None
+        intensity_weight="entropy",  # "entropy" or None
     ) -> None:
         """
         Initialize the EntropySearch class.
-    
+
         :param path_array: The path array of the index files.
         :param max_ms2_tolerance_in_da: The maximum MS2 tolerance used when searching the MS/MS spectra, in Dalton. Default is 0.024.
         :param mz_index_step:   The step size of the m/z index, in Dalton. Default is 0.0001.
@@ -114,8 +114,6 @@ class FlashEntropySearchCore:
             all_nl_spec_idx,
             all_ions_idx_for_nl,
         ) = self.index
-        index_number_in_one_da = int(1 / self.mz_index_step)
-
         # Prepare the query spectrum
         peaks = self._preprocess_peaks(peaks)
 
@@ -151,12 +149,8 @@ class FlashEntropySearchCore:
         # Go through all the peaks in the spectrum
         for mz_query, intensity_query in peaks:
             # Determine the mz index range
-            product_mz_idx_min = self._find_location_from_array_with_index(
-                mz_query - ms2_tolerance_in_da, library_mz, library_mz_idx_start, "left", index_number_in_one_da
-            )
-            product_mz_idx_max = self._find_location_from_array_with_index(
-                mz_query + ms2_tolerance_in_da, library_mz, library_mz_idx_start, "right", index_number_in_one_da
-            )
+            product_mz_idx_min = self._find_location_from_array_with_index(mz_query - ms2_tolerance_in_da, library_mz, library_mz_idx_start, "left")
+            product_mz_idx_max = self._find_location_from_array_with_index(mz_query + ms2_tolerance_in_da, library_mz, library_mz_idx_start, "right")
 
             if target == "cpu" and search_type == 0:
                 intensity_library = library_peaks_intensity[product_mz_idx_min:product_mz_idx_max]
@@ -229,8 +223,6 @@ class FlashEntropySearchCore:
             all_nl_spec_idx,
             all_ions_idx_for_nl,
         ) = self.index
-        index_number_in_one_da = int(1 / self.mz_index_step)
-
         # Prepare the query spectrum
         peaks = self._preprocess_peaks(peaks)
 
@@ -239,12 +231,8 @@ class FlashEntropySearchCore:
         product_peak_match_idx_max = np.zeros(peaks.shape[0], dtype=np.uint64)
         for peak_idx, (mz_query, _) in enumerate(peaks):
             # Determine the mz index range
-            product_mz_idx_min = self._find_location_from_array_with_index(
-                mz_query - ms2_tolerance_in_da, all_ions_mz, all_ions_mz_idx_start, "left", index_number_in_one_da
-            )
-            product_mz_idx_max = self._find_location_from_array_with_index(
-                mz_query + ms2_tolerance_in_da, all_ions_mz, all_ions_mz_idx_start, "right", index_number_in_one_da
-            )
+            product_mz_idx_min = self._find_location_from_array_with_index(mz_query - ms2_tolerance_in_da, all_ions_mz, all_ions_mz_idx_start, "left")
+            product_mz_idx_max = self._find_location_from_array_with_index(mz_query + ms2_tolerance_in_da, all_ions_mz, all_ions_mz_idx_start, "right")
 
             product_peak_match_idx_min[peak_idx] = product_mz_idx_min
             product_peak_match_idx_max[peak_idx] = product_mz_idx_max
@@ -268,12 +256,8 @@ class FlashEntropySearchCore:
                 # Match the neutral loss ions
                 mz_nl = precursor_mz - mz
                 # Determine the mz index range
-                neutral_loss_mz_idx_min = self._find_location_from_array_with_index(
-                    mz_nl - ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, "left", index_number_in_one_da
-                )
-                neutral_loss_mz_idx_max = self._find_location_from_array_with_index(
-                    mz_nl + ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, "right", index_number_in_one_da
-                )
+                neutral_loss_mz_idx_min = self._find_location_from_array_with_index(mz_nl - ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, "left")
+                neutral_loss_mz_idx_max = self._find_location_from_array_with_index(mz_nl + ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, "right")
 
                 # Calculate the entropy similarity for this matched peak
                 modified_idx_nl = all_nl_spec_idx[neutral_loss_mz_idx_min:neutral_loss_mz_idx_max]
@@ -325,12 +309,8 @@ class FlashEntropySearchCore:
                 # Match the neutral loss ions
                 mz_nl = precursor_mz - mz
                 # Determine the mz index range
-                neutral_loss_mz_idx_min = self._find_location_from_array_with_index(
-                    mz_nl - ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, "left", index_number_in_one_da
-                )
-                neutral_loss_mz_idx_max = self._find_location_from_array_with_index(
-                    mz_nl + ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, "right", index_number_in_one_da
-                )
+                neutral_loss_mz_idx_min = self._find_location_from_array_with_index(mz_nl - ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, "left")
+                neutral_loss_mz_idx_max = self._find_location_from_array_with_index(mz_nl + ms2_tolerance_in_da, all_nl_mass, all_nl_mass_idx_start, "right")
 
                 # Calculate the entropy similarity for this matched peak
                 modified_idx_nl = all_nl_spec_idx[neutral_loss_mz_idx_min:neutral_loss_mz_idx_max]
@@ -538,9 +518,9 @@ class FlashEntropySearchCore:
     def _score_peaks_gpu(self, entropy_transform, intensity_query, intensity_library):
         return entropy_transform(intensity_library, intensity_query)
 
-    def _find_location_from_array_with_index(self, wanted_mz, mz_array, mz_idx_start_array, side, index_number):
-        mz_min_int = (np.floor(wanted_mz * index_number)).astype(int)
-        mz_max_int = mz_min_int + 1
+    def _find_location_from_array_with_index(self, wanted_mz, mz_array, mz_idx_start_array, side):
+        mz_min_int = (np.floor(wanted_mz / self.mz_index_step - 0.5)).astype(int)
+        mz_max_int = mz_min_int + 2
 
         if mz_min_int >= len(mz_idx_start_array):
             mz_idx_search_start = mz_idx_start_array[-1]
