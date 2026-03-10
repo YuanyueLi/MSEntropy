@@ -20,20 +20,8 @@ jobs:
           - windows-latest
           - macos-latest
 
-    env:
-      CIBW_CACHE_PATH: ${{ github.workspace }}/.cibw-cache
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Restore cibuildwheel cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.CIBW_CACHE_PATH }}
-          key: ${{ runner.os }}-cibw-v1-${{ hashFiles('.github/workflows/build_publish.yml', 'pyproject.toml', 'setup.cfg', 'setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-cibw-v1-
-            ${{ runner.os }}-cibw-
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.4.0
