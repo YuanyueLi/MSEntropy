@@ -519,7 +519,7 @@ class FlashEntropySearchCore:
         return entropy_transform(intensity_library, intensity_query)
 
     def _find_location_from_array_with_index(self, wanted_mz, mz_array, mz_idx_start_array, side):
-        mz_min_int = (np.floor(wanted_mz / self.mz_index_step - 0.5)).astype(int)
+        mz_min_int = (np.floor(np.float64(wanted_mz) / self.mz_index_step - 0.5)).astype(int)
         mz_max_int = mz_min_int + 2
 
         if mz_min_int >= len(mz_idx_start_array):
