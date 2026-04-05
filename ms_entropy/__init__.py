@@ -12,5 +12,10 @@ from .entropy_search import (
     FlashEntropySearchCoreLowMemory,
     FlashEntropySearchCoreMediumMemory,
     FlashEntropySearchCoreForDynamicIndexing,
+    DynamicEntropySearchCore,
+    DynamicEntropySearch,
+    DynamicWithFlash,
+    RepositorySearchWithoutCharge,
+    RepositorySearch
 )
 from .version import __version__
