@@ -49,11 +49,10 @@ Dependencies
 If you install MS Entropy from PyPI, the necessary dependencies will be installed automatically. However, if you are installing from the source, install these manually:
 
 - ``Numpy >= 1.9.3``
-- ``msgpack >= 1.1.2``
 - ``Cython >= 0.26.1`` (Optional: required for Cython mode)
 - ``Cupy >= 12.0.0`` (Optional: required for GPU acceleration)
 - ``pyteomics >= 4.6`` (Optional: required for reading mzML files)
-- ``lz4 >= 4.3.2``  (Optional: required for reading .lbm2 file format from MS-DIAL)
+- ``lz4 >= 4.3.2, msgpack>=1.0.5,``  (Optional: required for reading .lbm2 file format from MS-DIAL)
 
 
 Installing from Source

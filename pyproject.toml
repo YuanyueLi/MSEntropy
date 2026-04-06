@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "cython >= 0.26.1", "numpy >= 1.9.3","msgpack>=1.0.5","wheel"]
+requires = ["setuptools>=61.0", "cython >= 0.26.1", "numpy >= 1.9.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,8 +8,10 @@ dynamic = ["version"]
 description = "Python implementation of spectral entropy, entropy similarity, and Flash entropy search for mass spectrometry data."
 readme = "README.md"
 requires-python = ">=3.7"
-authors = [{ name = "Yuanyue Li", email = "yuanyueli@zju.edu.cn" },
-{ name = "Ren Guo", email = "gr_@zju.edu.cn" }]
+authors = [
+    { name = "Yuanyue Li", email = "yuanyueli@zju.edu.cn" },
+    { name = "Ren Guo", email = "gr_@zju.edu.cn" },
+]
 keywords = [
     "mass spectrometry",
     "ms entropy",
@@ -20,7 +22,6 @@ keywords = [
     "flash entropy similarity",
     "flash entropy search",
     "dynamic entropy search",
-    "repository search"
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -36,7 +37,7 @@ classifiers = [
 dependencies = ["numpy>=1.9.13"]
 
 [project.optional-dependencies]
-all = ["lz4>=4.3.2", "pyteomics>=4.6"]
+all = ["lz4>=4.3.2", "msgpack>=1.0.5", "pyteomics>=4.6"]
 gpu = ["cupy>=12.0.0"]
 dev = ["build", "pytest", "cython >= 0.26.1"]
 

@@ -15,7 +15,5 @@ from .entropy_search import (
     DynamicEntropySearchCore,
     DynamicEntropySearch,
     DynamicWithFlash,
-    RepositorySearchWithoutCharge,
-    RepositorySearch
 )
 from .version import __version__

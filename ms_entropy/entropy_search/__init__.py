@@ -6,5 +6,3 @@ from .flash_entropy_search_core_for_dynamic_indexing import FlashEntropySearchCo
 from .dynamic_entropy_search_core import DynamicEntropySearchCore
 from .dynamic_entropy_search import DynamicEntropySearch
 from .dynamic_with_flash import DynamicWithFlash
-from .repository_search_without_charge import RepositorySearchWithoutCharge
-from .repository_search import RepositorySearch

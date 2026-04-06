@@ -25,8 +25,6 @@ This package contains the following modules:
 
 3.  **Dynamic Entropy Search Algorithm Functions:** This module supports fast index build, incremental updates of reference spectra library, and spectra search against a large spectral library with high efficiency.
 
-4.  **Repository Search Functions:** This module supports search and personalized incremental updates of our prebuilt index. This prebuilt resource comprises all publicly available spectra (1,473,028,876 MS/MS spectra from MassIVE/GNPS, MetaboLights, and Metabolomics Workbench), enabling global spectra comparisons.
-
 .. toctree::
    :maxdepth: 1
 
@@ -55,17 +53,10 @@ This package contains the following modules:
 
 .. toctree::
    :maxdepth: 1
-   :caption: ⚡ Dynamic Entropy Search ⚡
+   :caption: 📈 Dynamic Entropy Search 📈
 
    dynamic_quickstart
    dynamic_basic_usage_index_construction
    dynamic_basic_usage_search
    dynamic_useful_functions
    dynamic_api
-
-.. toctree::
-   :maxdepth: 1
-   :caption: 🌐 Repository Search 🌐
-
-   repository_search_basic_usage
-   repository_api
