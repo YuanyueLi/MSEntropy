@@ -12,5 +12,8 @@ from .entropy_search import (
     FlashEntropySearchCoreLowMemory,
     FlashEntropySearchCoreMediumMemory,
     FlashEntropySearchCoreForDynamicIndexing,
+    DynamicEntropySearchCore,
+    DynamicEntropySearch,
+    DynamicWithFlash,
 )
 from .version import __version__
