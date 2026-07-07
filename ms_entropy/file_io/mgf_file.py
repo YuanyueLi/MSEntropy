@@ -49,7 +49,7 @@ def read_one_spectrum(file_input, file_encoding='utf-8', **kwargs) -> dict:
                 if len(items)>=2:
                     spectrum_info['peaks'].append([items[0], items[1]])
 
-    if len(spectrum_info['peaks']) > 0 or len(spectrum_info) > 3:
+    if spectrum_start:
         yield spectrum_info
 
     fi.close()
