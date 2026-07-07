@@ -37,6 +37,14 @@ class TestFlashEntropySearchWithCpu(unittest.TestCase):
             precursor_mz=self.query_spectrum["precursor_mz"], peaks=self.query_spectrum["peaks"], ms2_tolerance_in_da=0.02
         )
         np.testing.assert_almost_equal(similarity, [1.0, 0.22299, 0.66897, 0.66897], decimal=5)
+        similarity, matched_peaks = self.flash_entropy.hybrid_search(
+            precursor_mz=self.query_spectrum["precursor_mz"],
+            peaks=self.query_spectrum["peaks"],
+            ms2_tolerance_in_da=0.02,
+            output_matched_peak_number=True,
+        )
+        np.testing.assert_almost_equal(similarity, [1.0, 0.22299, 0.66897, 0.66897], decimal=5)
+        np.testing.assert_almost_equal(matched_peaks, [4, 1, 3, 3], decimal=5)
 
     def test_neutral_loss_search(self):
         similarity = self.flash_entropy.neutral_loss_search(
@@ -75,6 +83,26 @@ class TestFlashEntropySearchWithCpu(unittest.TestCase):
         )
         np.testing.assert_almost_equal(similarity, [1.0, 0.0, 0.0, 0.0], decimal=5)
         np.testing.assert_almost_equal(matched_peaks, [4, 0, 0, 0], decimal=5)
+
+    def test_search_with_matched_peaks(self):
+        """Test the main search function with output_matched_peak_number=True."""
+        search_results = self.flash_entropy.search(
+            precursor_mz=self.query_spectrum["precursor_mz"],
+            peaks=self.query_spectrum["peaks"],
+            method="all",
+            ms1_tolerance_in_da=0.01,
+            ms2_tolerance_in_da=0.02,
+            output_matched_peak_number=True,
+        )
+        
+        # Verify all search methods return tuples of (similarity, matched_peaks)
+        for method_name, result in search_results.items():
+            self.assertIsInstance(result, tuple, f"{method_name} should return a tuple")
+            self.assertEqual(len(result), 2, f"{method_name} should return a tuple of length 2")
+            similarity, matched_peaks = result
+            self.assertEqual(len(similarity), 4, f"{method_name} similarity array should have length 4")
+            self.assertEqual(len(matched_peaks), 4, f"{method_name} matched_peaks array should have length 4")
+            self.assertTrue(all(count >= 0 for count in matched_peaks), f"{method_name} matched peak counts should be non-negative")
 
 
 class TestUnweightedFlashEntropySearchWithCpu(unittest.TestCase):
