@@ -44,7 +44,7 @@ setup(
     python_requires=">=3.7",
     install_requires=["numpy>=1.9.13"],
     extras_require={
-        "all": ["lz4>=4.3.2", "msgpack>=1.0.5", "pyteomics>=4.6"],
+        "all": ["lz4>=4.3.2", "msgpack>=1.0.5", "pyteomics>=4.6", "psims>=1.4.0"],
         "gpu": ["cupy>=12.0.0"],
     },
     ext_modules=cythonize(extensions, annotate=False, compiler_directives=common_directives),
